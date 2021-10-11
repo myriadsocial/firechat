@@ -109,17 +109,10 @@ export function Chat(props:{[keys:string] : any}) {
     }
 
     const sendChat = async() => {
-        let s = 
-                {
-                    msg : textMsg,
-                    timestamp : "123123123",
-                    _self : true,
-                }
-        setChatsMessages([...chatsMessages, s]);
-        setTextMsg("")
         console.log ("Sending Chat...")
         send(()=>{
             console.log ("Sending Chat... Success")
+            setTextMsg("")
         })        
     }
 
@@ -150,7 +143,7 @@ export function Chat(props:{[keys:string] : any}) {
                         } else {
                             s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[0], myPairKey));
                         }
-                        setChatsMessages([...chatsMessages, {_self : s._self, msg : s.msg, timestamp : s.timestamp }])
+                        setChatsMessages(oldArray=>[...oldArray, {_self : s._self, msg : s.msg, timestamp : s.timestamp }])
                     }                        
                 })
             } else {
@@ -166,22 +159,21 @@ export function Chat(props:{[keys:string] : any}) {
 
     useEffect(()=>{
         if (partnerKey !== "") {
-            getCertificate(50);
+            getCertificate(5);
         }
         
     },[partnerKey])
 
     useEffect(()=>{
-        let i = 0;
         setChatMessagesDiv(
             <>
                 {
                     chatsMessages.map((val)=>
-                        <div key={i++} className={`card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
+                        <div key={val.timestamp} className={`card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
                             <img className="card-img-top" src="holder.js/100px180/" alt="" />
                             <div className="card-body">
-                            <p className="card-text">{val.msg}</p>
-                            <p className="card-text"><small>sending ...</small></p>
+                            <p className="card-text mb-0">{val.msg}</p>
+                            <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
                             </div>
                         </div>
                     )
