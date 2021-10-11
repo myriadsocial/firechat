@@ -52,6 +52,18 @@ export function Chat(props:{[keys:string] : any}) {
     const partnerInputClick = async () => {
     }
 
+    const getDate = () => {
+        let currentdate = new Date(); 
+        let year = currentdate.getFullYear();
+        let month  = ((currentdate.getMonth()+1) < 10) ? "0" + (currentdate.getMonth()+1) : (currentdate.getMonth()+1);
+        let date = (currentdate.getDate() < 10) ? "0" + (currentdate.getDate()) : (currentdate.getDate());
+        let hour = (currentdate.getHours() < 10) ? "0" + (currentdate.getHours()) : (currentdate.getHours());
+        let minutes = (currentdate.getMinutes() < 10) ? "0" + (currentdate.getMinutes()) : (currentdate.getMinutes());
+        let seconds = (currentdate.getSeconds() < 10) ? "0" + (currentdate.getSeconds()) : (currentdate.getSeconds());
+        let miliseconds = (currentdate.getMilliseconds() < 10) ? "0" + (currentdate.getMilliseconds()) : (currentdate.getMilliseconds());
+        return ( {year : year, month : month, date : date, hour : hour, minutes : minutes, seconds : seconds, miliseconds : miliseconds} )
+    }
+
     const send = async (callback:()=>void) => {
         let msgToHim, msgToMe;
         if (yourPairKey.epub) {
@@ -61,18 +73,12 @@ export function Chat(props:{[keys:string] : any}) {
             msgToHim = textMsg
         }
         let cert = yourCertificate;
-        let currentdate = new Date(); 
-        let year = currentdate.getFullYear();
-        let month  = ((currentdate.getMonth()+1) < 10) ? "0" + (currentdate.getMonth()+1) : (currentdate.getMonth()+1);
-        let date = (currentdate.getDate() < 10) ? "0" + (currentdate.getDate()) : (currentdate.getDate());
-        let hour = (currentdate.getHours() < 10) ? "0" + (currentdate.getHours()) : (currentdate.getHours());
-        let minutes = (currentdate.getMinutes() < 10) ? "0" + (currentdate.getMinutes()) : (currentdate.getMinutes());
-        let seconds = (currentdate.getSeconds() < 10) ? "0" + (currentdate.getSeconds()) : (currentdate.getSeconds());
-        let miliseconds = (currentdate.getMilliseconds() < 10) ? "0" + (currentdate.getMilliseconds()) : (currentdate.getMilliseconds());
-        let datetime = `${year}/${month}/${date}T${hour}:${minutes}:${seconds}.${miliseconds}`;
+
+        let dateNow = getDate()
+        let datetime = `${dateNow.year}/${dateNow.month}/${dateNow.date}T${dateNow.hour}:${dateNow.minutes}:${dateNow.seconds}.${dateNow.miliseconds}`;
 
         console.log ("Send to Him ...")
-        gun.get(`~${yourPairKey.pub}`).get("chat-with").get(myPairKey.pub).get(year).get(month).get(date).set({
+        gun.get(`~${yourPairKey.pub}`).get("chat-with").get(myPairKey.pub).get(dateNow.year).get(dateNow.month).get(dateNow.date).set({
             "_self" : false,
             "timestamp" : datetime, 
             "msg" : msgToHim, 
@@ -90,7 +96,7 @@ export function Chat(props:{[keys:string] : any}) {
         })
 
         console.log ("Send to Me ...")
-        gun.user().get("chat-with").get(yourPairKey.pub).get(year).get(month).get(date).set({
+        gun.user().get("chat-with").get(yourPairKey.pub).get(dateNow.year).get(dateNow.month).get(dateNow.date).set({
             "_self" : true,
             "timestamp" : datetime, 
             "msg" : msgToMe, 
@@ -132,8 +138,11 @@ export function Chat(props:{[keys:string] : any}) {
                 setYourCertificate(s as any);
                 setPartnerKeyStateReadOnly(true);
 
-                // Hidupkan gun.On
-
+                let dateNow = getDate()
+                console.log (`ON !!! gun.user().get("chat-with").get(${keys[0]}).get(${dateNow.year}).get(${dateNow.month}).get(${dateNow.date})`);
+                gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(s=>{
+                    console.log(s);
+                })
             } else {
                 console.log (`Getting Certificate... Failed... Retry (${tries})`);
                 getCertificate(tries-1);
