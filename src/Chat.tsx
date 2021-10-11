@@ -36,7 +36,6 @@ export function Chat(props:{[keys:string] : any}) {
 
                     // Login Berhasil
                     setPartnerKeyStateReadOnly(false);
-                    setTextMsgReadOnlyState(false);
                     setKeterangan("Login Berhasil");                    
                 }
             }));
@@ -110,18 +109,21 @@ export function Chat(props:{[keys:string] : any}) {
     }
 
     const sendChat = async() => {
-        let s = chatsMessages;        
-        s.push({
-            msg : textMsg,
-            timestamp : "123123123",
-            _self : true,
-        })
-        setChatsMessages(s);
+        let s = 
+                {
+                    msg : textMsg,
+                    timestamp : "123123123",
+                    _self : true,
+                }
+        setChatsMessages([...chatsMessages, s]);
         setTextMsg("")
         console.log ("Sending Chat...")
         send(()=>{
             console.log ("Sending Chat... Success")
         })        
+    }
+
+    const retrieveChat = (chats:{_self : boolean, msg: string, timestamp:string}) => {
     }
 
     const getCertificate = (tries:number) => {
@@ -137,6 +139,7 @@ export function Chat(props:{[keys:string] : any}) {
                 console.log (s);
                 setYourCertificate(s as any);
                 setPartnerKeyStateReadOnly(true);
+                setTextMsgReadOnlyState(false);
 
                 let dateNow = getDate()
                 console.log (`ON !!! gun.user().get("chat-with").get(${keys[0]}).get(${dateNow.year}).get(${dateNow.month}).get(${dateNow.date})`);
@@ -144,15 +147,19 @@ export function Chat(props:{[keys:string] : any}) {
                     console.log(s);
                 })
             } else {
-                console.log (`Getting Certificate... Failed... Retry (${tries})`);
-                getCertificate(tries-1);
+                if (tries>=0) {
+                    console.log (`Getting Certificate... Failed... Retry (${tries})`);
+                    getCertificate(tries-1);    
+                } else {
+                    console.log (`Getting Certificate... Failed ! `);
+                }
             }
         })
     }
 
     useEffect(()=>{
         if (partnerKey !== "") {
-            getCertificate(10);
+            getCertificate(50);
         }
         
     },[partnerKey])
