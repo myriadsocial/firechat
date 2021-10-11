@@ -143,8 +143,15 @@ export function Chat(props:{[keys:string] : any}) {
 
                 let dateNow = getDate()
                 console.log (`ON !!! gun.user().get("chat-with").get(${keys[0]}).get(${dateNow.year}).get(${dateNow.month}).get(${dateNow.date})`);
-                gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(s=>{
-                    console.log(s);
+                gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+                    if (s) {
+                        if (s._self) {
+                            s.msg = await Gun.SEA.decrypt(s.msg, myPairKey);
+                        } else {
+                            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[0], myPairKey));
+                        }
+                        setChatsMessages([...chatsMessages, {_self : s._self, msg : s.msg, timestamp : s.timestamp }])
+                    }                        
                 })
             } else {
                 if (tries>=0) {
