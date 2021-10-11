@@ -16,7 +16,8 @@ export function Chat(props:{[keys:string] : any}) {
     const [chatsMessages, setChatsMessages] = useState<{_self : boolean, msg: string, timestamp : string }[]>([])
     const [chatMessagesDiv, setChatMessagesDiv] = useState<JSX.Element>(<></>)
     const [textMsg, setTextMsg] = useState("");
-    const [partnerKeyStateReadOnly, setPartnerKeyStateReadOnly] = useState(false);
+    const [partnerKeyStateReadOnly, setPartnerKeyStateReadOnly] = useState(true);
+    const [textMsgReadOnlyState, setTextMsgReadOnlyState] = useState(true);
     
     
     const loginPair = async () => {
@@ -25,21 +26,22 @@ export function Chat(props:{[keys:string] : any}) {
         setMyPairKey({priv : (pairKey?.priv || ""), pub: (pairKey?.pub || ""), epriv : (pairKey?.epriv || ""), epub : (pairKey?.epub || "") })
 
         // Generate Certificate
-        let cert = await (Gun as any).SEA.certify("*", [{ "*" : "chat-with","+" : "*"}], pairKey,null,{
-            // block : 'chat-blacklist' //ADA BUG DARI GUN JADI BELUM BISA BLACKLIST
-        });
+        let cert = await (Gun as any).SEA.certify("*", [{ "*" : "chat-with","+" : "*"}], pairKey);
         gun.user().auth(pairKey as any,()=>{
             gun.user().get("chat-cert").put(cert,(s=>{
                 if (s.err) {
                     console.log ("Error Creating Certificate")
                 } else {
                     console.log ("Success Creating Certificate")
+
+                    // Login Berhasil
+                    setPartnerKeyStateReadOnly(false);
+                    setTextMsgReadOnlyState(false);
+                    setKeterangan("Login Berhasil");                    
                 }
             }));
         })
         
-
-        setKeterangan("Login Berhasil");
     }
 
     const pairInputClick = async () => {
@@ -70,7 +72,7 @@ export function Chat(props:{[keys:string] : any}) {
         let datetime = `${year}/${month}/${date}T${hour}:${minutes}:${seconds}.${miliseconds}`;
 
         console.log ("Send to Him ...")
-        gun.get(`~${yourPairKey.pub}`).get("chat-with").get(myPairKey.pub).get(year).get(month).get(date).put({
+        gun.get(`~${yourPairKey.pub}`).get("chat-with").get(myPairKey.pub).get(year).get(month).get(date).set({
             "_self" : false,
             "timestamp" : datetime, 
             "msg" : msgToHim, 
@@ -88,7 +90,7 @@ export function Chat(props:{[keys:string] : any}) {
         })
 
         console.log ("Send to Me ...")
-        gun.user().get("chat-with").get(yourPairKey.pub).get(year).get(month).get(date).put({
+        gun.user().get("chat-with").get(yourPairKey.pub).get(year).get(month).get(date).set({
             "_self" : true,
             "timestamp" : datetime, 
             "msg" : msgToMe, 
@@ -117,16 +119,21 @@ export function Chat(props:{[keys:string] : any}) {
     }
 
     const getCertificate = (tries:number) => {
+        // Init Pasangan Chat, Ketika Paste di dalam kotak Partner Pairkey
         let keys = partnerKey.split("&");
         setYourPairKey({pub : keys[0], epub:keys[1]})
 
         console.log ("Getting Certificate...")
         gun.get(`~${keys[0]}`).get("chat-cert").once(s=>{
             if (s) {
+                // Success Init
                 console.log ("Getting Certificate... Success");
                 console.log (s);
                 setYourCertificate(s as any);
                 setPartnerKeyStateReadOnly(true);
+
+                // Hidupkan gun.On
+
             } else {
                 console.log (`Getting Certificate... Failed... Retry (${tries})`);
                 getCertificate(tries-1);
@@ -151,6 +158,7 @@ export function Chat(props:{[keys:string] : any}) {
                             <img className="card-img-top" src="holder.js/100px180/" alt="" />
                             <div className="card-body">
                             <p className="card-text">{val.msg}</p>
+                            <p className="card-text"><small>sending ...</small></p>
                             </div>
                         </div>
                     )
@@ -176,7 +184,7 @@ export function Chat(props:{[keys:string] : any}) {
                         </div>
                       </div>
                     </div>
-                    <input value={textMsg} onChange={(e)=>{setTextMsg(e.target.value)}} className="form-control" onKeyPress={(e)=>{if (e.code === "Enter") {sendChat()}}} />
+                    <input value={textMsg} readOnly={textMsgReadOnlyState} onChange={(e)=>{setTextMsg(e.target.value)}} className="form-control" onKeyPress={(e)=>{if (e.code === "Enter") {sendChat()}}} />
                 </div>
                 <div className="col text-start pe-5">
                     <input onClick={loginPair} name="loginBtn" id="loginBtn" className="btn btn-primary mb-3" type="button" value="Login" />
