@@ -141,7 +141,7 @@ export function Chat(props:{[keys:string] : any}) {
                         if (s._self) {
                             s.msg = await Gun.SEA.decrypt(s.msg, myPairKey);
                         } else {
-                            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[0], myPairKey));
+                            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], myPairKey));
                         }
                         setChatsMessages(oldArray=>[...oldArray, {_self : s._self, msg : s.msg, timestamp : s.timestamp }])
                     }                        
