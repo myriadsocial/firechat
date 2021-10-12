@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Gun from 'gun';
 import 'gun/sea';
 
@@ -16,6 +16,7 @@ export function Chat(props:{[keys:string] : any}) {
     const [chatsMessages, setChatsMessages] = useState<{_self : boolean, msg: string, timestamp : string }[]>([])
     const [chatMessagesDiv, setChatMessagesDiv] = useState<JSX.Element>(<></>)
     const [textMsg, setTextMsg] = useState("");
+    const [chatTrigger, setChatTrigger] = useState(0);
     const [partnerKeyStateReadOnly, setPartnerKeyStateReadOnly] = useState(true);
     const [textMsgReadOnlyState, setTextMsgReadOnlyState] = useState(true);
     
@@ -85,7 +86,7 @@ export function Chat(props:{[keys:string] : any}) {
             if (ack.err) {
                 console.log ("Send to Him ... Failed")
             } else {
-                console.log ("Send to Him ... Success")
+                console.log ("Send to Him ... Success")                
                 callback();
             }
         }),{
@@ -108,15 +109,27 @@ export function Chat(props:{[keys:string] : any}) {
         }))
     }
 
+    const chatsRef = useRef({a: chatsMessages[chatsMessages.length-1], b:chatTrigger})
+
+    useEffect(()=>{
+        let lastIndex = chatsMessages.length-1;
+        if (
+            chatsRef.current.a !== chatsMessages[lastIndex] &&
+            chatsRef.current.b !== chatTrigger
+        ) {
+            chatsRef.current.a = chatsMessages[lastIndex];
+            chatsRef.current.b = chatTrigger;
+            setTextMsg("");            
+            send(()=>{
+                console.log ("Sending Chat... Success")                
+            })
+        }
+    })
+
     const sendChat = async() => {
         console.log ("Sending Chat...")
-        send(()=>{
-            console.log ("Sending Chat... Success")
-            setTextMsg("")
-        })        
-    }
-
-    const retrieveChat = (chats:{_self : boolean, msg: string, timestamp:string}) => {
+        setChatTrigger(Math.random())
+        setChatsMessages(oldArray=>[...oldArray, {_self : true, msg: textMsg, timestamp : "sending..."}])
     }
 
     const getCertificate = (tries:number) => {
@@ -143,7 +156,14 @@ export function Chat(props:{[keys:string] : any}) {
                         } else {
                             s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], myPairKey));
                         }
-                        setChatsMessages(oldArray=>[...oldArray, {_self : s._self, msg : s.msg, timestamp : s.timestamp }])
+                        setChatsMessages(chatsMessages=>{
+                            let chatsTemp = chatsMessages;                    
+                            chatsTemp = chatsTemp.filter(function( obj ) {
+                                console.log (obj);
+                                return obj.timestamp !== 'sending...';
+                            });
+                            return [...chatsTemp,{_self : s._self, msg : s.msg, timestamp: s.timestamp}]
+                        });
                     }                        
                 })
             } else {
@@ -165,11 +185,17 @@ export function Chat(props:{[keys:string] : any}) {
     },[partnerKey])
 
     useEffect(()=>{
+        var objDiv = document.getElementById("chatBox");
+        if (objDiv) 
+            objDiv.scrollTop = objDiv.scrollHeight;
+    },[chatMessagesDiv])
+
+    useEffect(()=>{
         setChatMessagesDiv(
             <>
                 {
                     chatsMessages.map((val)=>
-                        <div key={val.timestamp} className={`card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
+                        <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
                             <img className="card-img-top" src="holder.js/100px180/" alt="" />
                             <div className="card-body">
                             <p className="card-text mb-0">{val.msg}</p>
@@ -193,8 +219,8 @@ export function Chat(props:{[keys:string] : any}) {
                     <div className="card text-start mb-3">
                       <img className="card-img-top" src="holder.js/100px180/" alt="" />
                       <div className="card-body">
-                        <h4 className="card-title">Chat Area</h4>
-                        <div className="card-text">
+                        <h4 className="card-title" id="chatAreaTitle">Chat Area</h4>
+                        <div className="card-text" id="chatBox" style={{ maxHeight : "600px", overflow : "scroll"}}>
                             {chatMessagesDiv}
                         </div>
                       </div>
