@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import Gun from 'gun';
 import 'gun/sea';
+import 'gun/lib/store';
+import 'gun/lib/radix';
+import 'gun/lib/radisk';
+import 'gun/lib/rindexed';
 
-const gun = Gun("https://gundb.dev.myriad.systems/gun");
+const gun = Gun({
+    peers : ["https://gundb.dev.myriad.systems/gun"],
+    localStorage : false,
+});
 
 export function Chat(props:{[keys:string] : any}) {
 
