@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Gun from 'gun';
 import 'gun/sea';
 
-const gun = Gun("https://fire-gun.herokuapp.com/gun");
+const gun = Gun("https://gundb.dev.myriad.systems/gun");
 
 export function Chat(props:{[keys:string] : any}) {
 
