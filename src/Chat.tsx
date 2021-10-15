@@ -26,12 +26,17 @@ export function Chat(props:{[keys:string] : any}) {
     const [chatTrigger, setChatTrigger] = useState(0);
     const [partnerKeyStateReadOnly, setPartnerKeyStateReadOnly] = useState(true);
     const [textMsgReadOnlyState, setTextMsgReadOnlyState] = useState(true);
+
     
+    const logoutPair = async() => {
+
+    }
     
     const loginPair = async () => {
         let pairKey = await Gun.SEA.pair()
+        let localpairkey = {priv : (pairKey?.priv || ""), pub: (pairKey?.pub || ""), epriv : (pairKey?.epriv || ""), epub : (pairKey?.epub || "") };
         setPairKey(`${pairKey?.pub}&${pairKey?.epub}`)
-        setMyPairKey({priv : (pairKey?.priv || ""), pub: (pairKey?.pub || ""), epriv : (pairKey?.epriv || ""), epub : (pairKey?.epub || "") })
+        setMyPairKey(localpairkey);
 
         // Generate Certificate
         let cert = await (Gun as any).SEA.certify("*", [{ "*" : "chat-with","+" : "*"}], pairKey);
@@ -44,13 +49,14 @@ export function Chat(props:{[keys:string] : any}) {
 
                     // Login Berhasil
                     setPartnerKeyStateReadOnly(false);
-                    setKeterangan("Login Berhasil");                    
+                    setKeterangan("Login Berhasil");
+
+                    localStorage.setItem("myPairKey",JSON.stringify(localpairkey))
                 }
             }));
-        })
-        
+        })        
     }
-
+    
     const pairInputClick = async () => {
         await window.navigator.clipboard.writeText(pairKey);
         setKeterangan("Pairkey di copy ke clipboard");
@@ -216,7 +222,17 @@ export function Chat(props:{[keys:string] : any}) {
     },[chatsMessages[chatsMessages.length-1]])
 
     useEffect(()=>{
+        // First Time Only
         (window as any).gun = gun
+        let localKey = localStorage.getItem("myPairKey");
+        if (localKey) {
+            let localPairKey:{epub : string,pub : string,priv : string,epriv : string} = JSON.parse(localKey);
+            console.log (localPairKey)
+            setMyPairKey(localPairKey)
+            setPairKey(`${localPairKey.pub}&${localPairKey.epub}`)
+            setPartnerKeyStateReadOnly(false);
+            setKeterangan("Login Berhasil");    
+        }
     },[])
 
     return (
@@ -235,7 +251,8 @@ export function Chat(props:{[keys:string] : any}) {
                     <input value={textMsg} readOnly={textMsgReadOnlyState} onChange={(e)=>{setTextMsg(e.target.value)}} className="form-control" onKeyPress={(e)=>{if (e.code === "Enter") {sendChat()}}} />
                 </div>
                 <div className="col text-start pe-5">
-                    <input onClick={loginPair} name="loginBtn" id="loginBtn" className="btn btn-primary mb-3" type="button" value="Login" />
+                    <input onClick={loginPair} name="loginBtn" id="loginBtn" className="btn btn-primary mb-3 me-3" type="button" value="Login" />
+                    <input onClick={logoutPair} name="logoutBtn" id="logoutBtn" className="btn btn-danger mb-3" type="button" value="Logout" />
                     <div className="card mb-4">
                       <img className="card-img-top" src="holder.js/100px180/" alt="" />
                       <div className="card-body">
