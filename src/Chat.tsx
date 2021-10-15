@@ -253,7 +253,7 @@ export function Chat(props:{[keys:string] : any}) {
                       <div className="card-body">
                         <h4 className="card-title">Partner PairKey</h4>
                         <div className="card-text">
-                            <textarea rows={5} onChange={(e)=>{setPartnerKey(e.target.value)}} onClick={partnerInputClick} readOnly={partnerKeyStateReadOnly}
+                            <textarea rows={5} onChange={(e)=>{setPartnerKey(e.target.value.trim())}} onClick={partnerInputClick} readOnly={partnerKeyStateReadOnly}
                                 className="form-control" name="partnerKey" id="partnerKey" aria-describedby="partnerKey" placeholder="Paste Key Here" value={partnerKey}></textarea>
                             <small id="pairKey" className="form-text text-muted">Get from other partner</small>
                             <p><small className="form-text text-success">{keterangan2}</small></p>
