@@ -1,16 +1,26 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
-import {Chat} from './Chat'
+import './App.css';
+import { Chat } from './Chat';
+import { Iris } from './Iris';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <div className="App">
-      <Chat text="Helo Guys" />
-    </div>
-  )
+    <Router>
+        <Switch>
+          <Route path="/chat">
+            <Chat />
+          </Route>
+          <Route path="/iris">
+            {/* <Iris /> */}
+          </Route>
+          <Route path="/">
+            Index Page
+          </Route>
+        </Switch>
+    </Router>
+  );
 }
-
-export default App
