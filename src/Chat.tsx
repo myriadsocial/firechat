@@ -7,7 +7,7 @@ import 'gun/lib/radisk';
 import 'gun/lib/rindexed';
 
 const gun = Gun({
-    peers : ["https://gundb.dev.myriad.systems/gun"],
+    peers : ["https://gundb.dev.myriad.systems/gun", "https://gun-relay.bimasoft.web.id:16902/gun"],
     localStorage : false,
 });
 
@@ -86,11 +86,13 @@ export function Chat(props:{[keys:string] : any}) {
             msgToHim = textMsg
         }
         let cert = yourCertificate;
+        console.log (cert);
 
         let dateNow = getDate()
         let datetime = `${dateNow.year}/${dateNow.month}/${dateNow.date}T${dateNow.hour}:${dateNow.minutes}:${dateNow.seconds}.${dateNow.miliseconds}`;
 
         console.log ("Send to Him ...")
+        console.log (`gun.get("~${yourPairKey.pub}").get("chat-with").get("${myPairKey.pub}").get("${dateNow.year}").get("${dateNow.month}").get("${dateNow.date}")`);
         gun.get(`~${yourPairKey.pub}`).get("chat-with").get(myPairKey.pub).get(dateNow.year).get(dateNow.month).get(dateNow.date).set({
             "_self" : false,
             "timestamp" : datetime, 
@@ -226,7 +228,9 @@ export function Chat(props:{[keys:string] : any}) {
         (window as any).gun = gun
         let localKey = localStorage.getItem("myPairKey");
         if (localKey) {
+            // RELOG
             let localPairKey:{epub : string,pub : string,priv : string,epriv : string} = JSON.parse(localKey);
+            gun.user().auth(localPairKey as CryptoKeyPair);
             console.log (localPairKey)
             setMyPairKey(localPairKey)
             setPairKey(`${localPairKey.pub}&${localPairKey.epub}`)
