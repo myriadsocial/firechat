@@ -11,6 +11,21 @@ const gun = Gun({
     localStorage : false,
 });
 
+function dynamicSort(property:string) {
+    var sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a:any,b:any) {
+        /* next line works with strings and numbers, 
+         * and you may want to customize it to your needs
+         */
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+}
+
 export function Chat(props:{[keys:string] : any}) {
 
     const [myPairKey, setMyPairKey] = useState({epub : "",pub : "",priv : "",epriv : ""})
@@ -172,12 +187,14 @@ export function Chat(props:{[keys:string] : any}) {
                             s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], myPairKey));
                         }
                         setChatsMessages(chatsMessages=>{
-                            let chatsTemp = chatsMessages;                    
+                            let chatsTemp = chatsMessages;
                             chatsTemp = chatsTemp.filter(function( obj ) {
                                 console.log (obj);
                                 return obj.timestamp !== 'sending...';
                             });
-                            return [...chatsTemp,{_self : s._self, msg : s.msg, timestamp: s.timestamp}]
+                            chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
+                            chatsTemp.sort(dynamicSort("timestamp"));
+                            return chatsTemp;
                         });
                     }                        
                 })
