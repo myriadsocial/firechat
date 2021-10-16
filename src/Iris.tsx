@@ -26,6 +26,14 @@ const gun2 = Gun({
 });
 
 export function Iris(props:{[keys:string] : any}) {
+
+    type pairKeyType = {
+        pub : string,
+        epub : string,
+        priv : string,
+        epriv : string,
+    }
+
     const [pairKey, setPairKey] = useState("")
     const [partnerKey, setPartnerKey] = useState("")
     const [keterangan, setKeterangan] = useState("")
@@ -36,14 +44,46 @@ export function Iris(props:{[keys:string] : any}) {
     const [textMsg, setTextMsg] = useState("");
     const [partnerKeyStateReadOnly, setPartnerKeyStateReadOnly] = useState(true);
     const [textMsgReadOnlyState, setTextMsgReadOnlyState] = useState(true);
+    const [myKey, setMyKey] = useState<pairKeyType>({pub:"",epub:"",priv:"",epriv:""});
+    const [ourChannel, setOurChannel] = useState<any>();
+    const [theirChannel, setTheirChannel] = useState<any>();
 
 
-    const loginPair = () =>{
-        
+    useEffect(()=>{
+        if (partnerKey) {
+            (async ()=>{
+                let someoneElse = JSON.parse(partnerKey);
+                setPartnerKeyStateReadOnly(true);
+                setTextMsgReadOnlyState(false);
+                var ourChannel = new iris.Channel({key: myKey, gun: gun1, participants: someoneElse.pub});
+                setOurChannel(ourChannel);
+                var theirChannel = new iris.Channel({key: someoneElse, gun: gun2, participants: myKey.pub});
+                setTheirChannel(theirChannel);                
+            })()
+        }        
+    },[partnerKey])
+
+    useEffect(()=>{
+        (window as any).gun1 = gun1;
+        (window as any).gun2 = gun2;
+    },[])
+
+    const loginPair = async () =>{
+        let myKey:pairKeyType = await iris.Key.getDefault();
+        setMyKey(myKey)
+        setPairKey(JSON.stringify(
+            {
+                pub : myKey.pub,
+                epub : myKey.epub
+            }
+        ));
+        iris.Channel.initUser(gun1, myKey);
+        setPartnerKeyStateReadOnly(false);
     }
 
-    const pairInputClick = () =>{
-
+    const pairInputClick = async () =>{
+        await window.navigator.clipboard.writeText(pairKey);
+        setKeterangan("Pairkey di copy ke clipboard");
     }
 
     const clearPartner = () =>{
@@ -55,7 +95,8 @@ export function Iris(props:{[keys:string] : any}) {
     }
 
     const sendChat = () =>{
-
+        ourChannel.put("chat",`${textMsg} to Me...`)
+        theirChannel.put("chat",`${textMsg} to Them...`)
     }
 
     return (
@@ -80,12 +121,11 @@ export function Iris(props:{[keys:string] : any}) {
                       <div className="card-body">
                         <h4 className="card-title">My PairKey</h4>
                         <div className="card-text">
-                            <input onClick={pairInputClick}  type="text" readOnly={true} value={pairKey}
-                                className="form-control" name="pairKey" id="pairKey" aria-describedby="pairKey" placeholder="Pairkey" />
+                            <textarea onClick={pairInputClick}  readOnly={true} value={pairKey} rows={5}
+                                className="form-control" name="pairKey" id="pairKey" aria-describedby="pairKey" placeholder="Pairkey"></textarea>
                             <small id="pairKey" className="form-text text-muted">Paste into Other Chat pairkey</small>
                             <p><small className="form-text text-success">{keterangan}</small></p>
                             <p><small className="form-text text-success"><a href={inviteLinkHref}>{inviteLinkText}</a></small></p>
-
                         </div>
                       </div>
                     </div>
