@@ -6,3 +6,4 @@
 ✅ Autologin (Save autologin, ketika sudah berhasil save certificate)
 ✅ Tambahkan beberapa peers buat failover
 ✅ Tombol Send
+- Save Certificate
