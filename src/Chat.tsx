@@ -41,6 +41,7 @@ export function Chat(props:{[keys:string] : any}) {
     const [keterangan2, setKeterangan2] = useState("")
     const [inviteLinkHref, setInviteLinkHref] = useState("")
     const [inviteLinkText, setInviteLinkText] = useState("")
+    const [mapArray, setMapArray] = useState<string[]>([]);
     const [chatsMessages, setChatsMessages] = useState<{_self : boolean, msg: string, timestamp : string }[]>([])
     const [chatMessagesDiv, setChatMessagesDiv] = useState<JSX.Element>(<></>)
     const [textMsg, setTextMsg] = useState("");
@@ -65,10 +66,10 @@ export function Chat(props:{[keys:string] : any}) {
     })
     
     useEffect(()=>{
+        setChatsMessages([]);
         if (partnerKey !== "") {
             getCertificate(5);
-        }
-        
+        }        
     },[partnerKey])
 
     useEffect(()=>{
@@ -251,6 +252,25 @@ export function Chat(props:{[keys:string] : any}) {
         setChatsMessages(oldArray=>[...oldArray, {_self : true, msg: textMsg, timestamp : "sending..."}])
     }
 
+    const processChat = async (s:{[x:string] : any},keys:string[]) => {
+        if ((s.msg as string).search("SEA") === 0)
+        if (s._self) {
+            s.msg = await Gun.SEA.decrypt(s.msg, myPairKey);
+        } else {
+            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], myPairKey));
+        }
+        setChatsMessages(chatsMessages=>{
+            let chatsTemp = chatsMessages;
+            chatsTemp = chatsTemp.filter(function( obj ) {
+                console.log (obj);
+                return obj.timestamp !== 'sending...';
+            });
+            chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
+            chatsTemp.sort(dynamicSort("timestamp"));
+            return chatsTemp;
+        });
+    }
+
     const getCertificate = (tries:number) => {
         // Init Pasangan Chat, Ketika Paste di dalam kotak Partner Pairkey
         let keys = partnerKey.split("&");
@@ -268,25 +288,22 @@ export function Chat(props:{[keys:string] : any}) {
 
                 let dateNow = getDate()
                 console.log (`ON !!! gun.user().get("chat-with").get(${keys[0]}).get(${dateNow.year}).get(${dateNow.month}).get(${dateNow.date})`);
-                gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
-                    if (s) {
-                        if (s._self) {
-                            s.msg = await Gun.SEA.decrypt(s.msg, myPairKey);
-                        } else {
-                            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], myPairKey));
+                if (!mapArray.includes(keys[0])) {
+                    // NEW Chat New Map
+                    setMapArray(oldArray=>{return [...oldArray, keys[0]]});
+                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+                        if (s) {
+                            processChat(s,keys);
+                        }                        
+                    })                    
+                } else {
+                    // Resume Chat Don't need Map
+                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).once().map().once(async (s)=>{
+                        if (s) {
+                            processChat(s,keys);
                         }
-                        setChatsMessages(chatsMessages=>{
-                            let chatsTemp = chatsMessages;
-                            chatsTemp = chatsTemp.filter(function( obj ) {
-                                console.log (obj);
-                                return obj.timestamp !== 'sending...';
-                            });
-                            chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
-                            chatsTemp.sort(dynamicSort("timestamp"));
-                            return chatsTemp;
-                        });
-                    }                        
-                })
+                    })
+                }
             } else {
                 if (tries>=0) {
                     console.log (`Getting Certificate... Failed... Retry (${tries})`);
