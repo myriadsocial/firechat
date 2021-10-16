@@ -5,4 +5,4 @@
 ✅ Trim Keys
 ✅ Autologin (Save autologin, ketika sudah berhasil save certificate)
 ✅ Tambahkan beberapa peers buat failover
-- Tombol Send
+✅ Tombol Send
