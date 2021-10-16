@@ -238,7 +238,7 @@ export function Chat(props:{[keys:string] : any}) {
                 }
             </>
         )        
-    },[chatsMessages[chatsMessages.length-1]])
+    },[chatsMessages])
 
     useEffect(()=>{
         // First Time Only
