@@ -1,4 +1,5 @@
 🐢 Group Chat
+- Auto Pair ketika invite link di buka
 ✅ Invite Link
 ✅ Ketika Resume Chat, tidak semua chat keliatan. kemungkinan karena race callback. jadi saling timpa
 ✅ Trim Keys
