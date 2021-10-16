@@ -5,9 +5,13 @@ import 'gun/lib/store';
 import 'gun/lib/radix';
 import 'gun/lib/radisk';
 import 'gun/lib/rindexed';
+import { useParams } from 'react-router';
 
 const gun = Gun({
-    peers : ["https://gundb.dev.myriad.systems/gun", "https://gun-relay.bimasoft.web.id:16902/gun"],
+    peers : [
+        "https://gundb.dev.myriad.systems/gun", 
+        "https://gun-relay.bimasoft.web.id:16902/gun"
+    ],
     localStorage : false,
 });
 
@@ -35,14 +39,86 @@ export function Chat(props:{[keys:string] : any}) {
     const [partnerKey, setPartnerKey] = useState("")
     const [keterangan, setKeterangan] = useState("")
     const [keterangan2, setKeterangan2] = useState("")
+    const [inviteLinkHref, setInviteLinkHref] = useState("")
+    const [inviteLinkText, setInviteLinkText] = useState("")
     const [chatsMessages, setChatsMessages] = useState<{_self : boolean, msg: string, timestamp : string }[]>([])
     const [chatMessagesDiv, setChatMessagesDiv] = useState<JSX.Element>(<></>)
     const [textMsg, setTextMsg] = useState("");
     const [chatTrigger, setChatTrigger] = useState(0);
     const [partnerKeyStateReadOnly, setPartnerKeyStateReadOnly] = useState(true);
     const [textMsgReadOnlyState, setTextMsgReadOnlyState] = useState(true);
+    let { inviteLink } = useParams() as {inviteLink : string};
 
+    useEffect(()=>{
+        let lastIndex = chatsMessages.length-1;
+        if (
+            chatsRef.current.a !== chatsMessages[lastIndex] &&
+            chatsRef.current.b !== chatTrigger
+        ) {
+            chatsRef.current.a = chatsMessages[lastIndex];
+            chatsRef.current.b = chatTrigger;
+            setTextMsg("");            
+            send(()=>{
+                console.log ("Sending Chat... Success")                
+            })
+        }
+    })
     
+    useEffect(()=>{
+        if (partnerKey !== "") {
+            getCertificate(5);
+        }
+        
+    },[partnerKey])
+
+    useEffect(()=>{
+        var objDiv = document.getElementById("chatBox");
+        if (objDiv) 
+            objDiv.scrollTop = objDiv.scrollHeight;
+    },[chatMessagesDiv])
+
+    useEffect(()=>{
+        setChatMessagesDiv(
+            <>
+                {
+                    chatsMessages.map((val)=>
+                        <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
+                            <img className="card-img-top" src="holder.js/100px180/" alt="" />
+                            <div className="card-body">
+                            <p className="card-text mb-0">{val.msg}</p>
+                            <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
+                            </div>
+                        </div>
+                    )
+                }
+            </>
+        )        
+    },[chatsMessages])
+
+    useEffect(()=>{
+        // First Time Only / INIT
+        (window as any).gun = gun
+        let localKey = localStorage.getItem("myPairKey");
+        if (localKey) {
+            // RELOG
+            let localPairKey:{epub : string,pub : string,priv : string,epriv : string} = JSON.parse(localKey);
+            let localPubKey = `${localPairKey.pub}&${localPairKey.epub}`;
+            gun.user().auth(localPairKey as CryptoKeyPair);
+            console.log (localPairKey)
+            setMyPairKey(localPairKey)
+            setPairKey(localPubKey)
+            setPartnerKeyStateReadOnly(false);
+            setKeterangan("Login Berhasil");
+            setInviteLinkText("Invite Link")
+            if (inviteLink) {
+                setPartnerKey(atob(inviteLink));
+                setInviteLinkHref(`./${btoa(localPubKey)}`)
+            } else {
+                setInviteLinkHref(`./chat/${btoa(localPubKey)}`)
+            }
+        }
+    },[])
+
     const logoutPair = async() => {
 
     }
@@ -50,7 +126,8 @@ export function Chat(props:{[keys:string] : any}) {
     const loginPair = async () => {
         let pairKey = await Gun.SEA.pair()
         let localpairkey = {priv : (pairKey?.priv || ""), pub: (pairKey?.pub || ""), epriv : (pairKey?.epriv || ""), epub : (pairKey?.epub || "") };
-        setPairKey(`${pairKey?.pub}&${pairKey?.epub}`)
+        let localPubKey = `${pairKey?.pub}&${pairKey?.epub}`;
+        setPairKey(localPubKey)
         setMyPairKey(localpairkey);
 
         // Generate Certificate
@@ -67,6 +144,14 @@ export function Chat(props:{[keys:string] : any}) {
                     setKeterangan("Login Berhasil");
 
                     localStorage.setItem("myPairKey",JSON.stringify(localpairkey))
+
+                    setInviteLinkText("Invite Link")
+                    if (inviteLink) {
+                        setPartnerKey(atob(inviteLink));
+                        setInviteLinkHref(`./${btoa(localPubKey)}`)
+                    } else {
+                        setInviteLinkHref(`./chat/${btoa(localPubKey)}`)
+                    }
                 }
             }));
         })        
@@ -141,21 +226,6 @@ export function Chat(props:{[keys:string] : any}) {
 
     const chatsRef = useRef({a: chatsMessages[chatsMessages.length-1], b:chatTrigger})
 
-    useEffect(()=>{
-        let lastIndex = chatsMessages.length-1;
-        if (
-            chatsRef.current.a !== chatsMessages[lastIndex] &&
-            chatsRef.current.b !== chatTrigger
-        ) {
-            chatsRef.current.a = chatsMessages[lastIndex];
-            chatsRef.current.b = chatTrigger;
-            setTextMsg("");            
-            send(()=>{
-                console.log ("Sending Chat... Success")                
-            })
-        }
-    })
-
     const sendChat = async() => {
         console.log ("Sending Chat...")
         setChatTrigger(Math.random())
@@ -209,53 +279,6 @@ export function Chat(props:{[keys:string] : any}) {
         })
     }
 
-    useEffect(()=>{
-        if (partnerKey !== "") {
-            getCertificate(5);
-        }
-        
-    },[partnerKey])
-
-    useEffect(()=>{
-        var objDiv = document.getElementById("chatBox");
-        if (objDiv) 
-            objDiv.scrollTop = objDiv.scrollHeight;
-    },[chatMessagesDiv])
-
-    useEffect(()=>{
-        setChatMessagesDiv(
-            <>
-                {
-                    chatsMessages.map((val)=>
-                        <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
-                            <img className="card-img-top" src="holder.js/100px180/" alt="" />
-                            <div className="card-body">
-                            <p className="card-text mb-0">{val.msg}</p>
-                            <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
-                            </div>
-                        </div>
-                    )
-                }
-            </>
-        )        
-    },[chatsMessages])
-
-    useEffect(()=>{
-        // First Time Only
-        (window as any).gun = gun
-        let localKey = localStorage.getItem("myPairKey");
-        if (localKey) {
-            // RELOG
-            let localPairKey:{epub : string,pub : string,priv : string,epriv : string} = JSON.parse(localKey);
-            gun.user().auth(localPairKey as CryptoKeyPair);
-            console.log (localPairKey)
-            setMyPairKey(localPairKey)
-            setPairKey(`${localPairKey.pub}&${localPairKey.epub}`)
-            setPartnerKeyStateReadOnly(false);
-            setKeterangan("Login Berhasil");    
-        }
-    },[])
-
     return (
         <>
             <div className="row mt-3">
@@ -283,6 +306,8 @@ export function Chat(props:{[keys:string] : any}) {
                                 className="form-control" name="pairKey" id="pairKey" aria-describedby="pairKey" placeholder="Pairkey" />
                             <small id="pairKey" className="form-text text-muted">Paste into Other Chat pairkey</small>
                             <p><small className="form-text text-success">{keterangan}</small></p>
+                            <p><small className="form-text text-success"><a href={inviteLinkHref}>{inviteLinkText}</a></small></p>
+
                         </div>
                       </div>
                     </div>

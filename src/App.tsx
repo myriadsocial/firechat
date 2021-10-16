@@ -11,6 +11,9 @@ export default function App() {
   return (
     <Router>
         <Switch>
+          <Route path="/chat/:inviteLink">
+            <Chat />
+          </Route>
           <Route path="/chat">
             <Chat />
           </Route>
