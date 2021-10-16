@@ -18,7 +18,7 @@ export default function App() {
             <Chat />
           </Route>
           <Route path="/iris">
-            {/* <Iris /> */}
+            <Iris />
           </Route>
           <Route path="/">
             Index Page
