@@ -17,14 +17,6 @@ const gun1 = Gun({
     localStorage : false,
 });
 
-const gun2 = Gun({
-    peers : [
-        "https://gundb.dev.myriad.systems/gun", 
-        "https://gun-relay.bimasoft.web.id:16902/gun"
-    ],
-    localStorage : false,
-});
-
 export function Iris(props:{[keys:string] : any}) {
 
     type pairKeyType = {
@@ -64,7 +56,6 @@ export function Iris(props:{[keys:string] : any}) {
     },[partnerKey])
 
     useEffect(()=>{
-        (window as any).gun = gun1;
     },[])
 
     const loginPair = async () =>{
@@ -83,7 +74,7 @@ export function Iris(props:{[keys:string] : any}) {
     }
 
     const printMessage = (msg:{[x:string] : string}, info:{[x:string] : string}) => {
-        console.log(`[${new Date(msg.time).toLocaleString()}] ${info.from.slice(0,8)}: ${msg.text}`)
+        console.log(`[${new Date(msg.time)}] ${info.from.slice(0,8)}: ${msg.text}`)
     }
 
 
@@ -97,6 +88,7 @@ export function Iris(props:{[keys:string] : any}) {
 
     const sendChat = () =>{
         ourChannel.send(textMsg);
+        setTextMsg("");
     }
 
     return (
