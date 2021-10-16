@@ -48,42 +48,32 @@ export function Iris(props:{[keys:string] : any}) {
     const [ourChannel, setOurChannel] = useState<any>();
     const [theirChannel, setTheirChannel] = useState<any>();
 
-    useEffect(()=>{    
+    useEffect(()=>{
+        if (partnerKey) {
+            var someoneElse = { pub : partnerKey }
+            var ourChannel = new iris.Channel({key: myKey, gun: gun1, participants: someoneElse.pub});
+            setOurChannel(ourChannel)
+    
+            iris.Channel.getChannels(gun1, myKey, (channel:any) => {
+                channel.getMessages(printMessage);
+            });
+    
+            setTextMsgReadOnlyState(false);
+            setPartnerKeyStateReadOnly(true);    
+        }        
     },[partnerKey])
 
     useEffect(()=>{
+        (window as any).gun = gun1;
     },[])
 
     const loginPair = async () =>{
-        var myKey = 
-                {
-                "pub": "1VUz-4DbHQuPNEegcrX9PiJ-AThJBzLJRWcwKjZUZtQ.eYfDGo-7bKoFGFqI_IW5wCkgYmZqNrgWcDH6HPixug4",
-                "priv": "Q6ptZqcbjpEiyh12jUmuDQNzoKKKZzxa1Kc42E7_g8c",
-                "epub": "zegUAdNkuEUWJtXyZBS6BDP0gOcLj7evNaDwn-ppLZM.phQlQQFKS5LlpSvVFSiMOgsT16C1FKjvjsa50Lqbt5k",
-                "epriv": "D_FEqaOFGeaJIuTlal-PjzgUjwjrmgEcO9mPM7KOFGA"
-                }        
-        var someoneElse = 
-                {
-                "pub": "RuKLB_-O0eg-D09uEeHdLgayca5DNzXOfpch8D5jclA.b63WOrMEFKzBy8FIeatl55FqpAnkBIIM8o1uz_6XiGo",
-                "priv": "z6M4QQYuPCU-rs6dOCDDmrF1Fj2c5H1wn0P3l0Wf44k",
-                "epub": "B00UC6NLjWWLFbjJg_KxBvgdQTFvgq_Wq5c0DQmlXho.h_ZpbIxw9KCCL0_F-uqE5QG5tDpQjGYClsGO8ZEaSB0",
-                "epriv": "oWMpROJqm3i0j9uxEn6XXwy2W5v9R2YRMVsCsI6tJXk"
-                }        
- 
+        var myKey = await iris.Key.getDefault();
+        setMyKey(myKey);
+        setPairKey(myKey.pub);
         iris.Channel.initUser(gun1, myKey); // saves myKey.epub to gun.user().get('epub')
-        iris.Channel.initUser(gun2, someoneElse);
 
-        var ourChannel = new iris.Channel({key: myKey, gun: gun1, participants: someoneElse.pub});
-        setOurChannel(ourChannel)
-
-        var theirChannel = new iris.Channel({key: someoneElse, gun: gun2, participants: myKey.pub});
-        setTheirChannel(theirChannel)
-        
-        iris.Channel.getChannels(gun1, myKey, (channel:any) => {
-            channel.getMessages(printMessage);
-        });
-
-        setTextMsgReadOnlyState(false);
+        setPartnerKeyStateReadOnly(false);
 
     }
 
