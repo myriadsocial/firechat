@@ -72,6 +72,13 @@ export function Chat(props:{[keys:string] : any}) {
     },[partnerKey])
 
     useEffect(()=>{
+        // Login Berhasil, Mypairkey berhasil di set
+        gun.get(pairKey).get("invitelink").on(val=>{
+            setPartnerKey(val);
+        })
+    },[myPairKey])
+
+    useEffect(()=>{
         var objDiv = document.getElementById("chatBox");
         if (objDiv) 
             objDiv.scrollTop = objDiv.scrollHeight;
@@ -111,8 +118,10 @@ export function Chat(props:{[keys:string] : any}) {
             setKeterangan("Login Berhasil");
             setInviteLinkText("Invite Link")
             if (inviteLink) {
-                setPartnerKey(atob(inviteLink));
+                let partnerKey = atob(inviteLink);
+                setPartnerKey(partnerKey);
                 setInviteLinkHref(`./${btoa(localPubKey)}`)
+                gun.get(atob(inviteLink)).get("invitelink").put(localPubKey as any);
             } else {
                 setInviteLinkHref(`./chat/${btoa(localPubKey)}`)
             }
@@ -122,13 +131,17 @@ export function Chat(props:{[keys:string] : any}) {
     const logoutPair = async() => {
 
     }
+
+    const clearPartner = async() => {
+        setPartnerKey("");        
+        setPartnerKeyStateReadOnly(false);
+        gun.get(pairKey).get("invitelink").put("" as any);
+    }
     
     const loginPair = async () => {
         let pairKey = await Gun.SEA.pair()
         let localpairkey = {priv : (pairKey?.priv || ""), pub: (pairKey?.pub || ""), epriv : (pairKey?.epriv || ""), epub : (pairKey?.epub || "") };
         let localPubKey = `${pairKey?.pub}&${pairKey?.epub}`;
-        setPairKey(localPubKey)
-        setMyPairKey(localpairkey);
 
         // Generate Certificate
         let cert = await (Gun as any).SEA.certify("*", [{ "*" : "chat-with","+" : "*"}], pairKey);
@@ -137,6 +150,10 @@ export function Chat(props:{[keys:string] : any}) {
                 if (s.err) {
                     console.log ("Error Creating Certificate")
                 } else {
+
+                    setPairKey(localPubKey)
+                    setMyPairKey(localpairkey);
+            
                     console.log ("Success Creating Certificate")
 
                     // Login Berhasil
@@ -147,8 +164,10 @@ export function Chat(props:{[keys:string] : any}) {
 
                     setInviteLinkText("Invite Link")
                     if (inviteLink) {
-                        setPartnerKey(atob(inviteLink));
+                        let partnerKey = atob(inviteLink);
+                        setPartnerKey(partnerKey);
                         setInviteLinkHref(`./${btoa(localPubKey)}`)
+                        gun.get(atob(inviteLink)).get("invitelink").put(localPubKey as any);
                     } else {
                         setInviteLinkHref(`./chat/${btoa(localPubKey)}`)
                     }
@@ -296,7 +315,6 @@ export function Chat(props:{[keys:string] : any}) {
                 </div>
                 <div className="col text-start pe-5">
                     <input onClick={loginPair} name="loginBtn" id="loginBtn" className="btn btn-primary mb-3 me-3" type="button" value="Login" />
-                    <input onClick={logoutPair} name="logoutBtn" id="logoutBtn" className="btn btn-danger mb-3" type="button" value="Logout" />
                     <div className="card mb-4">
                       <img className="card-img-top" src="holder.js/100px180/" alt="" />
                       <div className="card-body">
@@ -320,6 +338,7 @@ export function Chat(props:{[keys:string] : any}) {
                                 className="form-control" name="partnerKey" id="partnerKey" aria-describedby="partnerKey" placeholder="Paste Key Here" value={partnerKey}></textarea>
                             <small id="pairKey" className="form-text text-muted">Get from other partner</small>
                             <p><small className="form-text text-success">{keterangan2}</small></p>
+                            <input onClick={clearPartner} name="clearPartnerBtn" id="clearPartnerBtn" className="btn btn-warning mb-3" type="button" value="Clear" />
                         </div>
                       </div>
                     </div>
