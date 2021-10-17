@@ -2,16 +2,15 @@ import './App.css';
 import { Chat } from './Chat';
 import { Iris } from './Iris';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
-  BrowserRouter,
+  HashRouter,
 } from "react-router-dom";
 
 export default function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <HashRouter>
         <Switch>
           <Route path="/chat/:inviteLink">
             <Chat />
@@ -28,6 +27,6 @@ export default function App() {
             <p><Link to="/iris">Iris</Link></p>
           </Route>
         </Switch>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
