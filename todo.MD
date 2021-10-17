@@ -8,3 +8,5 @@
 ✅ Tombol Send
 ✅ Save Certificate
 🟥 Process Chat Iris, Including Sorting.
+🟥 Delete Chat
+🟥 Unsend

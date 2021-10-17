@@ -5,6 +5,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Link,
 } from "react-router-dom";
 
 export default function App() {
@@ -21,7 +22,9 @@ export default function App() {
             <Iris />
           </Route>
           <Route path="/">
-            Index Page
+            <p>Index Page :</p>
+            <p><Link to="/chat">Chat</Link></p>
+            <p><Link to="/iris">Iris</Link></p>
           </Route>
         </Switch>
     </Router>
