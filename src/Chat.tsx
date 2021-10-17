@@ -291,7 +291,7 @@ export function Chat(props:{[keys:string] : any}) {
                 if (!mapArray.includes(keys[0])) {
                     // NEW Chat New Map
                     setMapArray(oldArray=>{return [...oldArray, keys[0]]});
-                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().on(async (s)=>{
                         if (s) {
                             processChat(s,keys);
                         }                        
