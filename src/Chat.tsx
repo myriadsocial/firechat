@@ -93,7 +93,10 @@ export function Chat(props:{[keys:string] : any}) {
                         <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
                             <img className="card-img-top" src="holder.js/100px180/" alt="" />
                             <div className="card-body">
-                            <p className="card-text mb-0">{val.msg}</p>
+                            <div className="card-text mb-0">
+                                <p className="m-0">{val.msg}</p>
+                                {/* <p className="m-0" style={{fontSize : "10px"}}><a href='#unsend'>Unsend</a> <a href='#delete'>Delete</a></p> */}
+                            </div>
                             <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
                             </div>
                         </div>
@@ -291,7 +294,7 @@ export function Chat(props:{[keys:string] : any}) {
                 if (!mapArray.includes(keys[0])) {
                     // NEW Chat New Map
                     setMapArray(oldArray=>{return [...oldArray, keys[0]]});
-                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().on(async (s)=>{
+                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                         if (s) {
                             processChat(s,keys);
                         }                        
