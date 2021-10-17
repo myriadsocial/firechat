@@ -171,9 +171,9 @@ export class Iris extends Component<irisProps,irisState> {
         ourChannel.getMessages(this.printMessage)
 
         // Get Semua Chat dari semua Channel
-        iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
-            channel.getMessages();
-        });
+        // iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
+        //     channel.getMessages();
+        // });
     }
 
     render() {
