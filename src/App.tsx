@@ -6,11 +6,12 @@ import {
   Switch,
   Route,
   Link,
+  BrowserRouter,
 } from "react-router-dom";
 
 export default function App() {
   return (
-    <Router>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Switch>
           <Route path="/chat/:inviteLink">
             <Chat />
@@ -27,6 +28,6 @@ export default function App() {
             <p><Link to="/iris">Iris</Link></p>
           </Route>
         </Switch>
-    </Router>
+    </BrowserRouter>
   );
 }
