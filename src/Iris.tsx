@@ -38,7 +38,6 @@ export function Iris(props:{[keys:string] : any}) {
     const [textMsgReadOnlyState, setTextMsgReadOnlyState] = useState(true);
     const [myKey, setMyKey] = useState<pairKeyType>({pub:"",epub:"",priv:"",epriv:""});
     const [ourChannel, setOurChannel] = useState<any>();
-    const [theirChannel, setTheirChannel] = useState<any>();
 
     useEffect(()=>{
         if (partnerKey) {
