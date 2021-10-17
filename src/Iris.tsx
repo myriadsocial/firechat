@@ -165,9 +165,12 @@ export class Iris extends Component<irisProps,irisState> {
             ourChannel : ourChannel,
             textMsgReadOnlyState : false,
             partnerKeyStateReadOnly : true,
-        })
+        });
 
-        window.ourChannel = ourChannel;
+        (window as any).ourChannel = ourChannel;
+        (window as any).iris = iris;
+        (window as any).gun1 = gun1;
+        (window as any).mykey = this.state.myKey;
 
         iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
             channel.getMessages(this.printMessage);
