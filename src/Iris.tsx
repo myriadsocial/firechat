@@ -167,11 +167,6 @@ export class Iris extends Component<irisProps,irisState> {
             partnerKeyStateReadOnly : true,
         });
 
-        (window as any).ourChannel = ourChannel;
-        (window as any).iris = iris;
-        (window as any).gun1 = gun1;
-        (window as any).mykey = this.state.myKey;
-
         iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
             channel.getMessages(this.printMessage);
         });
@@ -214,7 +209,7 @@ export class Iris extends Component<irisProps,irisState> {
                         <div className="card-body">
                             <h4 className="card-title">Partner PairKey</h4>
                             <div className="card-text">
-                                <textarea rows={5} onChange={(e)=>{this.setState({partnerKey : e.target.value.trim()});this.partnerKeyChanged()}} onClick={this.partnerInputClick} readOnly={this.state.partnerKeyStateReadOnly}
+                                <textarea rows={5} onChange={(e)=>{this.setState({partnerKey : e.target.value.trim()},()=>{this.partnerKeyChanged()})}} onClick={this.partnerInputClick} readOnly={this.state.partnerKeyStateReadOnly}
                                     className="form-control" name="partnerKey" id="partnerKey" aria-describedby="partnerKey" placeholder="Paste Key Here" value={this.state.partnerKey}></textarea>
                                 <small id="pairKey" className="form-text text-muted">Get from other partner</small>
                                 <p><small className="form-text text-success">{this.state.keterangan2}</small></p>
