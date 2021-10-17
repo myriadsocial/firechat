@@ -7,6 +7,6 @@
 ✅ Tambahkan beberapa peers buat failover
 ✅ Tombol Send
 ✅ Save Certificate
-🟥 Process Chat Iris, Including Sorting.
+✅ Process Chat Iris, Including Sorting.
 🟥 Delete Chat
 🟥 Unsend
