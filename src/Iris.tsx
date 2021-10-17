@@ -73,7 +73,6 @@ export class Iris extends Component<irisProps,irisState> {
             myKey : {pub:"",epub:"",priv:"",epriv:""},
             ourChannel : null as any,
         }
-        console.log(this.state.textMsg);
         this.sendChat = this.sendChat.bind(this);
         this.loginPair = this.loginPair.bind(this);
         this.test = this.test.bind(this);
@@ -168,10 +167,11 @@ export class Iris extends Component<irisProps,irisState> {
             partnerKeyStateReadOnly : true,
         })
 
+        window.ourChannel = ourChannel;
+
         iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
             channel.getMessages(this.printMessage);
         });
-
     }
 
     render() {
