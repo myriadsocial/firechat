@@ -80,10 +80,12 @@ export class Iris extends Component<irisProps,irisState> {
         this.pairInputClick = this.pairInputClick.bind(this);
         this.partnerInputClick = this.partnerInputClick.bind(this);
         this.clearPartner = this.clearPartner.bind(this);
+        this.partnerKeyChanged = this.partnerKeyChanged.bind(this);
+        this.printMessage = this.printMessage.bind(this);
     }
 
     sendChat() {
-        ourChannel.send(this.state.textMsg);
+        this.state.ourChannel.send(this.state.textMsg);
         this.setState({
             textMsg : ""
         })
@@ -122,7 +124,7 @@ export class Iris extends Component<irisProps,irisState> {
             chatMessagesDiv : 
                 <>
                     {
-                        chatsMessages.map((val)=>
+                        this.state.chatsMessages.map((val)=>
                             <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
                                 <img className="card-img-top" src="holder.js/100px180/" alt="" />
                                 <div className="card-body">
@@ -139,7 +141,7 @@ export class Iris extends Component<irisProps,irisState> {
     printMessage (msg:{[x:string] : string}, info:{[x:string] : string}) {
         let chatsTemp = this.state.chatsMessages;
         let self = false;
-        if (info.from.slice(0,8) === myKey.pub.slice(0,8)) {
+        if (info.from.slice(0,8) === this.state.myKey.pub.slice(0,8)) {
             self = true;
         }
         chatsTemp.push({_self : self, msg : msg.text, timestamp: (new Date(msg.time).toString())});
@@ -154,6 +156,21 @@ export class Iris extends Component<irisProps,irisState> {
     }
 
     clearPartner() {
+
+    }
+
+    partnerKeyChanged() {
+        var someoneElse = { pub : this.state.partnerKey }
+        var ourChannel = new iris.Channel({key: this.state.myKey, gun: gun1, participants: someoneElse.pub});
+        this.setState({
+            ourChannel : ourChannel,
+            textMsgReadOnlyState : false,
+            partnerKeyStateReadOnly : true,
+        })
+
+        iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
+            channel.getMessages(this.printMessage);
+        });
 
     }
 
@@ -194,7 +211,7 @@ export class Iris extends Component<irisProps,irisState> {
                         <div className="card-body">
                             <h4 className="card-title">Partner PairKey</h4>
                             <div className="card-text">
-                                <textarea rows={5} onChange={(e)=>{this.setState({partnerKey : e.target.value.trim()})}} onClick={this.partnerInputClick} readOnly={this.state.partnerKeyStateReadOnly}
+                                <textarea rows={5} onChange={(e)=>{this.setState({partnerKey : e.target.value.trim()});this.partnerKeyChanged()}} onClick={this.partnerInputClick} readOnly={this.state.partnerKeyStateReadOnly}
                                     className="form-control" name="partnerKey" id="partnerKey" aria-describedby="partnerKey" placeholder="Paste Key Here" value={this.state.partnerKey}></textarea>
                                 <small id="pairKey" className="form-text text-muted">Get from other partner</small>
                                 <p><small className="form-text text-success">{this.state.keterangan2}</small></p>
@@ -217,21 +234,4 @@ export function AIris(props:{[keys:string] : any}) {
         priv : string,
         epriv : string,
     }
-
-
-    useEffect(()=>{
-        if (partnerKey) {
-            var someoneElse = { pub : partnerKey }
-            var ourChannel = new iris.Channel({key: myKey, gun: gun1, participants: someoneElse.pub});
-            setOurChannel(ourChannel)
-    
-            iris.Channel.getChannels(gun1, myKey, (channel:any) => {
-                channel.getMessages(printMessage);
-            });
-    
-            setTextMsgReadOnlyState(false);
-            setPartnerKeyStateReadOnly(true);    
-        }        
-    },[partnerKey])
-
 }
