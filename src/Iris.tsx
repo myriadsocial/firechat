@@ -167,8 +167,12 @@ export class Iris extends Component<irisProps,irisState> {
             partnerKeyStateReadOnly : true,
         });
 
+        // 1 Channel Saja
+        ourChannel.getMessages(this.printMessage)
+
+        // Get Semua Chat dari semua Channel
         iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
-            channel.getMessages(this.printMessage);
+            channel.getMessages();
         });
     }
 
