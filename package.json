@@ -7,6 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
     "dotenv": "^10.0.0",
     "gun": "^0.2020.1235",
     "iris-lib": "0.0.159",

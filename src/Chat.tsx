@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import {Buffer} from 'buffer';
 import Gun from 'gun';
 import 'gun/sea';
 import 'gun/lib/store';
@@ -45,7 +46,7 @@ function dynamicSort(property:string) {
 import { Component } from "react"
 
 type ChatProps = {
-
+    inviteLink : string | undefined,
 }
 type ChatState = {
     myPairKey : {epub : string,pub : string,priv : string,epriv : string},
@@ -66,10 +67,19 @@ type ChatState = {
     textMsgReadOnlyState : boolean,
     inviteLink : string,
 }
-export class Chat extends Component<ChatProps,ChatState> {
+
+export function Chat() {
+    const { inviteLink } = useParams() as {inviteLink : string};
+    return (
+        <>
+            <ChatCore inviteLink={inviteLink} />
+        </>
+    )
+}
+export class ChatCore extends Component<ChatProps,ChatState> {
+    
     constructor (props:ChatProps) {
-        super (props);
-        let { inviteLink } = useParams() as {inviteLink : string};
+        super (props);        
         this.state = {
             myPairKey : {epub : "",pub : "",priv : "",epriv : ""},
             yourPairKey : {pub : "",epub : ""},
@@ -87,7 +97,7 @@ export class Chat extends Component<ChatProps,ChatState> {
             chatTrigger : 0,
             partnerKeyStateReadOnly : true,
             textMsgReadOnlyState : true,
-            inviteLink : inviteLink,        
+            inviteLink : this.props.inviteLink || "",        
         }
 
         this.loginPair = this.loginPair.bind(this);
@@ -97,6 +107,7 @@ export class Chat extends Component<ChatProps,ChatState> {
         this.partnerInputClick = this.partnerInputClick.bind(this);
         this.getCertificate = this.getCertificate.bind(this);
         this.processChat = this.processChat.bind(this);
+        this.updateChatDiv = this.updateChatDiv.bind(this);
         this.send = this.send.bind(this);
     }
 
@@ -126,19 +137,45 @@ export class Chat extends Component<ChatProps,ChatState> {
                 gun.get(partnerKey).get("invitelink").put(localPubKey as any);
             } else {
                 this.setState({
-                    inviteLinkHref : `./chat/${Buffer.from(localPubKey,'ascii').toString("base64")}`
+                    inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString("base64")}`
                 })
             }
         }
     }
 
-    async send (callback:()=>void) {
+    updateChatDiv() {
+        this.setState({
+            chatMessagesDiv : 
+            <>
+                {
+                    this.state.chatsMessages.map((val)=>
+                        <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
+                            <img className="card-img-top" src="holder.js/100px180/" alt="" />
+                            <div className="card-body">
+                            <div className="card-text mb-0">
+                                <p className="m-0">{val.msg}</p>
+                                {/* <p className="m-0" style={{fontSize : "10px"}}><a href='#unsend'>Unsend</a> <a href='#delete'>Delete</a></p> */}
+                            </div>
+                            <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
+                            </div>
+                        </div>
+                    )
+                }
+            </>            
+        },()=>{
+            var objDiv = document.getElementById("chatBox");
+            if (objDiv) 
+                objDiv.scrollTop = objDiv.scrollHeight;    
+        })
+    }
+
+    async send (textMsg:string, callback:()=>void) {
         let msgToHim, msgToMe;
         if (this.state.yourPairKey.epub) {
-            msgToHim = await Gun.SEA.encrypt(this.state.textMsg,await (Gun as any).SEA.secret(this.state.yourPairKey.epub, this.state.myPairKey));
-            msgToMe = await Gun.SEA.encrypt(this.state.textMsg,this.state.myPairKey);
+            msgToHim = await Gun.SEA.encrypt(textMsg,await (Gun as any).SEA.secret(this.state.yourPairKey.epub, this.state.myPairKey));
+            msgToMe = await Gun.SEA.encrypt(textMsg,this.state.myPairKey);
         } else {
-            msgToHim = this.state.textMsg
+            msgToHim = textMsg
         }
         let cert = this.state.yourCertificate;
         console.log (cert);
@@ -202,6 +239,12 @@ export class Chat extends Component<ChatProps,ChatState> {
                         partnerKeyStateReadOnly : false,
                         keterangan : "Login Berhasil",
                         inviteLinkText : "Invite Link"
+                    },()=>{
+                        gun.get(this.state.pairKey).get("invitelink").on(val=>{
+                            this.setState({
+                                partnerKey : val
+                            })
+                        })                
                     })
             
                     localStorage.setItem("myPairKey",JSON.stringify(localpairkey))
@@ -215,7 +258,7 @@ export class Chat extends Component<ChatProps,ChatState> {
                         gun.get(partnerKey).get("invitelink").put(localPubKey as any);
                     } else {
                         this.setState({
-                            inviteLinkHref : `./chat/${Buffer.from(localPubKey,'ascii').toString('base64')}`,
+                            inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString('base64')}`,
                         })
                     }
                 }
@@ -223,8 +266,11 @@ export class Chat extends Component<ChatProps,ChatState> {
         })
     }
 
-    pairInputClick() {
-
+    async pairInputClick() {
+        await window.navigator.clipboard.writeText(this.state.pairKey);
+        this.setState({
+            keterangan : "Pairkey di copy ke clipboard"
+        })
     }
 
     sendChat() {
@@ -233,10 +279,15 @@ export class Chat extends Component<ChatProps,ChatState> {
         let newArray = this.state.chatsMessages;
         newArray.push({_self : true, msg: this.state.textMsg, timestamp : "sending..."})
 
+        this.send(this.state.textMsg,()=>{
+            console.log ("Sending Chat... Success")
+        })
+        
         this.setState({
             chatTrigger : Math.random(),
             chatsMessages : newArray,
-        })
+            textMsg : "",
+        },this.updateChatDiv)
         
     }
 
@@ -383,75 +434,4 @@ export class Chat extends Component<ChatProps,ChatState> {
         </>
         )
     }
-}
-
-export function Chati(props:{[keys:string] : any}) {
-
-
-    useEffect(()=>{
-        let lastIndex = chatsMessages.length-1;
-        if (
-            chatsRef.current.a !== chatsMessages[lastIndex] &&
-            chatsRef.current.b !== chatTrigger
-        ) {
-            chatsRef.current.a = chatsMessages[lastIndex];
-            chatsRef.current.b = chatTrigger;
-            setTextMsg("");            
-            send(()=>{
-                console.log ("Sending Chat... Success")                
-            })
-        }
-    })
-    
-    useEffect(()=>{
-        // Login Berhasil, Mypairkey berhasil di set
-        gun.get(pairKey).get("invitelink").on(val=>{
-            setPartnerKey(val);
-        })
-    },[myPairKey])
-
-    useEffect(()=>{
-        var objDiv = document.getElementById("chatBox");
-        if (objDiv) 
-            objDiv.scrollTop = objDiv.scrollHeight;
-    },[chatMessagesDiv])
-
-    useEffect(()=>{
-        setChatMessagesDiv(
-            <>
-                {
-                    chatsMessages.map((val)=>
-                        <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
-                            <img className="card-img-top" src="holder.js/100px180/" alt="" />
-                            <div className="card-body">
-                            <div className="card-text mb-0">
-                                <p className="m-0">{val.msg}</p>
-                                {/* <p className="m-0" style={{fontSize : "10px"}}><a href='#unsend'>Unsend</a> <a href='#delete'>Delete</a></p> */}
-                            </div>
-                            <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
-                            </div>
-                        </div>
-                    )
-                }
-            </>
-        )        
-    },[chatsMessages])
-
-    const logoutPair = async() => {
-
-    }
-
-    const clearPartner = async() => {
-    }
-        
-    const pairInputClick = async () => {
-        await window.navigator.clipboard.writeText(pairKey);
-        setKeterangan("Pairkey di copy ke clipboard");
-    }
-    
-    const partnerInputClick = async () => {
-    }
-
-    const chatsRef = useRef({a: chatsMessages[chatsMessages.length-1], b:chatTrigger})
-
 }
