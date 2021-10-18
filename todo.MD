@@ -8,6 +8,7 @@
 ✅ Tombol Send
 ✅ Save Certificate
 ✅ Process Chat Iris, Including Sorting.
+🟥 Refactor Firechat Biar Lebih Rapi
 🟥 Convert to Class Component
 🟥 Delete Chat
 🟥 Unsend
