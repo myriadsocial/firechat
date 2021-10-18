@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useState } from 'react'
 import Button from '@mui/material/Button'
-import { Send } from '@mui/icons-material'
+import { Send, AttachFile } from '@mui/icons-material'
 
 
 type ChatMUIProps = {
@@ -23,9 +23,9 @@ export function ChatMUI(props:ChatMUIProps) {
             height="100%"
             spacing={2}
             >
-                <Grid item height='90%' style={{overflowY : "scroll"}}>
+                <Grid item height='85%' style={{overflowY : "scroll"}}>
                 </Grid>
-                <Grid item container height='7%'>
+                <Grid item container height='15%'>
                     <Grid item xs={8}>
                         <TextField
                           fullWidth
@@ -35,7 +35,12 @@ export function ChatMUI(props:ChatMUIProps) {
                           onChange={(e)=>{settextMsg(e.target.value)}}                          
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid pt={1.5} item xs={4}>
+                        <Button
+                          color="primary"
+                          variant="text"
+                          endIcon={<AttachFile />}
+                        ></Button>
                         <Button
                           color="primary"
                           variant="contained"
