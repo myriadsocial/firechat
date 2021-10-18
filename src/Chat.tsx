@@ -108,6 +108,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
         this.getCertificate = this.getCertificate.bind(this);
         this.processChat = this.processChat.bind(this);
         this.updateChatDiv = this.updateChatDiv.bind(this);
+        this.partnerkeychanged = this.partnerkeychanged.bind(this);
         this.send = this.send.bind(this);
     }
 
@@ -127,19 +128,20 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                 partnerKeyStateReadOnly : false,
                 keterangan : "Login Berhasil",
                 inviteLinkText : "Invite Link"
+            },()=>{
+                if (this.state.inviteLink) {
+                    let partnerKey = Buffer.from(this.state.inviteLink,'base64').toString("ascii");
+                    this.setState({
+                        partnerKey : partnerKey,
+                        inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString("base64")}`,
+                    },this.partnerkeychanged)
+                    gun.get(partnerKey).get("invitelink").put(localPubKey as any);
+                } else {
+                    this.setState({
+                        inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString("base64")}`
+                    })
+                }    
             })
-            if (this.state.inviteLink) {
-                let partnerKey = Buffer.from(this.state.inviteLink,'base64').toString("ascii");
-                this.setState({
-                    partnerKey : partnerKey,
-                    inviteLinkHref : `./${Buffer.from(localPubKey,'ascii').toString("base64")}`
-                })
-                gun.get(partnerKey).get("invitelink").put(localPubKey as any);
-            } else {
-                this.setState({
-                    inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString("base64")}`
-                })
-            }
         }
     }
 
@@ -166,6 +168,17 @@ export class ChatCore extends Component<ChatProps,ChatState> {
             var objDiv = document.getElementById("chatBox");
             if (objDiv) 
                 objDiv.scrollTop = objDiv.scrollHeight;    
+        })
+    }
+
+    partnerkeychanged() {
+        this.setState({
+            chatsMessages : [],
+            partnerKeyStateReadOnly : true,
+        },()=>{
+            if (this.state.partnerKey !== "") {
+                this.getCertificate(5);
+            }    
         })
     }
 
@@ -320,7 +333,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
         chatsTemp.sort(dynamicSort("timestamp"));
         this.setState({
             chatsMessages : chatsTemp
-        })
+        },this.updateChatDiv)
     }
     
 
@@ -414,14 +427,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                       <div className="card-body">
                         <h4 className="card-title">Partner PairKey</h4>
                         <div className="card-text">
-                            <textarea rows={5} onChange={(e)=>{this.setState({partnerKey : e.target.value.trim()},()=>{
-                                this.setState({
-                                    chatsMessages : [],
-                                })
-                                if (this.state.partnerKey !== "") {
-                                    this.getCertificate(5);
-                                }
-                            })}} onClick={this.partnerInputClick} readOnly={this.state.partnerKeyStateReadOnly}
+                            <textarea rows={5} onChange={(e)=>{this.setState({partnerKey : e.target.value.trim()},this.partnerkeychanged)}} onClick={this.partnerInputClick} readOnly={this.state.partnerKeyStateReadOnly}
                                 className="form-control" name="partnerKey" id="partnerKey" aria-describedby="partnerKey" placeholder="Paste Key Here" value={this.state.partnerKey}></textarea>
                             <small id="pairKey" className="form-text text-muted">Get from other partner</small>
                             <p><small className="form-text text-success">{this.state.keterangan2}</small></p>
