@@ -266,8 +266,8 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                         let partnerKey = Buffer.from(this.state.inviteLink,'base64').toString('ascii');
                         this.setState({
                             partnerKey : partnerKey,
-                            inviteLinkHref : `./${Buffer.from(localPubKey,'ascii').toString('base64')}`,
-                        })
+                            inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString('base64')}`,
+                        },this.partnerkeychanged)
                         gun.get(partnerKey).get("invitelink").put(localPubKey as any);
                     } else {
                         this.setState({
