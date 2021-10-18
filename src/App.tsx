@@ -10,6 +10,7 @@ import {
 import { ChatMUI } from './ChatMUI';
 
 import { Firegun, Chat as ChatFG } from './firegun/firegun'
+import { useEffect, useState } from 'react';
 
 const fg = new Firegun([
   "https://gundb.dev.myriad.systems/gun", 
@@ -18,7 +19,24 @@ const fg = new Firegun([
 
 const chat = new ChatFG(fg)
 
+if (localStorage.getItem('myPairKey')) {
+  fg.loginPair(JSON.parse(localStorage.getItem('myPairKey') || "{}"))
+  .then((a)=>{
+    console.log(a);
+  })
+}
+
 export default function App() {
+
+  const [partners, setpartners] = useState<string[]>([])
+  const [text, settext] = useState("")
+
+  const addArray = () => {
+    setpartners(arr=>{
+      return [...arr, text]
+    })
+  }
+
   return (
     <HashRouter>
         <Switch>
@@ -30,7 +48,15 @@ export default function App() {
           </Route>
           <Route path="/chatMUI">
             <div style={{width : "500px", height:"600px",  margin: "auto"}}>
-              <ChatMUI fg={fg} chat={chat} />
+              Partner Key <input type="text" value={text} onChange={(e)=>{settext(e.target.value)}} /> <button onClick={addArray}>Init Chat !</button>
+              <br/><br/>
+              {
+                partners.map((val,index)=>{
+                  return(
+                    <ChatMUI key={val} fg={fg} chat={chat} partnerKey={val} />
+                  )                  
+                })
+              }
             </div>
           </Route>
           <Route path="/iris">
