@@ -25,8 +25,8 @@ export function ChatMUI(props:ChatMUIProps) {
             height="100%"
             spacing={2}
             >
-                <Grid item height='10%' textAlign="center">
-                    {props.partnerKey}
+                <Grid item height='10%' textAlign="center" fontWeight="bold">
+                    {props.partnerKey.slice(0,8)}
                     <Divider />
                 </Grid>
                 <Grid item height='70%' style={{overflowY : "scroll"}}>
