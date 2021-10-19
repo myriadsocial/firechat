@@ -60,7 +60,7 @@ export function ChatMUI(props:ChatMUIProps) {
             yourEpub = keys[1];
 
             let dateNow = getDate()
-            props.fg.gun.user().get("chat-with").get(yourPub).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+            props.fg.gun.user().get("chat-with").get(yourPub).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().on(async (s)=>{
                 if (s) {
                     // console.log (s);
                     processChat(s,keys);
@@ -76,11 +76,13 @@ export function ChatMUI(props:ChatMUIProps) {
     },[chatsMessages])
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
-        if ((s.msg as string).search("SEA") === 0)
-        if (s._self) {
-            s.msg = await Gun.SEA.decrypt(s.msg, props.fg.user.pair);
-        } else {
-            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], props.fg.user.pair));
+        if (typeof s.msg === "string") {
+            if ((s.msg as string).search("SEA") === 0)
+            if (s._self) {
+                s.msg = await Gun.SEA.decrypt(s.msg, props.fg.user.pair);
+            } else {
+                s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], props.fg.user.pair));
+            }    
         }
 
         setChatsMessages(chatsMessages=>{
