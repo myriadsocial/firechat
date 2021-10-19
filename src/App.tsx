@@ -19,7 +19,7 @@ const peer = [
   "https://gun-relay.bimasoft.web.id:16902/gun"
 ];
 
-const fg = new Firegun([],undefined,true)
+const fg = new Firegun(peer,undefined,true)
 
 const chat = new ChatFG(fg)
 
@@ -43,6 +43,7 @@ export default function App() {
   }
 
   useEffect(()=>{
+    (window as any).fg = fg;
     if (fg.user)
     setAlias(fg.user.alias);
   },[])
