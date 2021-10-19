@@ -5,6 +5,14 @@
 🟥 Login
 🟥 Size
 🟥 Cek Kemungkinan simpan past chat di Localstorage / Indexed DB, biar tidak terlalu lama loading.
+🟥 Simpan Alias Ketika Sign UP
+🟥 Get Partner Alias Instead of Pubkey
+🟥 Refactor Firechat Biar Lebih Rapi
+🟥 Tambahkan fungsi untuk refresh chat, gunakan once, karena sudah ada fungsi dari map sebelumnya, biar tidak double map
+🟥 Delete Chat , tambahkan 1 node buat notif, agar partner melakukan force refresh chat
+🟥 Unsend
+🟥 Edit
+🟥 Logout
 
 🐢 Group Chat
 ✅ Auto Pair ketika invite link di buka
@@ -16,9 +24,4 @@
 ✅ Tombol Send
 ✅ Save Certificate
 ✅ Process Chat Iris, Including Sorting.
-🟥 Refactor Firechat Biar Lebih Rapi
-🟥 Convert to Class Component
-🟥 Delete Chat
-🟥 Unsend
-🟥 Edit
-
+✅ Convert to Class Component
