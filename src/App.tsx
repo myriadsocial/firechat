@@ -14,10 +14,12 @@ import { Firegun, Chat as ChatFG } from './firegun/index'
 import { useEffect, useState } from 'react';
 import { Login } from './Login';
 
-const fg = new Firegun([
+const peer = [
   "https://gundb.dev.myriad.systems/gun", 
   "https://gun-relay.bimasoft.web.id:16902/gun"
-],undefined,true)
+];
+
+const fg = new Firegun([],undefined,true)
 
 const chat = new ChatFG(fg)
 

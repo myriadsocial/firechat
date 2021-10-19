@@ -1,5 +1,6 @@
 # CHAT MUI
 🟥 Memasukkan Fungsi Chat
+🟥 Generate Public Cert
 🟥 SIGNUP
 🟥 Login
 
