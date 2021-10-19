@@ -9,13 +9,14 @@ import {
 } from "react-router-dom";
 import { ChatMUI } from './ChatMUI';
 
+import Gun from 'gun'
 import { Firegun, Chat as ChatFG } from './firegun/index'
 import { useEffect, useState } from 'react';
 
 const fg = new Firegun([
   "https://gundb.dev.myriad.systems/gun", 
   "https://gun-relay.bimasoft.web.id:16902/gun"
-])
+],undefined,true)
 
 const chat = new ChatFG(fg)
 
@@ -41,10 +42,10 @@ export default function App() {
     <HashRouter>
         <Switch>
           <Route path="/chat/:inviteLink">
-            <Chat />
+            <Chat Gun={Gun} gun={fg.gun} inviteLink={undefined}/>
           </Route>
           <Route path="/chat">
-            <Chat />
+            <Chat Gun={Gun} gun={fg.gun} inviteLink={undefined}/>
           </Route>
           <Route path="/chatMUI">
             <div style={{width : "500px", height:"600px",  margin: "auto"}}>
@@ -60,13 +61,13 @@ export default function App() {
             </div>
           </Route>
           <Route path="/iris">
-            <Iris />
+            {/* <Iris Gun={Gun} gun={fg.gun} /> */}
           </Route>
           <Route path="/">
             <p>Index Page :</p>
             <p><Link to="/chat">Chat</Link></p>
             <p><Link to="/chatMUI">Chat Material UI</Link></p>
-            <p><Link to="/iris">Iris</Link></p>
+            {/* <p><Link to="/iris">Iris</Link></p> */}
           </Route>
         </Switch>
     </HashRouter>

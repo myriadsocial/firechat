@@ -1,21 +1,9 @@
 import { Component } from "react"
-import Gun from 'gun';
-import 'gun/sea';
-import 'gun/lib/store';
-import 'gun/lib/radix';
-import 'gun/lib/radisk';
-import 'gun/lib/rindexed';
 import { useParams } from 'react-router';
 // @ts-ignore
 import iris from "iris-lib"
-
-const gun1 = Gun({
-    peers : [
-        "https://gundb.dev.myriad.systems/gun", 
-        "https://gun-relay.bimasoft.web.id:16902/gun"
-    ],
-    localStorage : false,
-});
+import { IGunStatic } from "gun/types/static";
+import { IGunChainReference } from "gun/types/chain";
 
 function dynamicSort(property:string) {
     var sortOrder = 1;
@@ -51,7 +39,8 @@ interface irisState {
 }
 
 interface irisProps {
-
+    Gun : IGunStatic,
+    gun : IGunChainReference
 }
 export class Iris extends Component<irisProps,irisState> {
     constructor (props:irisProps) {
@@ -97,7 +86,7 @@ export class Iris extends Component<irisProps,irisState> {
             pairKey : myKey.pub,
             partnerKeyStateReadOnly : false,
         })
-        iris.Channel.initUser(gun1, myKey); // saves myKey.epub to gun.user().get('epub')
+        iris.Channel.initUser(this.props.gun, myKey); // saves myKey.epub to gun.user().get('epub')
     }
 
     test() {
@@ -160,7 +149,7 @@ export class Iris extends Component<irisProps,irisState> {
 
     partnerKeyChanged() {
         var someoneElse = { pub : this.state.partnerKey }
-        var ourChannel = new iris.Channel({key: this.state.myKey, gun: gun1, participants: someoneElse.pub});
+        var ourChannel = new iris.Channel({key: this.state.myKey, gun: this.props.gun, participants: someoneElse.pub});
         this.setState({
             ourChannel : ourChannel,
             textMsgReadOnlyState : false,
@@ -171,7 +160,7 @@ export class Iris extends Component<irisProps,irisState> {
         ourChannel.getMessages(this.printMessage)
 
         // Get Semua Chat dari semua Channel
-        // iris.Channel.getChannels(gun1, this.state.myKey, (channel:any) => {
+        // iris.Channel.getChannels(this.props.gun, this.state.myKey, (channel:any) => {
         //     channel.getMessages();
         // });
     }

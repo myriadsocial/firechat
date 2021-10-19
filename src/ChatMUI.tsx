@@ -1,12 +1,11 @@
-import { Gun, Chat, Firegun } from './firegun/index'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@mui/material/Button'
 import { Send, AttachFile, FiveG } from '@mui/icons-material'
 import { Divider } from '@mui/material'
-
-Gun.SEA.pair()
+import Gun from 'gun'
+import { Firegun, Chat } from './firegun/index'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -39,6 +38,7 @@ export function ChatMUI(props:ChatMUIProps) {
 
     const [textMsg, setTextMsg] = useState("");
     const [chatsMessages, setChatsMessages] = useState<chatType[]>([]);
+    const [chatsMessagesDiv, setChatsMessagesDiv] = useState<JSX.Element>(<></>);
 
     var 
         yourPub : string,
@@ -60,7 +60,7 @@ export function ChatMUI(props:ChatMUIProps) {
             yourEpub = keys[1];
 
             let dateNow = getDate()
-            props.fg.gun.user().get("chat-with").get(yourPub).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().on(async (s)=>{
+            props.fg.gun.user().get("chat-with").get(yourPub).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                 if (s) {
                     // console.log (s);
                     processChat(s,keys);
@@ -72,7 +72,29 @@ export function ChatMUI(props:ChatMUIProps) {
     },[])
 
     useEffect(()=>{
-        console.log (chatsMessages);
+        // UpdateChatDiv
+        setChatsMessagesDiv(
+            <>
+                {
+                    chatsMessages.map((val)=>
+                        <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
+                            <img className="card-img-top" src="holder.js/100px180/" alt="" />
+                            <div className="card-body">
+                            <div className="card-text mb-0">
+                                <p className="m-0">{val.msg}</p>
+                                {/* <p className="m-0" style={{fontSize : "10px"}}><a href='#unsend'>Unsend</a> <a href='#delete'>Delete</a></p> */}
+                            </div>
+                            <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
+                            </div>
+                        </div>
+                    )
+                }
+            </>
+        )
+        // Scroll to end
+        var objDiv = document.getElementById(`chatbox-${props.partnerKey.slice(0,8)}`);
+        if (objDiv) 
+            objDiv.scrollTop = objDiv.scrollHeight;    
     },[chatsMessages])
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
@@ -98,6 +120,7 @@ export function ChatMUI(props:ChatMUIProps) {
                     t.timestamp === thing.timestamp
                 ))
             )
+            // GO To UpdateChatDiv
             return chatsTemp;
         })
     }
@@ -126,7 +149,8 @@ export function ChatMUI(props:ChatMUIProps) {
                     {props.partnerKey.slice(0,8)}
                     <Divider />
                 </Grid>
-                <Grid item height='70%' style={{overflowY : "scroll"}}>
+                <Grid item height='70%' style={{overflowY : "scroll"}} id={`chatbox-${props.partnerKey.slice(0,8)}`}>
+                    {chatsMessagesDiv}
                 </Grid>
                 <Grid item container height='15%'>
                     <Grid item xs={8}>
