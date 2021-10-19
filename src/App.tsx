@@ -9,8 +9,7 @@ import {
 } from "react-router-dom";
 import { ChatMUI } from './ChatMUI';
 
-import Gun from 'gun'
-import { Firegun, Chat as ChatFG } from './firegun/index'
+import { Gun, Firegun, Chat as ChatFG } from './firegun/index'
 import { useEffect, useState } from 'react';
 import { Login } from './Login';
 
@@ -35,6 +34,7 @@ export default function App() {
   const [partners, setpartners] = useState<string[]>([])
   const [text, settext] = useState("")
   const [alias, setAlias] = useState("")
+  const [myPubKey, setMyPubKey] = useState("")
 
   const addArray = () => {
     setpartners(arr=>{
@@ -44,8 +44,10 @@ export default function App() {
 
   useEffect(()=>{
     (window as any).fg = fg;
-    if (fg.user)
-    setAlias(fg.user.alias);
+    if (fg.user) {
+      setAlias(fg.user.alias);
+      setMyPubKey(`${fg.user.pair.pub}&${fg.user.pair.epub}`)
+    }    
   },[])
 
 
@@ -61,6 +63,8 @@ export default function App() {
           <Route path="/chatMUI">
             { (alias) ? 
               <div style={{width : "500px", height:"600px",  margin: "auto"}}>
+                <textarea value={myPubKey} readOnly={true} />
+                <br/><br/>
                 Partner Key <input type="text" value={text} onChange={(e)=>{settext(e.target.value)}} /> <button onClick={addArray}>Init Chat !</button>
                 <br/><br/>
                 {
@@ -71,7 +75,7 @@ export default function App() {
                   })
                 }
               </div>
-            : <Login fg={fg} setAlias={setAlias} /> }
+            : <Login fg={fg} setAlias={setAlias} setMyPubKey={setMyPubKey} /> }
           </Route>
           <Route path="/iris">
             {/* <Iris Gun={Gun} gun={fg.gun} /> */}

@@ -3,7 +3,8 @@
 🟥 Generate Public Cert
 🟥 SIGNUP
 🟥 Login
-
+🟥 Size
+🟥 Cek Kemungkinan simpan past chat di Localstorage / Indexed DB, biar tidak terlalu lama loading.
 
 🐢 Group Chat
 ✅ Auto Pair ketika invite link di buka

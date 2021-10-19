@@ -11,6 +11,7 @@ export function Login (props:any) {
         props.fg.userLogin(username,password)
         .then(()=>{
             props.setAlias(props.fg.user.alias)
+            props.setMyPubKey(`${props.fg.user.pair.pub}&${props.fg.user.pair.epub}`)
         })
         .catch((s:any)=>{
             setKeterangan(s.err);
@@ -22,6 +23,7 @@ export function Login (props:any) {
         props.fg.userNew(username,password)
         .then(()=>{
             props.setAlias(props.fg.user.alias)
+            props.setMyPubKey(`${props.fg.user.pair.pub}&${props.fg.user.pair.epub}`)
         })
         .catch((s:any)=>{
             setKeterangan(s.err);
