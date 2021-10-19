@@ -1,7 +1,7 @@
 import { Chat, Firegun } from './firegun/firegun'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '@mui/material/Button'
 import { Send, AttachFile, FiveG } from '@mui/icons-material'
 import { Divider } from '@mui/material'
@@ -16,6 +16,26 @@ type ChatMUIProps = {
 export function ChatMUI(props:ChatMUIProps) {
 
     const [textMsg, settextMsg] = useState("");
+    const [yourCertificate, setyourCertificate] = useState("");
+    const [yourPub, setyourPub] = useState("");
+    const [yourEpub, setyourEpub] = useState("");
+
+    useEffect(()=>{
+        // INIT FIRST TIME ONLY
+        var keys;
+        if (props.partnerKey.indexOf("&")>=0) {
+            keys = props.partnerKey.split("&")
+            props.chat.getCert(keys[0])
+            .then(cert=>{
+                setyourCertificate(cert || "");
+                console.log (cert);
+            })
+            setyourPub(keys[0])
+            setyourEpub(keys[1])
+        } else {
+            console.log ("Partner Key Incomplete")
+        }
+    },[])
 
     return (
         <>
