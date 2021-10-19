@@ -1,4 +1,4 @@
-import { Chat, Firegun } from './firegun/firegun'
+import { Gun, Chat, Firegun } from './firegun/firegun'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -13,10 +13,31 @@ type ChatMUIProps = {
     chat : Chat,
 }
 
+type chatType = {
+    _self : boolean, 
+    msg : string, 
+    timestamp: string,
+}
+
+function dynamicSort(property:string) {
+    var sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a:any,b:any) {
+        /* next line works with strings and numbers, 
+         * and you may want to customize it to your needs
+         */
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+}
+
 export function ChatMUI(props:ChatMUIProps) {
 
     const [textMsg, setTextMsg] = useState("");
-    const [yourCertificate, setYourCertificate] = useState("BBBBB");
+    const [chatsMessages, setChatsMessages] = useState<chatType[]>([]);
 
     var 
         yourPub : string,
@@ -26,14 +47,12 @@ export function ChatMUI(props:ChatMUIProps) {
     useEffect(()=>{
         // INIT FIRST TIME ONLY
 
-        setYourCertificate("CCCC");
-
         var keys:string[];
         if (props.partnerKey.indexOf("&")>=0) {
             keys = props.partnerKey.split("&")
             props.chat.getCert(keys[0])
             .then(cert=>{
-                yourCert = cert || "";
+                yourCert = cert?.toString() || "";
                 console.log (yourCert);
             })
             yourPub = keys[0];
@@ -54,21 +73,22 @@ export function ChatMUI(props:ChatMUIProps) {
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
         if ((s.msg as string).search("SEA") === 0)
         if (s._self) {
-            s.msg = await Gun.SEA.decrypt(s.msg, this.state.myPairKey);
+            s.msg = await Gun.SEA.decrypt(s.msg, props.fg.user.pair);
         } else {
-            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], this.state.myPairKey));
+            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], props.fg.user.pair));
         }
 
-        let chatsTemp = this.state.chatsMessages;
-        chatsTemp = chatsTemp.filter(function( obj ) {
-            console.log (obj);
-            return obj.timestamp !== 'sending...';
-        });
-        chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
-        chatsTemp.sort(dynamicSort("timestamp"));
-        this.setState({
-            chatsMessages : chatsTemp
-        },this.updateChatDiv)
+        setChatsMessages(chatsMessages=>{
+            let chatsTemp = chatsMessages;
+            chatsTemp = chatsTemp.filter(function( obj ) {
+                console.log (obj);
+                return obj.timestamp !== 'sending...';
+            });
+            chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
+            chatsTemp.sort(dynamicSort("timestamp"));
+            updateChatDiv
+            return chatsTemp;
+        })
     }
 
     const getDate = () => {
