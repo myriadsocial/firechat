@@ -1,5 +1,7 @@
 # CHAT MUI
 🟥 Memasukkan Fungsi Chat
+🟥 SIGNUP
+🟥 Login
 
 
 🐢 Group Chat
