@@ -3,6 +3,7 @@
 ✅ Login
 🟥 Memasukkan Fungsi Chat (Note : kirim dulu ke orang, baru ke kota)
 🟥 Fungsi Friends yg sudah pernah chat dengan kita sebelumnya
+🟥 Pindah Fungsi Process Chat ke dalam chat.tsx
 🟥 Generate Public Cert
 🟥 Delete Chat , tambahkan 1 node buat notif, agar partner melakukan force refresh chat
 🟥 Unsend
