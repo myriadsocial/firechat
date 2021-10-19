@@ -1,4 +1,4 @@
-import { Gun, Chat, Firegun } from './firegun/firegun'
+import { Gun, Chat, Firegun } from './firegun/index'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -6,6 +6,7 @@ import Button from '@mui/material/Button'
 import { Send, AttachFile, FiveG } from '@mui/icons-material'
 import { Divider } from '@mui/material'
 
+Gun.SEA.pair()
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -61,14 +62,18 @@ export function ChatMUI(props:ChatMUIProps) {
             let dateNow = getDate()
             props.fg.gun.user().get("chat-with").get(yourPub).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                 if (s) {
-                    console.log (s);
-                    // processChat(s,keys);
+                    // console.log (s);
+                    processChat(s,keys);
                 }                        
             })
         } else {
             console.log ("Partner Key Incomplete")
         }
     },[])
+
+    useEffect(()=>{
+        console.log (chatsMessages);
+    },[chatsMessages])
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
         if ((s.msg as string).search("SEA") === 0)
@@ -81,12 +86,16 @@ export function ChatMUI(props:ChatMUIProps) {
         setChatsMessages(chatsMessages=>{
             let chatsTemp = chatsMessages;
             chatsTemp = chatsTemp.filter(function( obj ) {
-                console.log (obj);
                 return obj.timestamp !== 'sending...';
             });
             chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
             chatsTemp.sort(dynamicSort("timestamp"));
-            updateChatDiv
+
+            chatsTemp = chatsTemp.filter((thing, index, self) =>
+                index === self.findIndex((t) => (
+                    t.timestamp === thing.timestamp
+                ))
+            )
             return chatsTemp;
         })
     }
@@ -113,7 +122,6 @@ export function ChatMUI(props:ChatMUIProps) {
             >
                 <Grid item height='10%' textAlign="center" fontWeight="bold">
                     {props.partnerKey.slice(0,8)}
-                    {yourCertificate}
                     <Divider />
                 </Grid>
                 <Grid item height='70%' style={{overflowY : "scroll"}}>
@@ -125,7 +133,7 @@ export function ChatMUI(props:ChatMUIProps) {
                             label="Chat"
                             variant="standard"
                             value={textMsg}
-                            onChange={(e)=>{settextMsg(e.target.value)}}                          
+                            onChange={(e)=>{setTextMsg(e.target.value)}}                          
                         />
                     </Grid>
                     <Grid pt={1.5} item xs={4}>

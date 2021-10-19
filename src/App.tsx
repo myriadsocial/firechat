@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { ChatMUI } from './ChatMUI';
 
-import { Firegun, Chat as ChatFG } from './firegun/firegun'
+import { Firegun, Chat as ChatFG } from './firegun/index'
 import { useEffect, useState } from 'react';
 
 const fg = new Firegun([
