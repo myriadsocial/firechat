@@ -12,6 +12,7 @@ import { ChatMUI } from './ChatMUI';
 import Gun from 'gun'
 import { Firegun, Chat as ChatFG } from './firegun/index'
 import { useEffect, useState } from 'react';
+import { Login } from './Login';
 
 const fg = new Firegun([
   "https://gundb.dev.myriad.systems/gun", 
@@ -31,12 +32,19 @@ export default function App() {
 
   const [partners, setpartners] = useState<string[]>([])
   const [text, settext] = useState("")
+  const [alias, setAlias] = useState("")
 
   const addArray = () => {
     setpartners(arr=>{
       return [...arr, text]
     })
   }
+
+  useEffect(()=>{
+    if (fg.user)
+    setAlias(fg.user.alias);
+  },[])
+
 
   return (
     <HashRouter>
@@ -48,17 +56,19 @@ export default function App() {
             <Chat Gun={Gun} gun={fg.gun} inviteLink={undefined}/>
           </Route>
           <Route path="/chatMUI">
-            <div style={{width : "500px", height:"600px",  margin: "auto"}}>
-              Partner Key <input type="text" value={text} onChange={(e)=>{settext(e.target.value)}} /> <button onClick={addArray}>Init Chat !</button>
-              <br/><br/>
-              {
-                partners.map((val,index)=>{
-                  return(
-                    <ChatMUI key={val} fg={fg} chat={chat} partnerKey={val} />
-                  )                  
-                })
-              }
-            </div>
+            { (alias) ? 
+              <div style={{width : "500px", height:"600px",  margin: "auto"}}>
+                Partner Key <input type="text" value={text} onChange={(e)=>{settext(e.target.value)}} /> <button onClick={addArray}>Init Chat !</button>
+                <br/><br/>
+                {
+                  partners.map((val,index)=>{
+                    return(
+                      <ChatMUI key={val} fg={fg} chat={chat} partnerKey={val} />
+                    )                  
+                  })
+                }
+              </div>
+            : <Login fg={fg} setAlias={setAlias} /> }
           </Route>
           <Route path="/iris">
             {/* <Iris Gun={Gun} gun={fg.gun} /> */}
