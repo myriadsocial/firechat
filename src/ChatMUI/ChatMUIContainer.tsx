@@ -14,19 +14,23 @@ export default function ChatMUIContainer(props:{
     const [alias, setAlias] = useState("")
     const [myPubKey, setMyPubKey] = useState("")
 
-    const partnersRef = useRef(partners);
-
     useEffect(()=>{
     (window as any).fg = props.fg;
     if (props.fg.user) {
         setAlias(props.fg.user.alias);
         setMyPubKey(`${props.fg.user.pair.pub}&${props.fg.user.pair.epub}`)
-    }    
+    }
     },[])
 
     const closeChat = (index:number) => {
-      let tempArray = JSON.parse(JSON.stringify(partners));
+      let tempArray = [...partners]
       tempArray[index].show = false;
+      setPartners(tempArray)
+    }
+
+    const reOpenChat = (index:number) => {
+      let tempArray = [...partners]
+      tempArray[index].show = true;
       setPartners(tempArray)
     }
 
@@ -34,14 +38,13 @@ export default function ChatMUIContainer(props:{
         <>
             { (props.fg.user.alias) ? 
               <div style={{width : "500px", height:"600px",  margin: "auto"}}>
-                <ChatMUIKeyPair myPubKey={myPubKey} setPartners={setPartners} />
+                <ChatMUIKeyPair reOpenChat={reOpenChat} myPubKey={myPubKey} setPartners={setPartners} />
                 {
                   partners.map((val,index)=>{
                     return(
                       <div key={`${val}-${Math.random()}`} style={{display : val.show ? "block" : "none"}} >
-                        <ChatMUI fg={props.fg} chat={props.chat} partnerKey={val.data} show={val.show} />
+                        <ChatMUI fg={props.fg} chat={props.chat} partnerKey={val.data} show={true} />
                         <Button onClick={()=>{closeChat(index)}}>Close Chat</Button>
-                        <Button onClick={()=>{console.log(partners)}}>Partners</Button>
                       </div>
                     )
                   })

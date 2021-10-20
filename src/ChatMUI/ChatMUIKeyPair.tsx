@@ -1,18 +1,29 @@
 import { Button, Grid, TextareaAutosize, TextField, Typography} from "@mui/material"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
+    reOpenChat : (index:number) => void,
     myPubKey:string,
     setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>
 }) {
 
     const [text,setText] = useState("")
 
+    const listPartners = useRef<string[]>([])
+
     const addArray = () => {
-        props.setPartners(arr=>{
-            return [...arr, {show: true, data:text}]
-          })
-      }
+
+        let index = listPartners.current.indexOf(text);
+
+        if (index>=0) {
+            props.reOpenChat(index)
+        } else {
+            props.setPartners(arr=>{
+                return [...arr, {show: true, data:text}]
+              })            
+            listPartners.current.push(text);    
+        }
+    }
     
     return (
         <>            
