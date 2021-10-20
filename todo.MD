@@ -9,6 +9,7 @@
 ✅ Simpan Alias Ketika Sign UP
 ✅ Download File
 ✅ Kirim File
+🟥 Tambahkan box chat default yg isinya keterangan belum ada chat. 
 🟥 Sembunyikan Chatbox Ketika Klik File
 🟥 Delete Chat , tambahkan 1 node buat notif, agar partner melakukan force refresh chat
 🟥 Tanggal / History Chat
