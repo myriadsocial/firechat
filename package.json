@@ -17,7 +17,8 @@
     "iris-lib": "0.0.159",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "react-router-dom": "^5.3.0"
+    "react-router-dom": "^5.3.0",
+    "sass": "^1.43.2"
   },
   "devDependencies": {
     "@types/node": "^16.11.1",

@@ -1,3 +1,4 @@
+import { Button, Divider, Grid, TextareaAutosize, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
@@ -16,10 +17,18 @@ export default function ChatMUIKeyPair (props:{
     
     return (
         <>
-            <textarea value={props.myPubKey} readOnly={true} />
-            <br/><br/>
-            Partner Key <input type="text" value={text} onChange={(e)=>{setText(e.target.value)}} /> <button onClick={addArray}>Init Chat !</button>
-            <br/><br/>
+            <Grid container direction="column" spacing={2} alignItems="center">
+                <Grid item width="100%" textAlign="center">
+                    <Typography>My Pairkey:</Typography>
+                    <TextareaAutosize value={props.myPubKey} readOnly={true} style={{ width:"100%" }} />
+                </Grid>
+                <Grid item>
+                    <TextField variant="outlined" value={text} onChange={(e)=>{setText(e.target.value)}} label="Partner Keypair" />
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" onClick={addArray}>New Chat</Button>
+                </Grid>
+            </Grid>
         </>
     )
 }

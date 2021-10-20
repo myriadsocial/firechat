@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import './Chat.scss'
 import {Buffer} from 'buffer';
 import { useParams } from 'react-router';
 
@@ -32,6 +33,7 @@ function dynamicSort(property:string) {
 import { Component } from "react"
 import { IGunChainReference } from 'gun/types/chain';
 import { IGunStatic } from 'gun/types/static';
+import { ClassNames } from '@emotion/react';
 
 type ChatProps = {
     Gun : IGunStatic,
@@ -380,7 +382,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
 
     render() {
         return (
-        <>
+        <div className="use-bootstrap">            
             <div className="row mt-3">
                 <div className="col ps-5">
                     <div className="card text-start mb-3">
@@ -425,7 +427,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
         )
     }
 }
