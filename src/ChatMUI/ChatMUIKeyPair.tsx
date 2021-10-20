@@ -17,7 +17,7 @@ export default function ChatMUIKeyPair (props:{
     
     return (
         <>
-            <Grid container direction="column" spacing={2} alignItems="center">
+            <Grid mb={3} container direction="column" spacing={2} alignItems="center">
                 <Grid item width="100%" textAlign="center">
                     <Typography>My Pairkey:</Typography>
                     <TextareaAutosize value={props.myPubKey} readOnly={true} style={{ width:"100%" }} />

@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@mui/material/Button'
 import { Send, AttachFile} from '@mui/icons-material'
-import { Divider } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import Gun from 'gun'
 import { Firegun, Chat, common } from '../firegun/index'
 import { chatType } from '../firegun/common'
@@ -129,7 +129,7 @@ export default function ChatMUI(props:ChatMUIProps) {
             spacing={2}
             >
                 <Grid item height='10%' textAlign="center" fontWeight="bold">
-                    {props.partnerKey.slice(0,8)}
+                    <Typography>{props.partnerKey.slice(0,8)}</Typography>
                     <Divider />
                 </Grid>
                 <Grid item height='70%' style={{overflowY : "scroll"}} id={`chatbox-${props.partnerKey.slice(0,8)}`}>
