@@ -11,7 +11,7 @@ export default function ChatMUIContainer(props:{
 }) {
 
     const [partners, setPartners] = useState<{show:boolean, data:string}[]>([])
-    const [chatMUIPlaceHolder, setchatMUIPlaceHolder] = useState<any[]>([])
+    const [chatMUIPlaceHolder, setchatMUIPlaceHolder] = useState<JSX.Element[]>([])
     const [alias, setAlias] = useState("")
     const [myPubKey, setMyPubKey] = useState("")
 
@@ -29,14 +29,25 @@ export default function ChatMUIContainer(props:{
       setPartners(tempArray)
     }
 
-    const reOpenChat = (index:number) => {
-      let tempArray = [...partners]
-      tempArray[index].show = true;
-      setPartners(tempArray)
+    const reOpenChat = (key:string) => {
+      let elem = document.getElementById(`chatmui-${key}`);
+      if ( elem !== null) {
+        elem.style.display = 'block'
+      }
     }
 
     const addPartnerChat = (key:string) => {
-      setchatMUIPlaceHolder([...chatMUIPlaceHolder, <ChatMUI key={key} fg={props.fg} chat={props.chat} partnerKey={key} show={true} />])
+      setchatMUIPlaceHolder([...chatMUIPlaceHolder, 
+        <div id={`chatmui-${key}`} key={key}>
+          <ChatMUI fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
+          <Button onClick={()=>{
+            let elem = document.getElementById(`chatmui-${key}`);
+            if ( elem !== null) {
+              elem.style.display = 'none'
+            }
+          }}>Close Chat</Button>
+        </div>
+      ])
     }
 
     return (

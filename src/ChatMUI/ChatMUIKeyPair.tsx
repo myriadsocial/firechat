@@ -2,7 +2,7 @@ import { Button, Grid, TextareaAutosize, TextField, Typography} from "@mui/mater
 import { useRef, useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
-    reOpenChat : (index:number) => void,
+    reOpenChat : (key:string) => void,
     addPartnerChat : (key:string) => void,
     myPubKey:string,
     setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>
@@ -17,7 +17,7 @@ export default function ChatMUIKeyPair (props:{
         let index = listPartners.current.indexOf(text);
 
         if (index>=0) {
-            props.reOpenChat(index)
+            props.reOpenChat(text)
         } else {
             props.addPartnerChat(text)
             listPartners.current.push(text);    
