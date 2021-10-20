@@ -11,6 +11,7 @@ export default function ChatMUIContainer(props:{
 }) {
 
     const [partners, setPartners] = useState<{show:boolean, data:string}[]>([])
+    const [chatMUIPlaceHolder, setchatMUIPlaceHolder] = useState<any[]>([])
     const [alias, setAlias] = useState("")
     const [myPubKey, setMyPubKey] = useState("")
 
@@ -34,21 +35,16 @@ export default function ChatMUIContainer(props:{
       setPartners(tempArray)
     }
 
+    const addPartnerChat = (key:string) => {
+      setchatMUIPlaceHolder([...chatMUIPlaceHolder, <ChatMUI key={key} fg={props.fg} chat={props.chat} partnerKey={key} show={true} />])
+    }
+
     return (
         <>
             { (props.fg.user.alias) ? 
               <div style={{width : "500px", height:"600px",  margin: "auto"}}>
-                <ChatMUIKeyPair reOpenChat={reOpenChat} myPubKey={myPubKey} setPartners={setPartners} />
-                {
-                  partners.map((val,index)=>{
-                    return(
-                      <div key={`${val}-${Math.random()}`} style={{display : val.show ? "block" : "none"}} >
-                        <ChatMUI fg={props.fg} chat={props.chat} partnerKey={val.data} show={true} />
-                        <Button onClick={()=>{closeChat(index)}}>Close Chat</Button>
-                      </div>
-                    )
-                  })
-                }
+                <ChatMUIKeyPair addPartnerChat={addPartnerChat} reOpenChat={reOpenChat} myPubKey={myPubKey} setPartners={setPartners} />
+                {chatMUIPlaceHolder}                
               </div>
             : <Login fg={props.fg} setAlias={setAlias} setMyPubKey={setMyPubKey} /> }
         </>

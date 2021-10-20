@@ -3,6 +3,7 @@ import { useRef, useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
     reOpenChat : (index:number) => void,
+    addPartnerChat : (key:string) => void,
     myPubKey:string,
     setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>
 }) {
@@ -18,9 +19,7 @@ export default function ChatMUIKeyPair (props:{
         if (index>=0) {
             props.reOpenChat(index)
         } else {
-            props.setPartners(arr=>{
-                return [...arr, {show: true, data:text}]
-              })            
+            props.addPartnerChat(text)
             listPartners.current.push(text);    
         }
     }
