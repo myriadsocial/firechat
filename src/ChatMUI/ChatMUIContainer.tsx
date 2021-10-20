@@ -1,3 +1,4 @@
+import { Button } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Firegun, Chat } from "../firegun/index"
 import ChatMUI from "./ChatMUI"
@@ -21,6 +22,13 @@ export default function ChatMUIContainer(props:{
     }    
     },[])
 
+    const closeChat = (index:number) => {
+      setPartners(arr=>{
+        arr = arr.filter((item,idx) => idx !== index);
+        return arr
+      })
+    }
+
     return (
         <>
             { (props.fg.user.alias) ? 
@@ -29,8 +37,12 @@ export default function ChatMUIContainer(props:{
                 {
                   partners.map((val,index)=>{
                     return(
-                      <ChatMUI key={val} fg={props.fg} chat={props.chat} partnerKey={val} />
-                    )                  
+                      <div key={`${val}-${Math.random()}`} >
+                        <ChatMUI fg={props.fg} chat={props.chat} partnerKey={val} />
+                        <Button onClick={()=>{closeChat(index)}}>Close Chat</Button>
+                        <Button onClick={()=>{console.log(partners)}}>Partners</Button>
+                      </div>
+                    )
                   })
                 }
               </div>

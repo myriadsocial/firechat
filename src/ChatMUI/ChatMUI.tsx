@@ -1,14 +1,13 @@
+import Gun from 'gun'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@mui/material/Button'
 import { Send, AttachFile} from '@mui/icons-material'
 import { Divider, Typography } from '@mui/material'
-import Gun from 'gun'
 import { Firegun, Chat, common } from '../firegun/index'
 import { chatType } from '../firegun/common'
-
-
+import ChatBubble from "./ChatBubble"
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -64,16 +63,7 @@ export default function ChatMUI(props:ChatMUIProps) {
             <>
                 {
                     chatsMessages.map((val)=>
-                        <div key={`${val.timestamp}-${Math.random()}`} className={`${val.timestamp} card col-md-7 mb-3 ${val._self ? "text-start bg-primary text-white" : "text-end offset-md-5"}`}>
-                            <img className="card-img-top" src="holder.js/100px180/" alt="" />
-                            <div className="card-body">
-                            <div className="card-text mb-0">
-                                <p className="m-0">{val.msg}</p>
-                                {/* <p className="m-0" style={{fontSize : "10px"}}><a href='#unsend'>Unsend</a> <a href='#delete'>Delete</a></p> */}
-                            </div>
-                            <p className="card-text fs" style={{fontSize : "10px"}}>{val.timestamp}</p>
-                            </div>
-                        </div>
+                        <ChatBubble self={val._self} key={`${val.timestamp}-${Math.random()}`} text={val.msg} timestamp={val.timestamp} />
                     )
                 }
             </>
