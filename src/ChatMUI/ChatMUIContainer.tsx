@@ -1,4 +1,4 @@
-import { Button } from "@mui/material"
+import { Button, Container, Grid } from "@mui/material"
 import { useEffect, useRef, useState } from "react"
 import { Firegun, Chat } from "../firegun/index"
 import ChatMUI from "./ChatMUI"
@@ -38,14 +38,8 @@ export default function ChatMUIContainer(props:{
 
     const addPartnerChat = (key:string) => {
       setchatMUIPlaceHolder([...chatMUIPlaceHolder, 
-        <div id={`chatmui-${key}`} key={key}>
-          <ChatMUI fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
-          <Button onClick={()=>{
-            let elem = document.getElementById(`chatmui-${key}`);
-            if ( elem !== null) {
-              elem.style.display = 'none'
-            }
-          }}>Close Chat</Button>
+        <div className="chatmui" id={`chatmui-${key}`} key={key}>
+          <ChatMUI height="100vh" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
         </div>
       ])
     }
@@ -53,10 +47,17 @@ export default function ChatMUIContainer(props:{
     return (
         <>
             { (props.fg.user.alias) ? 
-              <div style={{width : "500px", height:"600px",  margin: "auto"}}>
-                <ChatMUIKeyPair addPartnerChat={addPartnerChat} reOpenChat={reOpenChat} myPubKey={myPubKey} setPartners={setPartners} />
-                {chatMUIPlaceHolder}                
-              </div>
+              <Container>
+                <Grid container spacing={2}>
+                  <Grid xs={2} sm={4} item>
+                    <ChatMUIKeyPair addPartnerChat={addPartnerChat} reOpenChat={reOpenChat} myPubKey={myPubKey} setPartners={setPartners} />
+                  </Grid>
+                  <Grid xs={10} sm={8} item>
+                    {chatMUIPlaceHolder}
+                  </Grid>
+                </Grid>                
+                
+              </Container>
             : <Login fg={props.fg} setAlias={setAlias} setMyPubKey={setMyPubKey} /> }
         </>
     )

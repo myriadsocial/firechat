@@ -3,17 +3,18 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@mui/material/Button'
-import { Send, AttachFile} from '@mui/icons-material'
-import { Divider, Typography } from '@mui/material'
+import { Send, AttachFile, Close} from '@mui/icons-material'
+import { Divider, IconButton, Typography } from '@mui/material'
 import { Firegun, Chat, common } from '../firegun/index'
 import { chatType } from '../firegun/common'
 import ChatBubble from "./ChatBubble"
 
 type ChatMUIProps = {
     partnerKey : string,
+    height : string,
     fg : Firegun,
     chat : Chat,
-    show : boolean,
+    show : boolean,    
 }
 
 export default function ChatMUI(props:ChatMUIProps) {
@@ -116,12 +117,20 @@ export default function ChatMUI(props:ChatMUIProps) {
             <Grid
             container
             direction="column"
-            height="100%"
+            height={props.height}
             spacing={2}
             display={props.show ? "block" : "none"}
             >
                 <Grid item height='10%' textAlign="center" fontWeight="bold">
-                    <Typography>{props.partnerKey.slice(0,8)}</Typography>
+                    <Typography>
+                        {props.partnerKey.slice(0,8)}
+                        <IconButton color="error" onClick={()=>{
+                            let elem = document.getElementById(`chatmui-${props.partnerKey}`);
+                            if ( elem !== null) {
+                                elem.style.display = 'none'
+                            }
+                        }}><Close /></IconButton>
+                    </Typography>
                     <Divider />
                 </Grid>
                 <Grid item height='70%' style={{overflowY : "scroll"}} id={`chatbox-${props.partnerKey.slice(0,8)}`}>

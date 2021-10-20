@@ -1,3 +1,4 @@
+import { AddCircle } from "@mui/icons-material"
 import { Button, Grid, TextareaAutosize, TextField, Typography} from "@mui/material"
 import { useRef, useState } from "react"
 
@@ -28,14 +29,10 @@ export default function ChatMUIKeyPair (props:{
         <>            
             <Grid mb={3} container direction="column" spacing={2} alignItems="center">
                 <Grid item width="100%" textAlign="center">
-                    <Typography>My Pairkey:</Typography>
-                    <TextareaAutosize value={props.myPubKey} readOnly={true} style={{ width:"100%" }} />
+                    <Typography>My Pairkey: <Button onClick={()=>{navigator.clipboard.writeText(props.myPubKey)}} variant="text">Copy</Button></Typography>
                 </Grid>
                 <Grid item>
-                    <TextField variant="outlined" value={text} onChange={(e)=>{setText(e.target.value)}} label="Partner Keypair" />
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" onClick={addArray}>New Chat</Button>
+                    <TextField size="small" variant="outlined" value={text} onChange={(e)=>{setText(e.target.value)}} label="Partner Keypair" /> <Button startIcon={<AddCircle />} variant="contained" onClick={addArray}>Chat</Button>
                 </Grid>
             </Grid>
         </>
