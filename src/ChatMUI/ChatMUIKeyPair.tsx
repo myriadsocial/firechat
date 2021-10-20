@@ -1,5 +1,8 @@
-import { AddCircle } from "@mui/icons-material"
-import { Button, Grid, TextareaAutosize, TextField, Typography} from "@mui/material"
+import AddCircle from "@mui/icons-material/AddCircle"
+import Button from "@mui/material/Button"
+import Grid from "@mui/material/Grid"
+import TextField from "@mui/material/TextField"
+import Typography from "@mui/material/Typography"
 import { useRef, useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
