@@ -3,15 +3,14 @@ import { useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
     myPubKey:string,
-    setPartners: React.Dispatch<React.SetStateAction<string[]>>
+    setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>
 }) {
 
     const [text,setText] = useState("")
-    const [partners, setpartners] = useState<string[]>([])
 
     const addArray = () => {
         props.setPartners(arr=>{
-            return [...arr, text]
+            return [...arr, {show: true, data:text}]
           })
       }
     

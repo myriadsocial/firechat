@@ -1,5 +1,5 @@
 import { Button } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Firegun, Chat } from "../firegun/index"
 import ChatMUI from "./ChatMUI"
 import ChatMUIKeyPair from "./ChatMUIKeyPair"
@@ -10,9 +10,11 @@ export default function ChatMUIContainer(props:{
     chat : Chat
 }) {
 
-    const [partners, setPartners] = useState<string[]>([])
+    const [partners, setPartners] = useState<{show:boolean, data:string}[]>([])
     const [alias, setAlias] = useState("")
     const [myPubKey, setMyPubKey] = useState("")
+
+    const partnersRef = useRef(partners);
 
     useEffect(()=>{
     (window as any).fg = props.fg;
@@ -23,10 +25,9 @@ export default function ChatMUIContainer(props:{
     },[])
 
     const closeChat = (index:number) => {
-      setPartners(arr=>{
-        arr = arr.filter((item,idx) => idx !== index);
-        return arr
-      })
+      let tempArray = JSON.parse(JSON.stringify(partners));
+      tempArray[index].show = false;
+      setPartners(tempArray)
     }
 
     return (
@@ -37,8 +38,8 @@ export default function ChatMUIContainer(props:{
                 {
                   partners.map((val,index)=>{
                     return(
-                      <div key={`${val}-${Math.random()}`} >
-                        <ChatMUI fg={props.fg} chat={props.chat} partnerKey={val} />
+                      <div key={`${val}-${Math.random()}`} style={{display : val.show ? "block" : "none"}} >
+                        <ChatMUI fg={props.fg} chat={props.chat} partnerKey={val.data} show={val.show} />
                         <Button onClick={()=>{closeChat(index)}}>Close Chat</Button>
                         <Button onClick={()=>{console.log(partners)}}>Partners</Button>
                       </div>

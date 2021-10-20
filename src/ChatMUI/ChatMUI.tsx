@@ -13,6 +13,7 @@ type ChatMUIProps = {
     partnerKey : string,
     fg : Firegun,
     chat : Chat,
+    show : boolean,
 }
 
 export default function ChatMUI(props:ChatMUIProps) {
@@ -117,6 +118,7 @@ export default function ChatMUI(props:ChatMUIProps) {
             direction="column"
             height="100%"
             spacing={2}
+            display={props.show ? "block" : "none"}
             >
                 <Grid item height='10%' textAlign="center" fontWeight="bold">
                     <Typography>{props.partnerKey.slice(0,8)}</Typography>
