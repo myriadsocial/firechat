@@ -147,8 +147,8 @@ export default function ChatMUI(props:ChatMUIProps) {
                     {chatsMessagesDiv}
                     </div>
                 </Grid>
-                <Grid item container>
-                    <Grid item xs={8}>
+                <Grid item container justifyContent="space-between">
+                    <Grid item xs>
                         <TextField
                             fullWidth
                             label="Chat"
@@ -158,7 +158,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                             onKeyPress={(e)=>{if (e.code === "Enter") {sendChat()}}}
                         />
                     </Grid>
-                    <Grid pt={1.5} item xs={4}>
+                    <Grid pt={1.5} item>
                         <Button
                             color="primary"
                             variant="text"

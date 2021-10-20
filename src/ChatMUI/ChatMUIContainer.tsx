@@ -48,11 +48,11 @@ export default function ChatMUIContainer(props:{
         <>
             { (props.fg.user.alias) ? 
               <Container>
-                <Grid container spacing={2}>
-                  <Grid xs={2} sm={4} item>
+                <Grid container spacing={2} textAlign="center">
+                  <Grid xs={12} sm={4} item>
                     <ChatMUIKeyPair addPartnerChat={addPartnerChat} reOpenChat={reOpenChat} myPubKey={myPubKey} setPartners={setPartners} />
                   </Grid>
-                  <Grid xs={10} sm={8} item>
+                  <Grid xs={12} sm={8} item>
                     {chatMUIPlaceHolder}
                   </Grid>
                 </Grid>                

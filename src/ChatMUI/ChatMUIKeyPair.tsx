@@ -28,11 +28,12 @@ export default function ChatMUIKeyPair (props:{
     return (
         <>            
             <Grid mb={3} container direction="column" spacing={2} alignItems="center">
-                <Grid item width="100%" textAlign="center">
+                <Grid item xs textAlign="center">
                     <Typography>My Pairkey: <Button onClick={()=>{navigator.clipboard.writeText(props.myPubKey)}} variant="text">Copy</Button></Typography>
                 </Grid>
                 <Grid item>
-                    <TextField size="small" variant="outlined" value={text} onChange={(e)=>{setText(e.target.value)}} label="Partner Keypair" /> <Button startIcon={<AddCircle />} variant="contained" onClick={addArray}>Chat</Button>
+                    <TextField style={{marginBottom : "10px", marginRight: "10px"}} size="small" variant="outlined" value={text} onChange={(e)=>{setText(e.target.value)}} label="Partner Keypair" />
+                    <Button startIcon={<AddCircle />} variant="contained" onClick={addArray}>Chat</Button>
                 </Grid>
             </Grid>
         </>
