@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export function Login (props:any) {
+export default function Login (props:any) {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

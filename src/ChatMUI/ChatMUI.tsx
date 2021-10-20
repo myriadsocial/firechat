@@ -5,8 +5,8 @@ import Button from '@mui/material/Button'
 import { Send, AttachFile} from '@mui/icons-material'
 import { Divider } from '@mui/material'
 import Gun from 'gun'
-import { Firegun, Chat, common } from './firegun/index'
-import { chatType } from './firegun/common'
+import { Firegun, Chat, common } from '../firegun/index'
+import { chatType } from '../firegun/common'
 
 
 
@@ -16,7 +16,7 @@ type ChatMUIProps = {
     chat : Chat,
 }
 
-export function ChatMUI(props:ChatMUIProps) {
+export default function ChatMUI(props:ChatMUIProps) {
 
     const [textMsg, setTextMsg] = useState("");
     const [chatsMessages, setChatsMessages] = useState<chatType[]>([]);

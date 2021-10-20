@@ -2,7 +2,9 @@
 ✅ SIGNUP
 ✅ Login
 ✅ Memasukkan Fungsi Chat (Note : kirim dulu ke orang, baru ke kita)
-🟥 Illusion of low latency
+✅ Illusion of low latency
+🟥 Avatar Random
+🟥 Avatar Choose
 🟥 Fungsi Friends yg sudah pernah chat dengan kita sebelumnya
 🟥 Pindah Fungsi Process Chat ke dalam chat.tsx
 🟥 Generate Public Cert
