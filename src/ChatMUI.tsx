@@ -5,33 +5,15 @@ import Button from '@mui/material/Button'
 import { Send, AttachFile} from '@mui/icons-material'
 import { Divider } from '@mui/material'
 import Gun from 'gun'
-import { Firegun, Chat } from './firegun/index'
+import { Firegun, Chat, common } from './firegun/index'
+import { chatType } from './firegun/common'
+
+
 
 type ChatMUIProps = {
     partnerKey : string,
     fg : Firegun,
     chat : Chat,
-}
-
-type chatType = {
-    _self : boolean, 
-    msg : string, 
-    timestamp: string,
-}
-
-function dynamicSort(property:string) {
-    var sortOrder = 1;
-    if(property[0] === "-") {
-        sortOrder = -1;
-        property = property.substr(1);
-    }
-    return function (a:any,b:any) {
-        /* next line works with strings and numbers, 
-         * and you may want to customize it to your needs
-         */
-        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-        return result * sortOrder;
-    }
 }
 
 export function ChatMUI(props:ChatMUIProps) {
@@ -40,10 +22,9 @@ export function ChatMUI(props:ChatMUIProps) {
     const [chatsMessages, setChatsMessages] = useState<chatType[]>([]);
     const [chatsMessagesDiv, setChatsMessagesDiv] = useState<JSX.Element>(<></>);
 
-    var 
-        yourPub : string,
-        yourEpub : string,
-        yourCert:string;
+    const yourPub = useRef("");
+    const yourEpub = useRef("");
+    const yourCert = useRef("");
 
     useEffect(()=>{
         // INIT FIRST TIME ONLY
@@ -53,14 +34,13 @@ export function ChatMUI(props:ChatMUIProps) {
             keys = props.partnerKey.split("&")
             props.chat.getCert(keys[0])
             .then(cert=>{
-                yourCert = cert?.toString() || "";
-                console.log (yourCert);
+                yourCert.current = cert?.toString() || "";
             })
-            yourPub = keys[0];
-            yourEpub = keys[1];
+            yourPub.current = keys[0];
+            yourEpub.current = keys[1];
 
-            let dateNow = getDate()
-            props.fg.gun.user().get("chat-with").get(yourPub).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+            let dateNow = common.getDate()
+            props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                 if (s) {
                     // console.log (s);
                     processChat(s,keys);
@@ -113,7 +93,7 @@ export function ChatMUI(props:ChatMUIProps) {
                 return obj.timestamp !== 'sending...';
             });
             chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
-            chatsTemp.sort(dynamicSort("timestamp"));
+            chatsTemp.sort(common.dynamicSort("timestamp"));
 
             chatsTemp = chatsTemp.filter((thing, index, self) =>
                 index === self.findIndex((t) => (
@@ -125,18 +105,10 @@ export function ChatMUI(props:ChatMUIProps) {
         })
     }
 
-    const getDate = () => {
-        let currentdate = new Date(); 
-        let year = currentdate.getFullYear();
-        let month  = ((currentdate.getMonth()+1) < 10) ? "0" + (currentdate.getMonth()+1) : (currentdate.getMonth()+1);
-        let date = (currentdate.getDate() < 10) ? "0" + (currentdate.getDate()) : (currentdate.getDate());
-        let hour = (currentdate.getHours() < 10) ? "0" + (currentdate.getHours()) : (currentdate.getHours());
-        let minutes = (currentdate.getMinutes() < 10) ? "0" + (currentdate.getMinutes()) : (currentdate.getMinutes());
-        let seconds = (currentdate.getSeconds() < 10) ? "0" + (currentdate.getSeconds()) : (currentdate.getSeconds());
-        let miliseconds = (currentdate.getMilliseconds() < 10) ? "0" + (currentdate.getMilliseconds()) : (currentdate.getMilliseconds());
-        return ( {year : year, month : month, date : date, hour : hour, minutes : minutes, seconds : seconds, miliseconds : miliseconds} )
+    const sendChat = () => {
+        props.chat.send({pub : yourPub.current, epub: yourEpub.current},textMsg);
     }
-    
+
     return (
         <>
             <Grid
@@ -172,6 +144,7 @@ export function ChatMUI(props:ChatMUIProps) {
                             color="primary"
                             variant="contained"
                             endIcon={<Send />}
+                            onClick={sendChat}
                         >
                             Send
                         </Button>
