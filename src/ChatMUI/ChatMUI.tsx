@@ -121,16 +121,25 @@ export default function ChatMUI(props:ChatMUIProps) {
             spacing={2}
             display={props.show ? "block" : "none"}
             >
-                <Grid item textAlign="center" fontWeight="bold">
-                    <Typography>
-                        {props.partnerKey.slice(0,8)}
+                <Grid container item textAlign="center" fontWeight="bold"  justifyContent="space-between">
+                    <Grid item style={{marginRight : "auto"}}>
+
+                    </Grid>
+                    <Grid item xs>
+                        <Typography pt={1}>
+                            {props.partnerKey.slice(0,8)}
+                        </Typography>
+                    </Grid>
+                    <Grid item>
                         <IconButton color="error" onClick={()=>{
                             let elem = document.getElementById(`chatmui-${props.partnerKey}`);
                             if ( elem !== null) {
                                 elem.style.display = 'none'
                             }
                         }}><Close /></IconButton>
-                    </Typography>
+                    </Grid>
+                </Grid>
+                <Grid>
                     <Divider />
                 </Grid>
                 <Grid item height={props.height} style={{overflowY : "scroll"}} id={`chatbox-${props.partnerKey.slice(0,8)}`}>
