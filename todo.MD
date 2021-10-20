@@ -1,7 +1,8 @@
 # CHAT MUI
 ✅ SIGNUP
 ✅ Login
-🟥 Memasukkan Fungsi Chat (Note : kirim dulu ke orang, baru ke kota)
+✅ Memasukkan Fungsi Chat (Note : kirim dulu ke orang, baru ke kita)
+🟥 Illusion of low latency
 🟥 Fungsi Friends yg sudah pernah chat dengan kita sebelumnya
 🟥 Pindah Fungsi Process Chat ke dalam chat.tsx
 🟥 Generate Public Cert

@@ -52,6 +52,13 @@ export function ChatMUI(props:ChatMUIProps) {
     },[])
 
     useEffect(()=>{
+        // Scroll to end
+        var objDiv = document.getElementById(`chatbox-${props.partnerKey.slice(0,8)}`);
+        if (objDiv) 
+            objDiv.scrollTop = objDiv.scrollHeight;
+    },[chatsMessagesDiv])
+    
+    useEffect(()=>{
         // UpdateChatDiv
         setChatsMessagesDiv(
             <>
@@ -71,10 +78,6 @@ export function ChatMUI(props:ChatMUIProps) {
                 }
             </>
         )
-        // Scroll to end
-        var objDiv = document.getElementById(`chatbox-${props.partnerKey.slice(0,8)}`);
-        if (objDiv) 
-            objDiv.scrollTop = objDiv.scrollHeight;    
     },[chatsMessages])
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
@@ -105,8 +108,16 @@ export function ChatMUI(props:ChatMUIProps) {
         })
     }
 
-    const sendChat = () => {
-        props.chat.send({pub : yourPub.current, epub: yourEpub.current},textMsg);
+    const sendChat = async () => {
+
+        setTextMsg("");
+        console.log ("Sending Chat...")
+
+        processChat({_self : true, msg: textMsg, timestamp : "sending..."},[yourPub.current,yourEpub.current])
+
+        await props.chat.send({pub : yourPub.current, epub: yourEpub.current},textMsg,yourCert.current);
+        console.log ("Sending Chat... Success")
+
     }
 
     return (
@@ -132,6 +143,7 @@ export function ChatMUI(props:ChatMUIProps) {
                             variant="standard"
                             value={textMsg}
                             onChange={(e)=>{setTextMsg(e.target.value)}}                          
+                            onKeyPress={(e)=>{if (e.code === "Enter") {sendChat()}}}
                         />
                     </Grid>
                     <Grid pt={1.5} item xs={4}>
