@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@mui/material/Button'
-import { Send, AttachFile, Close} from '@mui/icons-material'
+import { Send, AttachFile, Close, FiveMpOutlined} from '@mui/icons-material'
 import { Divider, Hidden, IconButton, Typography } from '@mui/material'
 import { Firegun, Chat, common } from '../firegun/index'
 import { chatType } from '../firegun/common'
@@ -116,8 +116,17 @@ export default function ChatMUI(props:ChatMUIProps) {
         function getBase64(file:any) {
             var reader = new FileReader();
             reader.readAsDataURL(file);
+            let fileInfo = {
+                name : file.name,
+                size : file.size,
+                type : file.type,                
+            }
             reader.onload = function () {
-              console.log(reader.result);
+                let data = {
+                    info : fileInfo,
+                    content : reader.result,
+                }
+                setTextMsg(JSON.stringify(data));
             };
             reader.onerror = function (error) {
               console.log('Error: ', error);
