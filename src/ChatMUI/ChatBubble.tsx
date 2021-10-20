@@ -9,10 +9,12 @@ const useStyles = makeStyles({
         width : "300px",
         marginBottom : "20px",
         "&.self" : {
+            textAlign : "left",
             backgroundColor : "darkcyan",
-            color : `#fff`,    
+            color : `#fff`,            
         },
         "&.notself" : {
+            textAlign : "right",
             backgroundColor : "whitesmoke",
             marginLeft : "auto",
             color : `dark`,
