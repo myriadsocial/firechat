@@ -3,6 +3,7 @@
 ✅ Login
 ✅ Memasukkan Fungsi Chat (Note : kirim dulu ke orang, baru ke kita)
 ✅ Illusion of low latency
+🟥 Tanggal / History Chat
 🟥 Rapikan Style Chat
 🟥 Avatar Random
 🟥 Avatar Choose
