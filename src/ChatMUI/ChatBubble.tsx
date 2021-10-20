@@ -1,5 +1,7 @@
-import { autocompleteClasses, Paper, Typography } from "@mui/material";
+import { Button, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useState } from "react";
+import download from "downloadjs"
 
 const useStyles = makeStyles({
 
@@ -11,7 +13,7 @@ const useStyles = makeStyles({
         "&.self" : {
             textAlign : "left",
             backgroundColor : "darkcyan",
-            color : `#fff`,            
+            color : `#fff`,
         },
         "&.notself" : {
             textAlign : "right",
@@ -30,13 +32,21 @@ export default function ChatBubble(
     }
 ) {
 
+    const [text,setText] = useState("");
+
+    const ParseText = () => {
+        if (props.text.indexOf(";base64,")>=0) {
+            return (<Typography variant="body2"><Button variant="contained" color="warning" onClick={()=>{download(props.text)}}>Download</Button></Typography>)
+        } else {
+            return (<Typography variant="body2">{props.text}</Typography>)
+        }
+    }
+
     const classes = useStyles();
     return (
         <>
-            <Paper className={`${classes.card} ${(props.self ? "self" : "notself")}`} elevation={4}>
-                <Typography variant="body2">
-                    {props.text}
-                </Typography>
+            <Paper className={`${classes.card} ${(props.self ? "self" : "notself")}`} elevation={4}>                
+                <ParseText />
                 <Typography variant="caption">
                     {props.timestamp}
                 </Typography>

@@ -14,6 +14,7 @@
     "@mui/styles": "^5.0.1",
     "buffer": "^6.0.3",
     "dotenv": "^10.0.0",
+    "downloadjs": "^1.4.7",
     "gun": "^0.2020.1235",
     "iris-lib": "0.0.159",
     "react": "^17.0.0",
@@ -22,6 +23,7 @@
     "sass": "^1.43.2"
   },
   "devDependencies": {
+    "@types/downloadjs": "^1.4.2",
     "@types/node": "^16.11.1",
     "@types/react": "^17.0.30",
     "@types/react-dom": "^17.0.0",

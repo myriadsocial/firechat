@@ -112,6 +112,22 @@ export default function ChatMUI(props:ChatMUIProps) {
 
     }
 
+    const attachFile = async () => {
+        function getBase64(file:any) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+              console.log(reader.result);
+            };
+            reader.onerror = function (error) {
+              console.log('Error: ', error);
+            };
+         }
+         
+         let file:any = (document.getElementById(`file-${props.partnerKey.slice(0,8)}`) as any).files[0];
+         getBase64(file);
+    }
+
     return (
         <>
             <Grid
@@ -159,9 +175,11 @@ export default function ChatMUI(props:ChatMUIProps) {
                         />
                     </Grid>
                     <Grid pt={1.5} item>
+                        <input type="file" id={`file-${props.partnerKey.slice(0,8)}`} />
                         <Button
                             color="primary"
                             variant="text"
+                            onClick={attachFile}
                             endIcon={<AttachFile />}
                         ></Button>
                         <Button
