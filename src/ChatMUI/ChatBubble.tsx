@@ -48,11 +48,13 @@ export default function ChatBubble(
                 }
                 return (
                     <div>
-                        <Typography sx={{fontFamily : 'Monospace'}} variant="body2">File &nbsp;&nbsp;: {data.info.name}</Typography>
-                        <Typography sx={{fontFamily : 'Monospace'}} variant="body2">Ukuran&nbsp;: {data.info.size}</Typography>
-                        <Typography sx={{fontFamily : 'Monospace'}} variant="body2">Type&nbsp;&nbsp;&nbsp;: {data.info.type}</Typography>
-                        {(data.info.type === "image/png") ? <div><img style={{maxWidth:"50%"}} src={data.content} /></div> : ""}
-                        {(data.info.type === "image/jpg") ? <div><img style={{maxWidth:"50%"}} src={data.content} /></div> : ""}
+                        <Typography sx={{fontFamily : 'Monospace'}} variant="body2">{data.info.name}</Typography>
+                        <Typography sx={{fontFamily : 'Monospace'}} variant="body2">{Math.round(data.info.size / 1000000 * 100) / 100} MB</Typography>
+                        {
+                            (data.info.type === "image/png") ||
+                            (data.info.type === "image/jpg") ||
+                            (data.info.type === "image/jpeg")
+                            ? <div><img style={{maxWidth:"50%"}} src={data.content} /></div> : ""}
                         <Button style={{margin : "10px"}} variant="contained" color="warning" onClick={()=>{download(data.content,data.info.name,data.info.type)}}>Download</Button>
                     </div>                    
                 )
