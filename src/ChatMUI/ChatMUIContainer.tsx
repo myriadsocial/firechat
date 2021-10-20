@@ -1,7 +1,7 @@
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import { useEffect, useRef, useState } from "react"
-import { Firegun, Chat } from "../firegun/index"
+import { Firegun, Chat } from "@yokowasis/firegun"
 import ChatMUI from "./ChatMUI"
 import ChatMUIKeyPair from "./ChatMUIKeyPair"
 import Login from "./ChatMUILogin"

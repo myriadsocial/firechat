@@ -10,8 +10,8 @@ import FiveMpOutlined from '@mui/icons-material/FiveMpOutlined'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import { Firegun, Chat, common } from '../firegun/index'
-import { chatType } from '../firegun/common'
+import { Firegun, Chat, common } from '@yokowasis/firegun'
+import { chatType } from '@yokowasis/firegun/common'
 import ChatBubble from "./ChatBubble"
 
 type ChatMUIProps = {

@@ -8,7 +8,7 @@ import {
   HashRouter,
 } from "react-router-dom";
 
-import { Gun, Firegun, Chat as ChatFG } from './firegun/index'
+import { Gun, Firegun, Chat as ChatFG } from '@yokowasis/firegun'
 import { useEffect, useState } from 'react';
 import ChatMUIContainer from './ChatMUI/ChatMUIContainer';
 
