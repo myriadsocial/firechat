@@ -7,40 +7,48 @@ import {
   Link,
   HashRouter,
 } from "react-router-dom";
-import { ChatMUI } from './ChatMUI';
 
-import { Firegun, Chat as ChatFG } from './firegun/firegun'
+import { Gun, Firegun, Chat as ChatFG } from './firegun/index'
+import { useEffect, useState } from 'react';
+import ChatMUIContainer from './ChatMUI/ChatMUIContainer';
 
-const fg = new Firegun([
+const peer = [
   "https://gundb.dev.myriad.systems/gun", 
   "https://gun-relay.bimasoft.web.id:16902/gun"
-])
+];
+
+const fg = new Firegun(peer,undefined,true)
 
 const chat = new ChatFG(fg)
+
+if (localStorage.getItem('myPairKey')) {
+  fg.loginPair(JSON.parse(localStorage.getItem('myPairKey') || "{}"))
+  .then((a)=>{
+    console.log(a);
+  })
+}
 
 export default function App() {
   return (
     <HashRouter>
         <Switch>
           <Route path="/chat/:inviteLink">
-            <Chat />
+            <Chat Gun={Gun} gun={fg.gun} inviteLink={undefined}/>
           </Route>
           <Route path="/chat">
-            <Chat />
+            <Chat Gun={Gun} gun={fg.gun} inviteLink={undefined}/>
           </Route>
           <Route path="/chatMUI">
-            <div style={{width : "500px", height:"600px",  margin: "auto"}}>
-              <ChatMUI fg={fg} chat={chat} />
-            </div>
+            <ChatMUIContainer fg={fg} chat={chat} />
           </Route>
           <Route path="/iris">
-            <Iris />
+            {/* <Iris Gun={Gun} gun={fg.gun} /> */}
           </Route>
           <Route path="/">
             <p>Index Page :</p>
             <p><Link to="/chat">Chat</Link></p>
             <p><Link to="/chatMUI">Chat Material UI</Link></p>
-            <p><Link to="/iris">Iris</Link></p>
+            {/* <p><Link to="/iris">Iris</Link></p> */}
           </Route>
         </Switch>
     </HashRouter>

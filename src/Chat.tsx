@@ -1,20 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import './Chat.scss'
 import {Buffer} from 'buffer';
-import Gun from 'gun';
-import 'gun/sea';
-import 'gun/lib/store';
-import 'gun/lib/radix';
-import 'gun/lib/radisk';
-import 'gun/lib/rindexed';
 import { useParams } from 'react-router';
-
-const gun = Gun({
-    peers : [
-        "https://gundb.dev.myriad.systems/gun", 
-        "https://gun-relay.bimasoft.web.id:16902/gun"
-    ],
-    localStorage : false,
-});
 
 const getDate = () => {
     let currentdate = new Date(); 
@@ -44,9 +31,14 @@ function dynamicSort(property:string) {
 }
 
 import { Component } from "react"
+import { IGunChainReference } from 'gun/types/chain';
+import { IGunStatic } from 'gun/types/static';
+import { ClassNames } from '@emotion/react';
 
 type ChatProps = {
+    Gun : IGunStatic,
     inviteLink : string | undefined,
+    gun : IGunChainReference
 }
 type ChatState = {
     myPairKey : {epub : string,pub : string,priv : string,epriv : string},
@@ -68,18 +60,18 @@ type ChatState = {
     inviteLink : string,
 }
 
-export function Chat() {
+export function Chat(props:ChatProps) {
     const { inviteLink } = useParams() as {inviteLink : string};
     return (
         <>
-            <ChatCore inviteLink={inviteLink} />
+            <ChatCore Gun={props.Gun} gun={props.gun} inviteLink={inviteLink} />
         </>
     )
 }
 export class ChatCore extends Component<ChatProps,ChatState> {
     
     constructor (props:ChatProps) {
-        super (props);        
+        super (props);
         this.state = {
             myPairKey : {epub : "",pub : "",priv : "",epriv : ""},
             yourPairKey : {pub : "",epub : ""},
@@ -120,7 +112,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
             // RELOG
             let localPairKey:{epub : string,pub : string,priv : string,epriv : string} = JSON.parse(localKey);
             let localPubKey = `${localPairKey.pub}&${localPairKey.epub}`;
-            gun.user().auth(localPairKey as CryptoKeyPair);
+            this.props.gun.user().auth(localPairKey as CryptoKeyPair);
             console.log (localPairKey)
             this.setState({
                 myPairKey : localPairKey,
@@ -135,7 +127,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                         partnerKey : partnerKey,
                         inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString("base64")}`,
                     },this.partnerkeychanged)
-                    gun.get(partnerKey).get("invitelink").put(localPubKey as any);
+                    this.props.gun.get(partnerKey).get("invitelink").put(localPubKey as any);
                 } else {
                     this.setState({
                         inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString("base64")}`
@@ -185,8 +177,8 @@ export class ChatCore extends Component<ChatProps,ChatState> {
     async send (textMsg:string, callback:()=>void) {
         let msgToHim, msgToMe;
         if (this.state.yourPairKey.epub) {
-            msgToHim = await Gun.SEA.encrypt(textMsg,await (Gun as any).SEA.secret(this.state.yourPairKey.epub, this.state.myPairKey));
-            msgToMe = await Gun.SEA.encrypt(textMsg,this.state.myPairKey);
+            msgToHim = await this.props.Gun.SEA.encrypt(textMsg,await (this.props.Gun as any).SEA.secret(this.state.yourPairKey.epub, this.state.myPairKey));
+            msgToMe = await this.props.Gun.SEA.encrypt(textMsg,this.state.myPairKey);
         } else {
             msgToHim = textMsg
         }
@@ -197,8 +189,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
         let datetime = `${dateNow.year}/${dateNow.month}/${dateNow.date}T${dateNow.hour}:${dateNow.minutes}:${dateNow.seconds}.${dateNow.miliseconds}`;
 
         console.log ("Send to Him ...")
-        console.log (`gun.get("~${this.state.yourPairKey.pub}").get("chat-with").get("${this.state.myPairKey.pub}").get("${dateNow.year}").get("${dateNow.month}").get("${dateNow.date}")`);
-        gun.get(`~${this.state.yourPairKey.pub}`).get("chat-with").get(this.state.myPairKey.pub).get(dateNow.year).get(dateNow.month).get(dateNow.date).set({
+        this.props.gun.get(`~${this.state.yourPairKey.pub}`).get("chat-with").get(this.state.myPairKey.pub).get(dateNow.year).get(dateNow.month).get(dateNow.date).set({
             "_self" : false,
             "timestamp" : datetime, 
             "msg" : msgToHim, 
@@ -216,7 +207,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
         })
 
         console.log ("Send to Me ...")
-        gun.user().get("chat-with").get(this.state.yourPairKey.pub).get(dateNow.year).get(dateNow.month).get(dateNow.date).set({
+        this.props.gun.user().get("chat-with").get(this.state.yourPairKey.pub).get(dateNow.year).get(dateNow.month).get(dateNow.date).set({
             "_self" : true,
             "timestamp" : datetime, 
             "msg" : msgToMe, 
@@ -231,14 +222,14 @@ export class ChatCore extends Component<ChatProps,ChatState> {
 
 
     async loginPair() {
-        let pairKey = await Gun.SEA.pair()
+        let pairKey = await this.props.Gun.SEA.pair()
         let localpairkey = {priv : (pairKey?.priv || ""), pub: (pairKey?.pub || ""), epriv : (pairKey?.epriv || ""), epub : (pairKey?.epub || "") };
         let localPubKey = `${pairKey?.pub}&${pairKey?.epub}`;
 
         // Generate Certificate
-        let cert = await (Gun as any).SEA.certify("*", [{ "*" : "chat-with","+" : "*"}], pairKey);
-        gun.user().auth(pairKey as any,()=>{
-            gun.user().get("chat-cert").put(cert,(s=>{
+        let cert = await (this.props.Gun as any).SEA.certify("*", [{ "*" : "chat-with","+" : "*"}], pairKey);
+        this.props.gun.user().auth(pairKey as any,()=>{
+            this.props.gun.user().get("chat-cert").put(cert,(s=>{
                 if (s.err) {
                     console.log ("Error Creating Certificate")
                 } else {
@@ -253,7 +244,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                         keterangan : "Login Berhasil",
                         inviteLinkText : "Invite Link"
                     },()=>{
-                        gun.get(this.state.pairKey).get("invitelink").on(val=>{
+                        this.props.gun.get(this.state.pairKey).get("invitelink").on(val=>{
                             this.setState({
                                 partnerKey : val
                             })
@@ -268,7 +259,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                             partnerKey : partnerKey,
                             inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString('base64')}`,
                         },this.partnerkeychanged)
-                        gun.get(partnerKey).get("invitelink").put(localPubKey as any);
+                        this.props.gun.get(partnerKey).get("invitelink").put(localPubKey as any);
                     } else {
                         this.setState({
                             inviteLinkHref : `./#/chat/${Buffer.from(localPubKey,'ascii').toString('base64')}`,
@@ -309,7 +300,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
             partnerKey : "",
             partnerKeyStateReadOnly : false,
         })
-        gun.get(this.state.pairKey).get("invitelink").put("" as any);
+        this.props.gun.get(this.state.pairKey).get("invitelink").put("" as any);
     }
 
     partnerInputClick() {
@@ -319,14 +310,13 @@ export class ChatCore extends Component<ChatProps,ChatState> {
     async processChat (s:{[x:string] : any},keys:string[]) {
         if ((s.msg as string).search("SEA") === 0)
         if (s._self) {
-            s.msg = await Gun.SEA.decrypt(s.msg, this.state.myPairKey);
+            s.msg = await this.props.Gun.SEA.decrypt(s.msg, this.state.myPairKey);
         } else {
-            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], this.state.myPairKey));
+            s.msg = await this.props.Gun.SEA.decrypt(s.msg, await (this.props.Gun as any).SEA.secret(keys[1], this.state.myPairKey));
         }
 
         let chatsTemp = this.state.chatsMessages;
         chatsTemp = chatsTemp.filter(function( obj ) {
-            console.log (obj);
             return obj.timestamp !== 'sending...';
         });
         chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
@@ -345,7 +335,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
         })
 
         console.log ("Getting Certificate...")
-        gun.get(`~${keys[0]}`).get("chat-cert").once(s=>{
+        this.props.gun.get(`~${keys[0]}`).get("chat-cert").once(s=>{
             if (s) {
                 // Success Init
                 console.log ("Getting Certificate... Success");
@@ -358,7 +348,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                 })
 
                 let dateNow = getDate()
-                console.log (`ON !!! gun.user().get("chat-with").get(${keys[0]}).get(${dateNow.year}).get(${dateNow.month}).get(${dateNow.date})`);
+                console.log (`ON !!! this.props.gun.user().get("chat-with").get(${keys[0]}).get(${dateNow.year}).get(${dateNow.month}).get(${dateNow.date})`);
                 if (!this.state.mapArray.includes(keys[0])) {
                     // NEW Chat New Map
                     let newArray = this.state.mapArray;
@@ -366,14 +356,14 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                     this.setState({
                         mapArray : newArray
                     })
-                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+                    this.props.gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                         if (s) {
                             this.processChat(s,keys);
                         }                        
                     })                    
                 } else {
                     // Resume Chat Don't need Map
-                    gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).once().map().once(async (s)=>{
+                    this.props.gun.user().get("chat-with").get(keys[0]).get(dateNow.year).get(dateNow.month).get(dateNow.date).once().map().once(async (s)=>{
                         if (s) {
                             this.processChat(s,keys);
                         }
@@ -392,7 +382,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
 
     render() {
         return (
-        <>
+        <div className="use-bootstrap">            
             <div className="row mt-3">
                 <div className="col ps-5">
                     <div className="card text-start mb-3">
@@ -437,7 +427,7 @@ export class ChatCore extends Component<ChatProps,ChatState> {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
         )
     }
 }
