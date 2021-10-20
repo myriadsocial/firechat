@@ -7,6 +7,8 @@
 ✅ Generate Public Cert ketika signup
 ✅ Pindah Fungsi Process Chat ke dalam chat.tsx
 ✅ Simpan Alias Ketika Sign UP
+✅ Download File
+🟥 Kirim File, termasuk file.
 🟥 Delete Chat , tambahkan 1 node buat notif, agar partner melakukan force refresh chat
 🟥 Tanggal / History Chat
 🟥 Avatar Random
