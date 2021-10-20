@@ -8,7 +8,8 @@
 ✅ Pindah Fungsi Process Chat ke dalam chat.tsx
 ✅ Simpan Alias Ketika Sign UP
 ✅ Download File
-🟥 Kirim File, termasuk file.
+✅ Kirim File
+🟥 Sembunyikan Chatbox Ketika Klik File
 🟥 Delete Chat , tambahkan 1 node buat notif, agar partner melakukan force refresh chat
 🟥 Tanggal / History Chat
 🟥 Avatar Random

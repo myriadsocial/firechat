@@ -133,8 +133,8 @@ export default function ChatMUI(props:ChatMUIProps) {
             };
          }
          
-         let file:any = (document.getElementById(`file-${props.partnerKey.slice(0,8)}`) as any).files[0];
-         getBase64(file);
+         let file:any = (document.getElementById(`file-${props.partnerKey.slice(0,8)}`) as any)
+         getBase64(file.files[0]);
     }
 
     return (
@@ -184,11 +184,11 @@ export default function ChatMUI(props:ChatMUIProps) {
                         />
                     </Grid>
                     <Grid pt={1.5} item>
-                        <input type="file" id={`file-${props.partnerKey.slice(0,8)}`} />
+                        <input style={{display: "none"}} type="file" id={`file-${props.partnerKey.slice(0,8)}`} onChange={attachFile} />
                         <Button
                             color="primary"
                             variant="text"
-                            onClick={attachFile}
+                            onClick={()=>{(document.getElementById(`file-${props.partnerKey.slice(0,8)}`) as any).click()}}
                             endIcon={<AttachFile />}
                         ></Button>
                         <Button
