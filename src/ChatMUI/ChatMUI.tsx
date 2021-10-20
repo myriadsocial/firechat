@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@mui/material/Button'
 import { Send, AttachFile, Close} from '@mui/icons-material'
-import { Divider, IconButton, Typography } from '@mui/material'
+import { Divider, Hidden, IconButton, Typography } from '@mui/material'
 import { Firegun, Chat, common } from '../firegun/index'
 import { chatType } from '../firegun/common'
 import ChatBubble from "./ChatBubble"
@@ -121,7 +121,7 @@ export default function ChatMUI(props:ChatMUIProps) {
             spacing={2}
             display={props.show ? "block" : "none"}
             >
-                <Grid item height='10%' textAlign="center" fontWeight="bold">
+                <Grid item textAlign="center" fontWeight="bold">
                     <Typography>
                         {props.partnerKey.slice(0,8)}
                         <IconButton color="error" onClick={()=>{
@@ -133,10 +133,12 @@ export default function ChatMUI(props:ChatMUIProps) {
                     </Typography>
                     <Divider />
                 </Grid>
-                <Grid item height='70%' style={{overflowY : "scroll"}} id={`chatbox-${props.partnerKey.slice(0,8)}`}>
+                <Grid item height={props.height} style={{overflowY : "scroll"}} id={`chatbox-${props.partnerKey.slice(0,8)}`}>
+                    <div style={{padding : "5px 20px"}}>
                     {chatsMessagesDiv}
+                    </div>
                 </Grid>
-                <Grid item container height='15%'>
+                <Grid item container>
                     <Grid item xs={8}>
                         <TextField
                             fullWidth

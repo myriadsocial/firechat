@@ -7,7 +7,7 @@ const useStyles = makeStyles({
         padding : "10px",
         maxWidth : "100%",
         width : "300px",
-        marginBottom : "10px",
+        marginBottom : "20px",
         "&.self" : {
             backgroundColor : "darkcyan",
             color : `#fff`,    

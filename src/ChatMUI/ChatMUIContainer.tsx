@@ -39,7 +39,7 @@ export default function ChatMUIContainer(props:{
     const addPartnerChat = (key:string) => {
       setchatMUIPlaceHolder([...chatMUIPlaceHolder, 
         <div className="chatmui" id={`chatmui-${key}`} key={key}>
-          <ChatMUI height="100vh" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
+          <ChatMUI height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
         </div>
       ])
     }
