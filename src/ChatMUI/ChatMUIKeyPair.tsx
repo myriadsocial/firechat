@@ -1,4 +1,4 @@
-import AddCircle from "@mui/icons-material/AddCircle"
+import Avatar from '@mui/material/Avatar';
 import Button from "@mui/material/Button"
 import Grid from "@mui/material/Grid"
 import TextField from "@mui/material/TextField"
@@ -11,7 +11,8 @@ export default function ChatMUIKeyPair (props:{
     myPubKey:string,
     setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>,
     newPartnerKeyPair : string,
-    setNewPartnerKeyPair : React.Dispatch<React.SetStateAction<string>>
+    setNewPartnerKeyPair : React.Dispatch<React.SetStateAction<string>>,
+    alias:string
 }) {
 
     const listPartners = useRef<string[]>([])
@@ -26,7 +27,7 @@ export default function ChatMUIKeyPair (props:{
         let index = listPartners.current.indexOf(props.newPartnerKeyPair);
 
         let keys = props.newPartnerKeyPair.split("&");
-        let alias;
+        let alias:string;
         if (keys.length === 3) {
             alias = keys[2];
         } else {
@@ -47,13 +48,16 @@ export default function ChatMUIKeyPair (props:{
     
     return (
         <>            
-            <Grid mb={3} container direction="column" spacing={2} alignItems="center">
-                <Grid item xs textAlign="center">
-                    <Typography>My Pairkey: <Button onClick={()=>{navigator.clipboard.writeText(props.myPubKey)}} variant="text">Copy</Button></Typography>
+            <Grid mb={3} container direction="column" spacing={2} alignItems="center">                
+                <Grid container direction="row" item textAlign="center" justifyContent="center" alignItems="center">
+                    <Grid xs="auto" item><Avatar alt={props.alias} src={`https://avatars.dicebear.com/api/human/${props.alias}.svg`} /></Grid>
+                    <Grid xs="auto" item container direction="column">
+                        <Grid item><Typography>{props.alias}</Typography></Grid>
+                        <Grid item><Button onClick={()=>{navigator.clipboard.writeText(props.myPubKey)}} variant="text">Copy</Button></Grid>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <TextField id="muiPartnerKeyPair" style={{marginBottom : "10px", marginRight: "10px"}} size="small" variant="outlined" value={props.newPartnerKeyPair} onChange={(e)=>{props.setNewPartnerKeyPair(e.target.value)}} label="Partner Keypair" />
-                </Grid>
+                    <TextField id="muiPartnerKeyPair" size="small" variant="outlined" value={props.newPartnerKeyPair} onChange={(e)=>{props.setNewPartnerKeyPair(e.target.value)}} label="Partner Keypair" />
+                <Grid />
             </Grid>
         </>
     )

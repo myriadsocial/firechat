@@ -44,7 +44,11 @@ export default function ChatMUIContainer(props:{
 
       async function getFriends() {
         let friends = await props.fg.userGet("chat-with");
-        let dataFriends = {};
+        let dataFriends:{[key:string] : {
+          keypair : string,
+          alias : string,
+          lastMsg : string,
+        }} = {};
         for (const pubkey in friends) {
           if (pubkey != "_")
           if (Object.prototype.hasOwnProperty.call(friends, pubkey)) {
@@ -53,8 +57,8 @@ export default function ChatMUIContainer(props:{
             if (data.pub && typeof data.pub === "string")            
             dataFriends[data.pub.slice(0,8)] = {
               keypair : `${data.pub}&${data.epub}`,
-              alias : data.alias,
-              lastMsg : localStorage.getItem(`fg.lastMsg.${data.pub.slice(0,8)}`),
+              alias : data.alias.toString(),
+              lastMsg : localStorage.getItem(`fg.lastMsg.${data.pub.slice(0,8)}`) || "",
             };
           }
         }
@@ -104,6 +108,7 @@ export default function ChatMUIContainer(props:{
                         setPartners={setPartners} 
                         newPartnerKeyPair={newPartnerKeyPair}
                         setNewPartnerKeyPair={setNewPartnerKeyPair}
+                        alias={alias}
                       /></Grid>
                     <Grid item>
                       <Friends
