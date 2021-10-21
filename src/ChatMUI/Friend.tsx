@@ -10,14 +10,7 @@ export default function Friend (props:{
 }) {
 
     const click = () => {
-        let muiNewChat = document.getElementById('muiNewChat');
-
         props.setNewPartnerKeyPair(props.keypair)
-    
-        if (muiNewChat) {
-            muiNewChat.click();            
-        }
-
     }
 
     return (

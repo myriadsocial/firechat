@@ -7,7 +7,6 @@ import ChatMUIKeyPair from "./ChatMUIKeyPair"
 import Login from "./ChatMUILogin"
 import Friends from "./ChatMUIFriends"
 import makeStyles from "@mui/styles/makeStyles";
-import { formGroupClasses } from "@mui/material"
 
 const useStyles = makeStyles({
 
@@ -73,10 +72,10 @@ export default function ChatMUIContainer(props:{
       }
     }
 
-    const addPartnerChat = (key:string) => {
+    const addPartnerChat = (key:string, alias:string) => {
       setchatMUIPlaceHolder([...chatMUIPlaceHolder, 
         <div className={`${classes.chatmui} chatmui show`} id={`chatmui-${key}`} key={key}>
-          <ChatMUI height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
+          <ChatMUI alias={alias} height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
         </div>
       ])
     }

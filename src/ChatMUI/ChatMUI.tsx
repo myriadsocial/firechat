@@ -6,7 +6,6 @@ import Button from '@mui/material/Button'
 import Send from '@mui/icons-material/Send'
 import AttachFile from '@mui/icons-material/AttachFile'
 import Close from '@mui/icons-material/Close'
-import FiveMpOutlined from '@mui/icons-material/FiveMpOutlined'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
@@ -19,7 +18,8 @@ type ChatMUIProps = {
     height : string,
     fg : Firegun,
     chat : Chat,
-    show : boolean,    
+    show : boolean,
+    alias : string,
 }
 
 export default function ChatMUI(props:ChatMUIProps) {
@@ -153,11 +153,11 @@ export default function ChatMUI(props:ChatMUIProps) {
             >
                 <Grid container item textAlign="center" fontWeight="bold"  justifyContent="space-between">
                     <Grid item style={{marginRight : "auto"}}>
-
+                        {/* Chat Date History */}
                     </Grid>
                     <Grid item xs>
                         <Typography pt={1}>
-                            {props.partnerKey.slice(0,8)}
+                            {props.alias}
                         </Typography>
                     </Grid>
                     <Grid item>

@@ -13,7 +13,7 @@ export default function ChatMUIFriends (
     return (
         <>
             {props.friends.map((val,index)=>
-                <Friend key={index} setNewPartnerKeyPair={props.setNewPartnerKeyPair} alias={val.alias} lastMsg={val.lastMsg} keypair={val.keypair} />
+            <Friend key={index} setNewPartnerKeyPair={props.setNewPartnerKeyPair} alias={val.alias} lastMsg={val.lastMsg} keypair={`${val.keypair}&${val.alias}`} />
             )}
         </>
     )

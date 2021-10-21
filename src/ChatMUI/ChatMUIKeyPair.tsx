@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
     reOpenChat : (key:string) => void,
-    addPartnerChat : (key:string) => void,
+    addPartnerChat : (key:string, alias:string) => void,
     myPubKey:string,
     setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>,
     newPartnerKeyPair : string,
@@ -25,10 +25,18 @@ export default function ChatMUIKeyPair (props:{
 
         let index = listPartners.current.indexOf(props.newPartnerKeyPair);
 
+        let keys = props.newPartnerKeyPair.split("&");
+        let alias;
+        if (keys.length === 3) {
+            alias = keys[2];
+        } else {
+            alias = props.newPartnerKeyPair.slice(0,8);
+        }
+
         if (index>=0) {
             props.reOpenChat(props.newPartnerKeyPair)
         } else {
-            props.addPartnerChat(props.newPartnerKeyPair)
+            props.addPartnerChat(props.newPartnerKeyPair,alias)
             listPartners.current.push(props.newPartnerKeyPair);    
         }
     }
