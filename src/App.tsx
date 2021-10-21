@@ -21,13 +21,6 @@ const fg = new Firegun(peer,undefined,true)
 
 const chat = new ChatFG(fg)
 
-if (localStorage.getItem('myPairKey')) {
-  fg.loginPair(JSON.parse(localStorage.getItem('myPairKey') || "{}"))
-  .then((a)=>{
-    console.log(a);
-  })
-}
-
 export default function App() {
   return (
     <HashRouter>
