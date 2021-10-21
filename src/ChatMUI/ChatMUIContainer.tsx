@@ -39,31 +39,31 @@ export default function ChatMUIContainer(props:{
     >({})
     const classes = useStyles();
 
+    const getFriends = async () => {
+      let friends = await props.fg.userGet("chat-with");
+      let dataFriends:{[key:string] : {
+        keypair : string,
+        alias : string,
+        lastMsg : string,
+      }} = {};
+      for (const pubkey in friends) {
+        if (pubkey != "_")
+        if (Object.prototype.hasOwnProperty.call(friends, pubkey)) {
+          const data = await props.fg.Get(`~${pubkey}`);
+          if (typeof data === "object")
+          if (data.pub && typeof data.pub === "string")            
+          dataFriends[data.pub.slice(0,8)] = {
+            keypair : `${data.pub}&${data.epub}`,
+            alias : data.alias.toString(),
+            lastMsg : localStorage.getItem(`fg.lastMsg.${data.pub.slice(0,8)}`) || "",
+          };
+        }
+      }
+      setFriends(dataFriends);
+    }
+
     useEffect(()=>{
       (window as any).fg = props.fg;
-
-      async function getFriends() {
-        let friends = await props.fg.userGet("chat-with");
-        let dataFriends:{[key:string] : {
-          keypair : string,
-          alias : string,
-          lastMsg : string,
-        }} = {};
-        for (const pubkey in friends) {
-          if (pubkey != "_")
-          if (Object.prototype.hasOwnProperty.call(friends, pubkey)) {
-            const data = await props.fg.Get(`~${pubkey}`);
-            if (typeof data === "object")
-            if (data.pub && typeof data.pub === "string")            
-            dataFriends[data.pub.slice(0,8)] = {
-              keypair : `${data.pub}&${data.epub}`,
-              alias : data.alias.toString(),
-              lastMsg : localStorage.getItem(`fg.lastMsg.${data.pub.slice(0,8)}`) || "",
-            };
-          }
-        }
-        setFriends(dataFriends);
-      }
 
       if (props.fg.user) {
           // AutoLogin
@@ -82,8 +82,13 @@ export default function ChatMUIContainer(props:{
 
     const updateLastMsg = (key:string,lastMsg:string) => {
         let arr = { ...friends }
-        arr[key].lastMsg = lastMsg;
-        setFriends(arr);
+        if (arr && arr[key]) {
+          arr[key].lastMsg = lastMsg;
+          setFriends(arr);  
+        } else {
+          // Belum terdaftar sebagai friends di sidebar, add dulu
+          getFriends();
+        }
     }
 
     const addPartnerChat = (key:string, alias:string) => {
