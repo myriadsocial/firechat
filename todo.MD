@@ -9,14 +9,14 @@
 ✅ Simpan Alias Ketika Sign UP
 ✅ Download File
 ✅ Kirim File
-🟥 LastMsg.
-🟥 Tambahkan box chat default yg isinya keterangan belum ada chat. 
+✅ LastMsg.
+✅ Tambahkan box chat default yg isinya keterangan belum ada chat. 
+✅ Fungsi Friends yg sudah pernah chat dengan kita sebelumnya
 🟥 Sembunyikan Chatbox Ketika Klik File
 🟥 Delete Chat , tambahkan 1 node buat notif, agar partner melakukan force refresh chat
 🟥 Tanggal / History Chat
 🟥 Avatar Random
 🟥 Avatar Choose
-🟥 Fungsi Friends yg sudah pernah chat dengan kita sebelumnya
 🟥 Unsend
 🟥 Edit
 🟥 Logout
@@ -24,7 +24,7 @@
 🟥 Cek Kemungkinan simpan past chat di Localstorage / Indexed DB, biar tidak terlalu lama loading.
 🟥 Get Partner Alias Instead of Pubkey
 🟥 Refactor Firechat Biar Lebih Rapi
-🟥 Tambahkan fungsi untuk refresh chat, gunakan once, karena sudah ada fungsi dari map sebelumnya, biar tidak double map
+🟥 Tambahkan fungsi untuk refresh chat, gunakan once, karena sudah ada fungsi dari map sebelumnya, biar tidak double map (untuk fungsi delete, dan unsend)
 
 🐢 Group Chat
 ✅ Auto Pair ketika invite link di buka
