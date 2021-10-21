@@ -3,30 +3,39 @@ import Button from "@mui/material/Button"
 import Grid from "@mui/material/Grid"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export default function ChatMUIKeyPair (props:{
     reOpenChat : (key:string) => void,
     addPartnerChat : (key:string) => void,
     myPubKey:string,
-    setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>
+    setPartners: React.Dispatch<React.SetStateAction<{show:boolean, data:string}[]>>,
+    newPartnerKeyPair : string,
+    setNewPartnerKeyPair : React.Dispatch<React.SetStateAction<string>>
 }) {
-
-    const [text,setText] = useState("")
 
     const listPartners = useRef<string[]>([])
 
     const addArray = () => {
 
-        let index = listPartners.current.indexOf(text);
+        let chatmui = document.getElementsByClassName('chatmui show');
+        for (let i = 0; i < chatmui.length; i++) {
+            chatmui[i].classList.remove('show');
+        }
+
+        let index = listPartners.current.indexOf(props.newPartnerKeyPair);
 
         if (index>=0) {
-            props.reOpenChat(text)
+            props.reOpenChat(props.newPartnerKeyPair)
         } else {
-            props.addPartnerChat(text)
-            listPartners.current.push(text);    
+            props.addPartnerChat(props.newPartnerKeyPair)
+            listPartners.current.push(props.newPartnerKeyPair);    
         }
     }
+
+    useEffect(()=>{
+        addArray()
+    },[props.newPartnerKeyPair])
     
     return (
         <>            
@@ -35,8 +44,7 @@ export default function ChatMUIKeyPair (props:{
                     <Typography>My Pairkey: <Button onClick={()=>{navigator.clipboard.writeText(props.myPubKey)}} variant="text">Copy</Button></Typography>
                 </Grid>
                 <Grid item>
-                    <TextField style={{marginBottom : "10px", marginRight: "10px"}} size="small" variant="outlined" value={text} onChange={(e)=>{setText(e.target.value)}} label="Partner Keypair" />
-                    <Button startIcon={<AddCircle />} variant="contained" onClick={addArray}>Chat</Button>
+                    <TextField id="muiPartnerKeyPair" style={{marginBottom : "10px", marginRight: "10px"}} size="small" variant="outlined" value={props.newPartnerKeyPair} onChange={(e)=>{props.setNewPartnerKeyPair(e.target.value)}} label="Partner Keypair" />
                 </Grid>
             </Grid>
         </>
