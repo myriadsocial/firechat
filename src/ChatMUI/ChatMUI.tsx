@@ -20,6 +20,7 @@ type ChatMUIProps = {
     chat : Chat,
     show : boolean,
     alias : string,
+    updateLastMsg : (key:string,lastMsg:string) => void,
 }
 
 export default function ChatMUI(props:ChatMUIProps) {
@@ -27,6 +28,7 @@ export default function ChatMUI(props:ChatMUIProps) {
     const [textMsg, setTextMsg] = useState("");
     const [chatsMessages, setChatsMessages] = useState<chatType[]>([]);
     const [chatsMessagesDiv, setChatsMessagesDiv] = useState<JSX.Element>(<></>);
+    const [first, setFirst] = useState(true);
 
     const yourPub = useRef("");
     const yourEpub = useRef("");
@@ -48,7 +50,6 @@ export default function ChatMUI(props:ChatMUIProps) {
             let dateNow = common.getDate()
             props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                 if (s) {
-                    // console.log (s);
                     processChat(s,keys);
                 }                        
             })
@@ -66,6 +67,13 @@ export default function ChatMUI(props:ChatMUIProps) {
     
     useEffect(()=>{
         // UpdateChatDiv
+        if (chatsMessages.length) {
+            let lastMsg = chatsMessages[chatsMessages.length-1].msg;
+            if (typeof lastMsg === "string") {            
+                localStorage.setItem(`fg.lastMsg.${props.partnerKey.slice(0,8)}`,`${lastMsg.slice(0,30)}...`);
+                props.updateLastMsg(props.partnerKey.slice(0,8),`${lastMsg.slice(0,12)}...`);
+            }    
+        }
         setChatsMessagesDiv(
             <>
                 {
@@ -78,18 +86,15 @@ export default function ChatMUI(props:ChatMUIProps) {
     },[chatsMessages])
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
-        if (typeof s.msg === "string") {
-            if ((s.msg as string).search("SEA") === 0)
-            if (s._self) {
-                s.msg = await Gun.SEA.decrypt(s.msg, props.fg.user.pair);
-            } else {
-                s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], props.fg.user.pair));
-            }    
+        if ((s.msg as string).search("SEA") === 0)
+        if (s._self) {
+            s.msg = await Gun.SEA.decrypt(s.msg, props.fg.user.pair);
+        } else {
+            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], props.fg.user.pair));
         }
-
+        
         setChatsMessages(chatsMessages=>{
-            let chatsTemp = chatsMessages;
-            chatsTemp = chatsTemp.filter(function( obj ) {
+            let chatsTemp = chatsMessages.filter(function( obj ) {
                 return obj.timestamp !== 'sending...';
             });
             chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
@@ -100,6 +105,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                     t.timestamp === thing.timestamp
                 ))
             )
+        
             // GO To UpdateChatDiv
             return chatsTemp;
         })

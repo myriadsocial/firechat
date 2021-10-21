@@ -28,11 +28,15 @@ export default function ChatMUIContainer(props:{
     const [alias, setAlias] = useState("")
     const [newPartnerKeyPair, setNewPartnerKeyPair] = useState("")
     const [myPubKey, setMyPubKey] = useState("")
-    const [friends, setFriends] = useState<{
-      alias : string,
-      lastMsg : string,
-      keypair : string
-    }[]>([])
+    const [friends, setFriends] = useState<
+      {
+        [key : string] : {
+          alias : string,
+          lastMsg : string,
+          keypair : string    
+        }
+      }
+    >({})
     const classes = useStyles();
 
     useEffect(()=>{
@@ -40,20 +44,20 @@ export default function ChatMUIContainer(props:{
 
       async function getFriends() {
         let friends = await props.fg.userGet("chat-with");
-        let dataFriends = [];
+        let dataFriends = {};
         for (const pubkey in friends) {
           if (pubkey != "_")
           if (Object.prototype.hasOwnProperty.call(friends, pubkey)) {
             const data = await props.fg.Get(`~${pubkey}`);
             if (typeof data === "object")
-            dataFriends.push({
+            if (data.pub && typeof data.pub === "string")            
+            dataFriends[data.pub.slice(0,8)] = {
               keypair : `${data.pub}&${data.epub}`,
               alias : data.alias,
-              lastMsg : "Test....",
-            })
+              lastMsg : localStorage.getItem(`fg.lastMsg.${data.pub.slice(0,8)}`),
+            };
           }
         }
-        console.log (dataFriends);
         setFriends(dataFriends);
       }
 
@@ -72,10 +76,16 @@ export default function ChatMUIContainer(props:{
       }
     }
 
+    const updateLastMsg = (key:string,lastMsg:string) => {
+        let arr = { ...friends }
+        arr[key].lastMsg = lastMsg;
+        setFriends(arr);
+    }
+
     const addPartnerChat = (key:string, alias:string) => {
       setchatMUIPlaceHolder([...chatMUIPlaceHolder, 
         <div className={`${classes.chatmui} chatmui show`} id={`chatmui-${key}`} key={key}>
-          <ChatMUI alias={alias} height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
+          <ChatMUI updateLastMsg={updateLastMsg} alias={alias} height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
         </div>
       ])
     }
