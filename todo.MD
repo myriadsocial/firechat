@@ -12,6 +12,14 @@
 ✅ LastMsg.
 ✅ Tambahkan box chat default yg isinya keterangan belum ada chat. 
 ✅ Fungsi Friends yg sudah pernah chat dengan kita sebelumnya
+✅ Proses, send, read. Gunakan Waktu sebagai chatID. Gunakan on untuk subscribe kepada sebuah node yg menghandle khusus status read pesan kita. 
+
+Proses nya :
+A ---Pesan---> B -----Update-------> /user(b)/lastread/user(a)/timestamp:string
+A ---subscribe-----> /user(b)/lastread/user(a)
+
+Begitu ada update si A mencari chat yg menggunakan memiliki timestamp yg sama, terus tandai menjadi read. 
+
 🟥 Sembunyikan Chatbox Ketika Klik File
 🟥 Delete Chat , tambahkan 1 node buat notif, agar partner melakukan force refresh chat
 🟥 Tanggal / History Chat
