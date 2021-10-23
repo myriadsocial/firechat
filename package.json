@@ -1,6 +1,6 @@
 {
-  "name": "firechat",
-  "version": "0.0.0",
+  "name": "@yokowasis/firechat",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "devforce": "vite --force",
@@ -22,16 +22,36 @@
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-router-dom": "^5.3.0",
-    "sass": "^1.43.2"
+    "sass": "^1.43.3"
   },
   "devDependencies": {
     "@types/downloadjs": "^1.4.2",
-    "@types/node": "^16.11.1",
-    "@types/react": "^17.0.30",
-    "@types/react-dom": "^17.0.0",
+    "@types/node": "^16.11.4",
+    "@types/react": "^17.0.31",
+    "@types/react-dom": "^17.0.10",
     "@types/react-router-dom": "^5.3.1",
     "@vitejs/plugin-react": "^1.0.5",
     "typescript": "^4.4.4",
     "vite": "^2.6.10"
-  }
+  },
+  "description": "ReactTS Material UI Chat Component",
+  "main": "index.js",
+  "types": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yokowasis/firechat.git"
+  },
+  "keywords": [
+    "chat",
+    "gun",
+    "gundb",
+    "firegun",
+    "firechat"
+  ],
+  "author": "yokowasis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yokowasis/firechat/issues"
+  },
+  "homepage": "https://github.com/yokowasis/firechat#readme"
 }

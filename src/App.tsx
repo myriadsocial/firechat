@@ -1,6 +1,4 @@
 import './App.css';
-import { Chat } from './Chat';
-import { Iris } from './Iris';
 import {
   Switch,
   Route,
@@ -25,23 +23,12 @@ export default function App() {
   return (
     <HashRouter>
         <Switch>
-          <Route path="/chat/:inviteLink">
-            <Chat Gun={Gun} gun={fg.gun} inviteLink={undefined}/>
-          </Route>
-          <Route path="/chat">
-            <Chat Gun={Gun} gun={fg.gun} inviteLink={undefined}/>
-          </Route>
           <Route path="/chatMUI">
             <ChatMUIContainer fg={fg} chat={chat} />
           </Route>
-          <Route path="/iris">
-            {/* <Iris Gun={Gun} gun={fg.gun} /> */}
-          </Route>
           <Route path="/">
             <p>Index Page :</p>
-            <p><Link to="/chat">Chat</Link></p>
             <p><Link to="/chatMUI">Chat Material UI</Link></p>
-            {/* <p><Link to="/iris">Iris</Link></p> */}
           </Route>
         </Switch>
     </HashRouter>
