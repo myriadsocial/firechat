@@ -1,0 +1,1 @@
+rm index.js;rm src/Chat/*.js;tsc index.tsx src/Chat/*.tsx --jsx react-jsx --esModuleInterop --lib "dom,dom.iterable,esnext"
