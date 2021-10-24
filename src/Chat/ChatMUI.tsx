@@ -190,8 +190,8 @@ export default function ChatMUI(props:ChatMUIProps) {
                             label="Chat"
                             variant="standard"
                             value={textMsg}
-                            onChange={(e)=>{setTextMsg(e.target.value)}}                          
-                            onKeyPress={(e)=>{if (e.code === "Enter") {sendChat()}}}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{ setTextMsg( e.target.value )}}
+                            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>)=>{if (e.code === "Enter") {sendChat()}}}
                         />
                     </Grid>
                     <Grid pt={1.5} item>

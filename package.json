@@ -1,42 +1,7 @@
 {
   "name": "@yokowasis/firechat",
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "vite",
-    "devforce": "vite --force",
-    "build": "tsc && vite build",
-    "serve": "vite preview"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.5.0",
-    "@emotion/styled": "^11.3.0",
-    "@mui/icons-material": "^5.0.4",
-    "@mui/material": "^5.0.4",
-    "@mui/styles": "^5.0.1",
-    "@yokowasis/firegun": "^1.4.2",
-    "buffer": "^6.0.3",
-    "dotenv": "^10.0.0",
-    "downloadjs": "^1.4.7",
-    "gun": "^0.2020.1235",
-    "iris-lib": "0.0.159",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
-    "react-router-dom": "^5.3.0",
-    "sass": "^1.43.3"
-  },
-  "devDependencies": {
-    "@types/downloadjs": "^1.4.2",
-    "@types/node": "^16.11.4",
-    "@types/react": "^17.0.31",
-    "@types/react-dom": "^17.0.10",
-    "@types/react-router-dom": "^5.3.1",
-    "@vitejs/plugin-react": "^1.0.5",
-    "typescript": "^4.4.4",
-    "vite": "^2.6.10"
-  },
+  "version": "0.2.0",
   "description": "ReactTS Material UI Chat Component",
-  "main": "index.js",
-  "types": "index.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yokowasis/firechat.git"
@@ -53,5 +18,54 @@
   "bugs": {
     "url": "https://github.com/yokowasis/firechat/issues"
   },
-  "homepage": "https://github.com/yokowasis/firechat#readme"
+  "dependencies": {
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.0.4",
+    "@mui/material": "^5.0.4",
+    "@mui/styles": "^5.0.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@yokowasis/firegun": "^1.4.4",
+    "downloadjs": "^1.4.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "main": "index.jsx",
+  "types": "index.tsx",
+  "devDependencies": {
+    "@types/downloadjs": "^1.4.2"
+  }
 }
