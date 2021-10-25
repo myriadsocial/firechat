@@ -2170,9 +2170,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^17.0.0":
-  version "17.0.31"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.31.tgz#fe05ebf91ff3ae35bb6b13f6c1b461db8089dff8"
-  integrity sha512-MQSR5EL4JZtdWRvqDgz9kXhSDDoy2zMTYyg7UhP+FZ5ttUOocWyxiqFJiI57sUG0BtaEX7WDXYQlkCYkb3X9vQ==
+  version "17.0.32"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.32.tgz#89a161286bbe2325d4d516420a27364a324909f4"
+  integrity sha512-hAm1pmwA3oZWbkB985RFwNvBRMG0F3KWSiC4/hNmanigKZMiKQoH5Q6etNw8HIDztTGfvXyOjPvdNnvBUCuaPg==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -2521,7 +2521,7 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@yokowasis/firegun@^1.4.4":
+"@yokowasis/firegun@latest":
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/@yokowasis/firegun/-/firegun-1.4.4.tgz#8c7b9b6222257a13ef7fa6a986237af3a942a074"
   integrity sha512-tLfrBOfyJZ+ezgxqR9bgMieW195oi6iK2WL2Jlrhqcp67nTt2gcNROwtRWpGyyJj0gmYEPvj6xP1guHoM9TlPA==
@@ -9694,7 +9694,7 @@ react-dev-utils@^11.0.3:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
-react-dom@^17.0.2:
+react-dom@latest:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
   integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
@@ -9799,7 +9799,7 @@ react-transition-group@^4.4.2:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^17.0.2:
+react@latest:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
