@@ -20,7 +20,8 @@ const useStyles = makeStyles({
 
 export default function ChatMUIContainer(props:{
     fg : Firegun,
-    chat : Chat
+    chat : Chat,
+    newChat? : string
 }) {
 
     const [partners, setPartners] = useState<{show:boolean, data:string}[]>([])
@@ -71,6 +72,10 @@ export default function ChatMUIContainer(props:{
           setMyPubKey(`${props.fg.user.pair.pub}&${props.fg.user.pair.epub}`)          
           getFriends();
       }
+
+      if (props.newChat) {
+        setNewPartnerKeyPair(props.newChat);
+      }      
     },[])
 
     const reOpenChat = (key:string) => {
