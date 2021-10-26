@@ -42,7 +42,12 @@ export default function ChatMUIContainer(props:{
     const classes = useStyles();
 
     const getFriends = async () => {
-      let friends = await props.fg.userGet("chat-with");
+      let friends
+      try {
+        friends = await props.fg.userGet("chat-with");        
+      } catch (error) {
+        friends = {}        
+      }
       let dataFriends:{[key:string] : {
         keypair : string,
         alias : string,
@@ -51,7 +56,12 @@ export default function ChatMUIContainer(props:{
       for (const pubkey in friends) {
         if (pubkey != "_")
         if (Object.prototype.hasOwnProperty.call(friends, pubkey)) {
-          const data = await props.fg.Get(`~${pubkey}`);
+          let data;
+          try {
+            data = await props.fg.Get(`~${pubkey}`);            
+          } catch (error) {
+            data = {};
+          }
           if (typeof data === "object")
           if (data.pub && typeof data.pub === "string")            
           dataFriends[data.pub.slice(0,8)] = {
