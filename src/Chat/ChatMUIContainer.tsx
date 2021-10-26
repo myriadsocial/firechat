@@ -1,6 +1,6 @@
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { Firegun, Chat } from "@yokowasis/firegun"
 import ChatMUI from "./ChatMUI"
 import ChatMUIKeyPair from "./ChatMUIKeyPair"
@@ -24,7 +24,8 @@ export default function ChatMUIContainer(props:{
     newChat? : string
 }) {
 
-    const [partners, setPartners] = useState<{show:boolean, data:string}[]>([])
+    const partners = useState<{show:boolean, data:string}[]>([])
+    const setPartners = partners[1];
     const [chatMUIPlaceHolder, setchatMUIPlaceHolder] = useState<JSX.Element[]>([])
     const [alias, setAlias] = useState("")
     const [newPartnerKeyPair, setNewPartnerKeyPair] = useState("")

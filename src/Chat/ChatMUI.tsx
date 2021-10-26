@@ -28,7 +28,6 @@ export default function ChatMUI(props:ChatMUIProps) {
     const [textMsg, setTextMsg] = useState("");
     const [chatsMessages, setChatsMessages] = useState<chatType[]>([]);
     const [chatsMessagesDiv, setChatsMessagesDiv] = useState<JSX.Element>(<></>);
-    const [first, setFirst] = useState(true);
 
     const yourPub = useRef("");
     const yourEpub = useRef("");

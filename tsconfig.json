@@ -19,6 +19,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "outDir": "./",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "jsx": "react-jsx"
   },
   "include": [

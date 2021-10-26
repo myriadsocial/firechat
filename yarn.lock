@@ -2521,10 +2521,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@yokowasis/firegun@latest":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@yokowasis/firegun/-/firegun-1.4.4.tgz#8c7b9b6222257a13ef7fa6a986237af3a942a074"
-  integrity sha512-tLfrBOfyJZ+ezgxqR9bgMieW195oi6iK2WL2Jlrhqcp67nTt2gcNROwtRWpGyyJj0gmYEPvj6xP1guHoM9TlPA==
+"@yokowasis/firegun@1.4.10":
+  version "1.4.10"
+  resolved "https://registry.yarnpkg.com/@yokowasis/firegun/-/firegun-1.4.10.tgz#631a6044a7eca2d9c43f5a30ea0e7479d18f2757"
+  integrity sha512-X65+8FRz3FiDXeRmwqa+I6etDZOT3GKPBj4Y9IQykMcZGjBTzlhllSh6r4o1aPMHVuHytzXjLXrpnSc51Ak/fg==
   dependencies:
     gun "^0.2020.1235"
     node-polyfill-webpack-plugin "^1.1.4"

@@ -11,19 +11,22 @@ function App() {
     return ("Hello Smiley 😇")
   }
 
+  console.log (a());
+
   return (
     <div className="App">
       <Chat fg={fg} chat={chat} />
+      <Test />
     </div>
   );
 }
 
-function Test(props:any) {
+function Test() {
   const a = useRef<HTMLInputElement[]>([]);
   const list = [0,1,2,3,4,5]
   const click = () => {
     let i = 3;
-    a.current[3].value = Math.random().toString()
+    a.current[i].value = Math.random().toString()
   }
   return (
     <>

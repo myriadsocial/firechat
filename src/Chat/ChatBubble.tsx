@@ -2,7 +2,6 @@ import Button from "@mui/material/Button"
 import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
 import makeStyles from "@mui/styles/makeStyles";
-import { useState } from "react";
 import download from "downloadjs"
 
 const useStyles = makeStyles({
@@ -33,8 +32,6 @@ export default function ChatBubble(
         timestamp : string,
     }
 ) {
-
-    const [text,setText] = useState("");
 
     const ParseText = () => {
         if (typeof props.text === "object" || props.text.indexOf(";base64,")>=0) {

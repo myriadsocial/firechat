@@ -3,7 +3,7 @@ import Button from "@mui/material/Button"
 import Grid from "@mui/material/Grid"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef} from "react"
 
 export default function ChatMUIKeyPair (props:{
     reOpenChat : (key:string) => void,
