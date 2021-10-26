@@ -53,7 +53,7 @@ export default function ChatMUIKeyPair (props:{
                     <Grid xs="auto" item><Avatar alt={props.alias} src={`https://avatars.dicebear.com/api/human/${props.alias}.svg`} /></Grid>
                     <Grid xs="auto" item container direction="column">
                         <Grid item><Typography>{props.alias}</Typography></Grid>
-                        <Grid item><Button onClick={()=>{navigator.clipboard.writeText(props.myPubKey)}} variant="text">Copy</Button></Grid>
+                        <Grid item><Button onClick={()=>{navigator.clipboard.writeText(`${props.myPubKey}&${props.alias}`)}} variant="text">Copy</Button></Grid>
                     </Grid>
                 </Grid>
                     <TextField id="muiPartnerKeyPair" size="small" variant="outlined" value={props.newPartnerKeyPair} onChange={(e)=>{props.setNewPartnerKeyPair(e.target.value)}} label="Partner Keypair" />

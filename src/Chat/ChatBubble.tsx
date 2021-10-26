@@ -1,3 +1,4 @@
+import { Delete, Undo } from "@mui/icons-material";
 import Button from "@mui/material/Button"
 import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
@@ -30,11 +31,15 @@ export default function ChatBubble(
         self : boolean,
         text : string,
         timestamp : string,
+        chatID : string,
+        deleteChat : (chatID:string, timestamp:string) => void,
+        unsentChat : (chatID:string, timestamp:string) => void,
     }
 ) {
+    const classes = useStyles();
 
     const ParseText = () => {
-        if (typeof props.text === "object" || props.text.indexOf(";base64,")>=0) {
+        if (typeof props.text === "object" || (typeof props.text === "string" && props.text.indexOf(";base64,")>=0)) {
             var data:any;
             try {
 
@@ -64,7 +69,23 @@ export default function ChatBubble(
         }
     }
 
-    const classes = useStyles();
+    const deleteChat = (chatID:string,timestamp:string) => {
+        props.deleteChat (chatID, timestamp);
+    }
+
+    const unsentChat = (chatID:string,timestamp:string) => {
+        props.unsentChat (chatID, timestamp);
+    }
+
+    const Operation = (props:{chatID : string,timestamp:string}) => {
+        return (
+            <Typography variant="body2">
+                <Button onClick={()=>{deleteChat(props.chatID,props.timestamp)}} variant="text" size="small" color="warning" startIcon={<Delete />}>Delete</Button>
+                <Button onClick={()=>{unsentChat(props.chatID,props.timestamp)}} variant="text" size="small" color="warning" startIcon={<Undo />}>Unsent</Button>
+            </Typography>
+        )
+    }
+
     return (
         <>
             <Paper className={`${classes.card} ${(props.self ? "self" : "notself")}`} elevation={4}>                
@@ -72,6 +93,7 @@ export default function ChatBubble(
                 <Typography variant="caption">
                     {props.timestamp}
                 </Typography>
+                <Operation chatID={props.chatID} timestamp={props.timestamp} />
             </Paper>
         </>        
     )

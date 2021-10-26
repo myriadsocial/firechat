@@ -1,4 +1,3 @@
-import Gun from 'gun'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { useEffect, useRef, useState } from 'react'
@@ -32,6 +31,7 @@ export default function ChatMUI(props:ChatMUIProps) {
     const yourPub = useRef("");
     const yourEpub = useRef("");
     const yourCert = useRef("");
+    const chatBubbleRef = useRef<{[x:string] : HTMLDivElement | null}>({})
 
     useEffect(()=>{
         // INIT FIRST TIME ONLY
@@ -77,7 +77,9 @@ export default function ChatMUI(props:ChatMUIProps) {
             <>
                 {
                     chatsMessages.map((val)=>
-                        <ChatBubble self={val._self} key={`${val.timestamp}-${Math.random()}`} text={val.msg} timestamp={val.timestamp} />
+                        <div key={`${val.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[val.id] = el; return chatBubbleRef.current[val.id]}}>
+                            <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                        </div>
                     )
                 }
             </>
@@ -85,29 +87,31 @@ export default function ChatMUI(props:ChatMUIProps) {
     },[chatsMessages])
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
-        if ((s.msg as string).search("SEA") === 0)
-        if (s._self) {
-            s.msg = await Gun.SEA.decrypt(s.msg, props.fg.user.pair);
-        } else {
-            s.msg = await Gun.SEA.decrypt(s.msg, await (Gun as any).SEA.secret(keys[1], props.fg.user.pair));
+        if (s.msg) {
+            if ((s.msg as string).search("SEA") === 0)
+            if (s._self) {
+                s.msg = await props.fg.Gun.SEA.decrypt(s.msg, props.fg.user.pair);
+            } else {
+                s.msg = await props.fg.Gun.SEA.decrypt(s.msg, await (props.fg.Gun as any).SEA.secret(keys[1], props.fg.user.pair));
+            }
+            
+            setChatsMessages(chatsMessages=>{
+                let chatsTemp = chatsMessages.filter(function( obj ) {
+                    return obj.timestamp !== 'sending...';
+                });
+                chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp, id : s.id});
+                chatsTemp.sort(common.dynamicSort("timestamp"));
+    
+                chatsTemp = chatsTemp.filter((thing, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.timestamp === thing.timestamp
+                    ))
+                )
+            
+                // GO To UpdateChatDiv
+                return chatsTemp;
+            })            
         }
-        
-        setChatsMessages(chatsMessages=>{
-            let chatsTemp = chatsMessages.filter(function( obj ) {
-                return obj.timestamp !== 'sending...';
-            });
-            chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp});
-            chatsTemp.sort(common.dynamicSort("timestamp"));
-
-            chatsTemp = chatsTemp.filter((thing, index, self) =>
-                index === self.findIndex((t) => (
-                    t.timestamp === thing.timestamp
-                ))
-            )
-        
-            // GO To UpdateChatDiv
-            return chatsTemp;
-        })
     }
 
     const sendChat = async () => {
@@ -120,6 +124,28 @@ export default function ChatMUI(props:ChatMUIProps) {
         await props.chat.send({pub : yourPub.current, epub: yourEpub.current},textMsg,yourCert.current);
         console.log ("Sending Chat... Success")
 
+    }
+
+    const deleteChat = (chatID:string, timestamp:string) => {
+        const pubkey = props.partnerKey.split("&")[0]
+        const date = timestamp.split("T")[0];
+        props.fg.userDel(`chat-with/${pubkey}/${date}/${chatID}`)
+        console.log ("DELETE", `chat-with/${pubkey}/${date}/${chatID}`);
+        if (
+            typeof chatBubbleRef.current[chatID] === "object" && 
+            chatBubbleRef !== null &&
+            chatBubbleRef.current[chatID] !== null
+            // chatBubbleRef.current !== null
+        ) {
+            let x = chatBubbleRef.current[chatID] || document.createElement("div");
+            x.style.display = "none";
+        }        
+    }
+
+    const unsentChat = (chatID:string, timestamp:string) => {
+        const pubkey = props.partnerKey.split("&")[0]
+        const date = timestamp.split("T")[0];
+        console.log ("UNSENT", pubkey, date, chatID);
     }
 
     const attachFile = async () => {
