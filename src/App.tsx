@@ -12,7 +12,7 @@ function App() {
   }
 
   useEffect(()=>{
-    const fg = new Firegun(["https://gundb.dev.myriad.systems/gun","https://gun-relay.bimasoft.web.id:16902/gun"]);
+    const fg = new Firegun(["https://gundb.myriad.systems/gun","https://gun-relay.bimasoft.web.id:16902/gun"]);
     const chat = new ChatFG(fg)
     const arr = [{
       fg : fg,
