@@ -143,9 +143,19 @@ export default function ChatMUI(props:ChatMUIProps) {
     }
 
     const unsentChat = (chatID:string, timestamp:string) => {
-        const pubkey = props.partnerKey.split("&")[0]
+        const pubkey = props.partnerKey.split("&")
         const date = timestamp.split("T")[0];
+        props.chat.unsend({ pub : pubkey[0], epub : pubkey[1]},date,chatID,yourCert.current);
         console.log ("UNSENT", pubkey, date, chatID);
+        if (
+            typeof chatBubbleRef.current[chatID] === "object" && 
+            chatBubbleRef !== null &&
+            chatBubbleRef.current[chatID] !== null
+            // chatBubbleRef.current !== null
+        ) {
+            let x = chatBubbleRef.current[chatID] || document.createElement("div");
+            x.style.display = "none";
+        }        
     }
 
     const attachFile = async () => {

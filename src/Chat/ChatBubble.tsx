@@ -77,11 +77,11 @@ export default function ChatBubble(
         props.unsentChat (chatID, timestamp);
     }
 
-    const Operation = (props:{chatID : string,timestamp:string}) => {
+    const Operation = (props:{chatID : string,timestamp:string, self:boolean}) => {
         return (
             <Typography variant="body2">
                 <Button onClick={()=>{deleteChat(props.chatID,props.timestamp)}} variant="text" size="small" color="warning" startIcon={<Delete />}>Delete</Button>
-                <Button onClick={()=>{unsentChat(props.chatID,props.timestamp)}} variant="text" size="small" color="warning" startIcon={<Undo />}>Unsent</Button>
+                {props.self ? <Button onClick={()=>{unsentChat(props.chatID,props.timestamp)}} variant="text" size="small" color="warning" startIcon={<Undo />}>Unsent</Button> : <></>}                
             </Typography>
         )
     }
@@ -93,7 +93,7 @@ export default function ChatBubble(
                 <Typography variant="caption">
                     {props.timestamp}
                 </Typography>
-                <Operation chatID={props.chatID} timestamp={props.timestamp} />
+                <Operation chatID={props.chatID} timestamp={props.timestamp} self={props.self} />
             </Paper>
         </>        
     )

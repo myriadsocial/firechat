@@ -32,7 +32,7 @@
     "@mui/material": "^5.0.6",
     "@mui/styles": "^5.0.2",
     "@types/downloadjs": "^1.4.2",
-    "@yokowasis/firegun": "^1.4.13",
+    "@yokowasis/firegun": "^1.4.16",
     "downloadjs": "^1.4.7",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
