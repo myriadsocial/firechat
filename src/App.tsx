@@ -1,21 +1,33 @@
 import Chat from "./Chat/ChatMUIContainer"
 import {Firegun, Chat as ChatFG} from "@yokowasis/firegun"
+import { useEffect, useState } from "react";
 // import {useRef} from "react"
 
-const fg = new Firegun(["https://gundb.dev.myriad.systems/gun","https://gun-relay.bimasoft.web.id:16902/gun"]);
-const chat = new ChatFG(fg)
-
 function App() {
+
+  const [initChat, setInitChat] = useState<{fg:Firegun, chat:ChatFG}[]>([])
 
   const a = async () => {
     return ("Hello Smiley 😇")
   }
 
+  useEffect(()=>{
+    const fg = new Firegun(["https://gundb.dev.myriad.systems/gun","https://gun-relay.bimasoft.web.id:16902/gun"]);
+    const chat = new ChatFG(fg)
+    const arr = [{
+      fg : fg,
+      chat : chat,
+    }]
+    setInitChat(arr);
+  },[])
+
   console.log (a());
 
   return (
     <div className="App">
-      <Chat fg={fg} chat={chat} />
+      {
+        initChat.map((val,index)=><Chat key={index} fg={val.fg} chat={val.chat} />)
+      }
       {/* <Test /> */}
     </div>
   );

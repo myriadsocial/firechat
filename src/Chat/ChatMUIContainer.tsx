@@ -66,7 +66,7 @@ export default function ChatMUIContainer(props:{
           if (data.pub && typeof data.pub === "string")            
           dataFriends[data.pub.slice(0,8)] = {
             keypair : `${data.pub}&${data.epub}`,
-            alias : data.alias.toString(),
+            alias : (data.alias) ? data.alias.toString() : "",
             lastMsg : localStorage.getItem(`fg.lastMsg.${data.pub.slice(0,8)}`) || "",
           };
         }
