@@ -47,6 +47,9 @@ export default function ChatMUI(props:ChatMUIProps) {
             yourEpub.current = keys[1];
 
             let dateNow = common.getDate()
+            props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).get("unsendChat").on((chatID)=>{
+                hideBubleChat(chatID);
+            })
             props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                 if (s) {
                     processChat(s,keys);
@@ -85,6 +88,17 @@ export default function ChatMUI(props:ChatMUIProps) {
             </>
         )
     },[chatsMessages])
+
+    const hideBubleChat = (chatID:string) => {
+        if (
+            typeof chatBubbleRef.current[chatID] === "object" && 
+            chatBubbleRef !== null &&
+            chatBubbleRef.current[chatID] !== null
+        ) {
+            let x = chatBubbleRef.current[chatID] || document.createElement("div");
+            x.style.display = "none";
+        }
+    }
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
         if (s.msg) {
@@ -131,15 +145,7 @@ export default function ChatMUI(props:ChatMUIProps) {
         const date = timestamp.split("T")[0];
         props.fg.userDel(`chat-with/${pubkey}/${date}/${chatID}`)
         console.log ("DELETE", `chat-with/${pubkey}/${date}/${chatID}`);
-        if (
-            typeof chatBubbleRef.current[chatID] === "object" && 
-            chatBubbleRef !== null &&
-            chatBubbleRef.current[chatID] !== null
-            // chatBubbleRef.current !== null
-        ) {
-            let x = chatBubbleRef.current[chatID] || document.createElement("div");
-            x.style.display = "none";
-        }        
+        hideBubleChat(chatID);
     }
 
     const unsentChat = (chatID:string, timestamp:string) => {
@@ -147,15 +153,7 @@ export default function ChatMUI(props:ChatMUIProps) {
         const date = timestamp.split("T")[0];
         props.chat.unsend({ pub : pubkey[0], epub : pubkey[1]},date,chatID,yourCert.current);
         console.log ("UNSENT", pubkey, date, chatID);
-        if (
-            typeof chatBubbleRef.current[chatID] === "object" && 
-            chatBubbleRef !== null &&
-            chatBubbleRef.current[chatID] !== null
-            // chatBubbleRef.current !== null
-        ) {
-            let x = chatBubbleRef.current[chatID] || document.createElement("div");
-            x.style.display = "none";
-        }        
+        hideBubleChat(chatID);
     }
 
     const attachFile = async () => {
