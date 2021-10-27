@@ -48,7 +48,7 @@ export default function ChatMUI(props:ChatMUIProps) {
 
             let dateNow = common.getDate()
             props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).get("unsendChat").on((chatID)=>{
-                hideBubleChat(chatID);
+                deleteBubleChat(chatID);
             })
             props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                 if (s) {
@@ -80,24 +80,20 @@ export default function ChatMUI(props:ChatMUIProps) {
             <>
                 {
                     chatsMessages.map((val)=>
-                        <div key={`${val.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[val.id] = el; return chatBubbleRef.current[val.id]}}>
-                            <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
-                        </div>
+                            <div key={`${val.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[val.id] = el; return chatBubbleRef.current[val.id]}}>
+                                <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                            </div>    
                     )
                 }
             </>
         )
     },[chatsMessages])
 
-    const hideBubleChat = (chatID:string) => {
-        if (
-            typeof chatBubbleRef.current[chatID] === "object" && 
-            chatBubbleRef !== null &&
-            chatBubbleRef.current[chatID] !== null
-        ) {
-            let x = chatBubbleRef.current[chatID] || document.createElement("div");
-            x.style.display = "none";
-        }
+    const deleteBubleChat = (chatID:string) => {
+        const myArray = chatsMessages.filter(function( obj ) {
+            return obj.timestamp.replace(/\//g,".") !== chatID;
+        });
+        setChatsMessages(myArray);
     }
 
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
@@ -145,7 +141,7 @@ export default function ChatMUI(props:ChatMUIProps) {
         const date = timestamp.split("T")[0];
         props.fg.userDel(`chat-with/${pubkey}/${date}/${chatID}`)
         console.log ("DELETE", `chat-with/${pubkey}/${date}/${chatID}`);
-        hideBubleChat(chatID);
+        deleteBubleChat(chatID);
     }
 
     const unsentChat = (chatID:string, timestamp:string) => {
@@ -153,7 +149,7 @@ export default function ChatMUI(props:ChatMUIProps) {
         const date = timestamp.split("T")[0];
         props.chat.unsend({ pub : pubkey[0], epub : pubkey[1]},date,chatID,yourCert.current);
         console.log ("UNSENT", pubkey, date, chatID);
-        hideBubleChat(chatID);
+        deleteBubleChat(chatID);
     }
 
     const attachFile = async () => {
