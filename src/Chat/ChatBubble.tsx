@@ -1,7 +1,11 @@
-import { Delete, Favorite, MoreVert, Share, Undo } from "@mui/icons-material";
-import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton } from "@mui/material";
+import Delete from "@mui/icons-material/Delete";
+import Undo from "@mui/icons-material/Undo";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button"
-import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
 import makeStyles from "@mui/styles/makeStyles";
 import download from "downloadjs"

@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography'
 import { Firegun, Chat, common } from '@yokowasis/firegun'
 import { chatType } from '@yokowasis/firegun/common'
 import ChatBubble from "./ChatBubble"
-import { Delete } from '@mui/icons-material'
+import Delete from '@mui/icons-material/Delete'
 
 type ChatMUIProps = {
     partnerKey : string,
