@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography'
 import { Firegun, Chat, common } from '@yokowasis/firegun'
 import { chatType } from '@yokowasis/firegun/common'
 import ChatBubble from "./ChatBubble"
+import { Delete } from '@mui/icons-material'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -96,9 +97,16 @@ export default function ChatMUI(props:ChatMUIProps) {
         setChatsMessages(myArray);
     }
 
+    const deleteMultiBubleChat = (chatIDS:string[]) => {
+        const myArray = chatsMessages.filter(function( obj ) {
+            return !chatIDS.includes(obj.timestamp.replace(/\//g,"."));
+        });
+        setChatsMessages(myArray);
+    }
+
     const processChat = async (s:{[x:string] : any},keys:string[]) => {
         if (s.msg) {
-            if ((s.msg as string).search("SEA") === 0)
+            if ((typeof s.msg === "string") && (s.msg.search("SEA") === 0))
             if (s._self) {
                 s.msg = await props.fg.Gun.SEA.decrypt(s.msg, props.fg.user.pair);
             } else {
@@ -144,6 +152,21 @@ export default function ChatMUI(props:ChatMUIProps) {
         deleteBubleChat(chatID);
     }
 
+    const deleteMultiChat = async (chatsArray : {chatID:string, timestamp:string}[]) => {
+        const pubkey = props.partnerKey.split("&")[0]
+        let chatIDs:string[] = [];
+        for (const val of chatsArray) {
+            console.log (val);
+            const date = val.timestamp.split("T")[0];
+            // Pake await biar tidak terlalu kencang deletenya, biar database tidak corrupt
+            await props.fg.userDel(`chat-with/${pubkey}/${date}/${val.chatID}`)
+            console.log ("DELETE", `chat-with/${pubkey}/${date}/${val.chatID}`);
+            chatIDs.push(val.chatID);            
+        }
+        console.log(chatIDs);
+        deleteMultiBubleChat(chatIDs)
+    }
+
     const unsentChat = (chatID:string, timestamp:string) => {
         const pubkey = props.partnerKey.split("&")
         const date = timestamp.split("T")[0];
@@ -177,6 +200,19 @@ export default function ChatMUI(props:ChatMUIProps) {
          getBase64(file.files[0]);
     }
 
+    const deleteAll = () => {
+        let listElements = document.getElementsByClassName("bubbleChecked");
+        let chatsArray:{chatID:string, timestamp:string}[] = [];
+        for (let i = 0; i < listElements.length; i++) {
+            let elem:HTMLElement = (listElements[i] as any);
+            let id = elem.dataset.chatid;
+            if (id) {
+                chatsArray.push({chatID:id, timestamp:id.replace(/\./g,"/")});
+            }            
+        }
+        deleteMultiChat(chatsArray)
+    }
+
     return (
         <>
             <Grid
@@ -196,6 +232,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                         </Typography>
                     </Grid>
                     <Grid item>
+                        <IconButton color="error" onClick={deleteAll}><Delete /></IconButton>
                         <IconButton color="error" onClick={()=>{
                             let elem = document.getElementById(`chatmui-${props.partnerKey}`);
                             if ( elem !== null) {

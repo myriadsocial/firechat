@@ -1,4 +1,5 @@
-import { Delete, Undo } from "@mui/icons-material";
+import { Delete, Favorite, MoreVert, Share, Undo } from "@mui/icons-material";
+import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton } from "@mui/material";
 import Button from "@mui/material/Button"
 import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
@@ -77,24 +78,44 @@ export default function ChatBubble(
         props.unsentChat (chatID, timestamp);
     }
 
+    const changeCheckbox = (e:React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.checked) {
+            e.target.classList.add("bubbleChecked")
+        } else {
+            e.target.classList.remove("bubbleChecked")
+        }
+    }
+
     const Operation = (props:{chatID : string,timestamp:string, self:boolean}) => {
         return (
             <Typography variant="body2">
-                <Button onClick={()=>{deleteChat(props.chatID,props.timestamp)}} variant="text" size="small" color="warning" startIcon={<Delete />}>Delete</Button>
-                {props.self ? <Button onClick={()=>{unsentChat(props.chatID,props.timestamp)}} variant="text" size="small" color="warning" startIcon={<Undo />}>Unsent</Button> : <></>}                
+                <Checkbox onChange={changeCheckbox} className="" inputProps={{ "data-chatid" : props.chatID } as any}  style={{color : "white"}} />
+                <IconButton style={{color : "white"}} aria-label="Delete" onClick={()=>{deleteChat(props.chatID,props.timestamp)}}>
+                    <Delete />
+                </IconButton>
+                {props.self ? 
+                    <IconButton style={{color : "white"}} aria-label="Unsent" onClick={()=>{unsentChat(props.chatID,props.timestamp)}} >
+                        <Undo />
+                    </IconButton>
+                    : 
+                    <></>}                
             </Typography>
         )
     }
 
     return (
         <>
-            <Paper className={`${classes.card} ${(props.self ? "self" : "notself")}`} elevation={4}>                
-                <ParseText />
-                <Typography variant="caption">
-                    {props.timestamp}
-                </Typography>
-                <Operation chatID={props.chatID} timestamp={props.timestamp} self={props.self} />
-            </Paper>
+            <Card className={`${classes.card} ${(props.self ? "self" : "notself")}`}>
+                <CardContent>
+                    <ParseText />
+                    <Typography variant="caption">
+                        {props.timestamp}
+                    </Typography>
+                </CardContent>
+                <CardActions disableSpacing>
+                    <Operation chatID={props.chatID} timestamp={props.timestamp} self={props.self} />
+                </CardActions>
+            </Card>        
         </>        
     )
 }
