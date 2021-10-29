@@ -42,14 +42,17 @@ export default function GroupChat() {
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <Grid container>
-                <Grid item xs={12} sm={4} textAlign="center" container direction="column">
-                    <Grid>
+                <Grid item xs={12} sm={4} textAlign="center" container direction="column" overflow="clip">
+                    <Grid item sx={{ maxWidth : "100%"}}>
                         {newImage}
                     </Grid>
-                    <Grid>
+                    <Grid item sx={{ maxWidth : "100%"}}>
                         <IconButton aria-label="" onClick={console.log}>
                             <Add />
                         </IconButton>
+                    </Grid>
+                    <Grid item sx={{ maxWidth : "100%"}}>
+                      <input type="file" onChange={(e)=>{console.log(e)}} />
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={8} container direction="column" spacing={2}>
