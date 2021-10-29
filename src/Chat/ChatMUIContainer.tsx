@@ -7,6 +7,7 @@ import ChatMUIKeyPair from "./ChatMUIKeyPair"
 import Login from "./ChatMUILogin"
 import Friends from "./ChatMUIFriends"
 import makeStyles from "@mui/styles/makeStyles";
+import GroupChat from './GroupChat';
 
 const useStyles = makeStyles({
 
@@ -131,6 +132,9 @@ export default function ChatMUIContainer(props:{
                         setNewPartnerKeyPair={setNewPartnerKeyPair}
                         alias={alias}
                       /></Grid>
+                    <Grid item>
+                      <GroupChat />
+                    </Grid>
                     <Grid item>
                       <Friends
                         setNewPartnerKeyPair={setNewPartnerKeyPair}
