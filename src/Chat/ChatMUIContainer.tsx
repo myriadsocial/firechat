@@ -1,7 +1,7 @@
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import { useEffect, useState } from "react"
-import { Firegun, Chat } from "@yokowasis/firegun"
+import { Firegun, Chat, common } from "@yokowasis/firegun"
 import ChatMUI from "./ChatMUI"
 import ChatMUIKeyPair from "./ChatMUIKeyPair"
 import Login from "./ChatMUILogin"
@@ -22,6 +22,7 @@ const useStyles = makeStyles({
 export default function ChatMUIContainer(props:{
     fg : Firegun,
     chat : Chat,
+    common? : typeof common,
     newChat? : string
 }) {
 
@@ -116,6 +117,10 @@ export default function ChatMUIContainer(props:{
       ])
     }
 
+    const newGroup = (name:string,desc:string,image:string) => {
+      console.log ("NEW GROUP", name, desc, image);
+    }
+
     return (
         <>
             { (props.fg.user.alias) ? 
@@ -133,7 +138,7 @@ export default function ChatMUIContainer(props:{
                         alias={alias}
                       /></Grid>
                     <Grid item>
-                      <GroupChat />
+                      {props.common ? <GroupChat newGroup={newGroup} common={props.common}/> : <></>}
                     </Grid>
                     <Grid item>
                       <Friends

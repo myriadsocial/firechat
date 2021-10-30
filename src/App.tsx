@@ -1,5 +1,5 @@
 import Chat from "./Chat/ChatMUIContainer"
-import {Firegun, Chat as ChatFG} from "./firegun/index"
+import {common, Firegun, Chat as ChatFG} from "./firegun/index"
 import { useEffect, useState } from "react";
 // import {useRef} from "react"
 
@@ -26,7 +26,7 @@ function App() {
   return (
     <div className="App">
       {
-        initChat.map((val,index)=><Chat key={index} fg={val.fg} chat={val.chat} />)
+        initChat.map((val,index)=><Chat common={common} key={index} fg={val.fg} chat={val.chat} />)
       }
       {/* <Test /> */}
     </div>
