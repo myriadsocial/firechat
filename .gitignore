@@ -24,4 +24,4 @@ yarn-error.log*
 
 *.js
 *.jsx
-src/chat/firegun
+src/firegun
