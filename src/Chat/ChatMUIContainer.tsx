@@ -94,8 +94,6 @@ export default function ChatMUIContainer(props:{
       } catch (error) {
         groups = {}        
       }
-      if (typeof groups === "object")
-
       var groupsName:typeof myGroups;
       groupsName = {};
       if (typeof groups === "object")
@@ -117,6 +115,7 @@ export default function ChatMUIContainer(props:{
 
     useEffect(()=>{
       (window as any).fg = props.fg;
+      (window as any).chat = props.chat;
 
       if (props.fg.user) {
           // AutoLogin
@@ -150,10 +149,20 @@ export default function ChatMUIContainer(props:{
         }
     }
 
+    const groupName = (key:string) => {
+      let s = ""
+      let keyPair = key.split("&");
+      if (key.length>=3) {
+        s = keyPair[2];
+      }
+      return s;
+    }
+
     const addPartnerChat = (key:string, alias:string) => {
       setchatMUIPlaceHolder([...chatMUIPlaceHolder, 
         <div className={`${classes.chatmui} chatmui show`} id={`chatmui-${key}`} key={key}>
-          <ChatMUI updateLastMsg={updateLastMsg} alias={alias} height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} isGroup={key.indexOf("group") === 0} />
+          <ChatMUI updateLastMsg={updateLastMsg} alias={alias} height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true}isGroup={key.indexOf("group") === 0}
+          groupName={key.indexOf("group") === 0 ? groupName(key) : ""} />
         </div>
       ])
     }

@@ -12,7 +12,7 @@ import { Firegun, Chat, common } from "../firegun/index"
 import { chatType } from "../firegun/common"
 import ChatBubble from "./ChatBubble"
 import Delete from '@mui/icons-material/Delete'
-import { Add } from '@mui/icons-material'
+import InviteButton from './InviteButton'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -22,6 +22,7 @@ type ChatMUIProps = {
     show : boolean,
     alias : string,
     isGroup? : boolean,
+    groupName? : string,
     updateLastMsg : (key:string,lastMsg:string) => void,
 }
 
@@ -175,13 +176,12 @@ export default function ChatMUI(props:ChatMUIProps) {
         processChat({_self : true, msg: textMsg, timestamp : "sending..."},[yourPub.current,yourEpub.current])
 
         // Check apakah group send
-        if (props.partnerKey.indexOf("group") === 0) {
+        if (props.isGroup) {
             let keys = props.partnerKey.split("&")
             let owner = keys[1];
             let alias = keys[2];
             await props.chat.groupSend(owner,alias,textMsg);
             console.log ("SendGroup ✔");
-            // group&hvjSNCw8a7AZXdTkp4kh3H0nGqj_TaJIHcJNb8p_lv0.tc6yudyo9vOHXqUKq0ItLcK09BKTDGDB04FKIB4vnpQ&Group Baru&Group Baru
         } else {
             await props.chat.send({pub : yourPub.current, epub: yourEpub.current},textMsg,yourCert.current);
         }
@@ -274,11 +274,16 @@ export default function ChatMUI(props:ChatMUIProps) {
                     </Grid>
                     <Grid item xs>
                         <Typography pt={1}>
-                            {props.alias}
+                            {props.isGroup ? props.groupName : props.alias}
                         </Typography>
                     </Grid>
                     <Grid item>
-                        {props.isGroup ? <IconButton color="primary" onClick={console.log}><Add /></IconButton> : <></>}
+                        {
+                            props.isGroup ?
+                            <InviteButton chat={props.chat} groupName={props.groupName || ""} />
+                            :
+                            <></>
+                        }                        
                         <IconButton color="error" onClick={deleteAll}><Delete /></IconButton>
                         <IconButton color="error" onClick={()=>{
                             let elem = document.getElementById(`chatmui-${props.partnerKey}`);
