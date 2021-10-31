@@ -67,7 +67,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                         members.forEach(async (member) => {
                             props.fg.gun.get(`~${member.pub}`).get("chat-group-with").get(`${owner}&${alias}`).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
                                 if (s) {
-                                    processChat(s,keys,false);
+                                    processChat(s,keys,member.pub === props.fg.user.pair.pub);
                                 }                        
                             })            
                         })
