@@ -51,15 +51,6 @@ export default function ChatMUIContainer(props:{
         }
       }
     >({})
-    const [otherGroups, setOtherGroups] = useState<
-      {
-        [key : string] : {
-          alias : string,
-          lastMsg : string,
-          keypair : string    
-        }
-      }
-    >({})
     const classes = useStyles();
 
     const getFriends = async () => {
@@ -119,7 +110,6 @@ export default function ChatMUIContainer(props:{
             keypair : `group&${groupName}`,
           }
           groupsName[groupName] = group
-          console.log("🚀 ~ file: ChatMUIContainer.tsx ~ line 111 ~ getMyGroups ~ groupName", group)
         }
       }
       setMyGroups(groupsName);

@@ -39,23 +39,51 @@ export default function ChatMUI(props:ChatMUIProps) {
 
         var keys:string[];
         if (props.partnerKey.indexOf("&")>=0) {
-            keys = props.partnerKey.split("&")
-            props.chat.getCert(keys[0])
-            .then(cert=>{
-                yourCert.current = cert?.toString() || "";
-            })
+            keys = props.partnerKey.split("&");            
+            (async ()=>{
+                if (props.partnerKey.indexOf("group") !== 0) {
+                    let cert = await props.chat.getCert(keys[0]);
+                    yourCert.current = (typeof cert === "string") ? cert : "";    
+                }
+            })()
             yourPub.current = keys[0];
             yourEpub.current = keys[1];
 
             let dateNow = common.getDate()
-            props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).get("unsendChat").on((chatID)=>{
-                deleteBubleChat(chatID);
-            })
-            props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
-                if (s) {
-                    processChat(s,keys);
-                }                        
-            })
+            if (props.partnerKey.indexOf("group") === 0) {
+                console.log ("CHAT GROUP ON !!!");
+                let keys = props.partnerKey.split("&")
+                let owner = keys[1];
+                let alias = keys[2];    
+
+                // Get Chat Members
+                // promises.push(this.firegun.userPut(`chat-group/${groupname}/members`,JSON.stringify([{
+                
+                props.fg.Get(`~${owner}/chat-group/${alias}/members`)
+                .then(async (membersJSON) => {
+                    if (typeof membersJSON === "string") {
+                        let members:{"alias": string, "pub" : string}[];
+                        members = JSON.parse(membersJSON);
+                        members.forEach(async (member) => {
+                            props.fg.gun.get(`~${member.pub}`).get("chat-group-with").get(`${owner}&${alias}`).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+                                if (s) {
+                                    processChat(s,keys,false);
+                                }                        
+                            })            
+                        })
+                    }
+                })
+            } else {
+                // Chat 1 on 1
+                props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).get("unsendChat").on((chatID)=>{
+                    deleteBubleChat(chatID);
+                })
+                props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+                    if (s) {
+                        processChat(s,keys);
+                    }                        
+                })    
+            }
         } else {
             console.log ("Partner Key Incomplete")
         }
@@ -104,7 +132,7 @@ export default function ChatMUI(props:ChatMUIProps) {
         setChatsMessages(myArray);
     }
 
-    const processChat = async (s:{[x:string] : any},keys:string[]) => {
+    const processChat = async (s:{[x:string] : any},keys:string[], alwaysSelf? : boolean) => {
         if (s.msg) {
             if ((typeof s.msg === "string") && (s.msg.search("SEA") === 0))
             if (s._self) {
@@ -117,7 +145,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                 let chatsTemp = chatsMessages.filter(function( obj ) {
                     return obj.timestamp !== 'sending...';
                 });
-                chatsTemp.push({_self : s._self, msg : s.msg, timestamp: s.timestamp, id : s.id});
+                chatsTemp.push({_self : (typeof alwaysSelf !== "undefined" ? alwaysSelf : s._self), msg : s.msg, timestamp: s.timestamp, id : s.id});
                 chatsTemp.sort(common.dynamicSort("timestamp"));
     
                 chatsTemp = chatsTemp.filter((thing, index, self) =>
@@ -139,7 +167,18 @@ export default function ChatMUI(props:ChatMUIProps) {
 
         processChat({_self : true, msg: textMsg, timestamp : "sending..."},[yourPub.current,yourEpub.current])
 
-        await props.chat.send({pub : yourPub.current, epub: yourEpub.current},textMsg,yourCert.current);
+        // Check apakah group send
+        if (props.partnerKey.indexOf("group") === 0) {
+            let keys = props.partnerKey.split("&")
+            let owner = keys[1];
+            let alias = keys[2];
+            await props.chat.groupSend(owner,alias,textMsg);
+            console.log ("SendGroup ✔");
+            // group&hvjSNCw8a7AZXdTkp4kh3H0nGqj_TaJIHcJNb8p_lv0.tc6yudyo9vOHXqUKq0ItLcK09BKTDGDB04FKIB4vnpQ&Group Baru&Group Baru
+        } else {
+            await props.chat.send({pub : yourPub.current, epub: yourEpub.current},textMsg,yourCert.current);
+        }
+
         console.log ("Sending Chat... Success")
 
     }

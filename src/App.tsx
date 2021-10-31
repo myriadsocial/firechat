@@ -7,10 +7,6 @@ function App() {
 
   const [initChat, setInitChat] = useState<{fg:Firegun, chat:ChatFG}[]>([])
 
-  const a = async () => {
-    return ("Hello Smiley 😇")
-  }
-
   useEffect(()=>{
     const fg = new Firegun(["https://gundb.myriad.systems/gun","https://gun-relay.bimasoft.web.id:16902/gun"]);
     const chat = new ChatFG(fg)
@@ -20,8 +16,6 @@ function App() {
     }]
     setInitChat(arr);
   },[])
-
-  console.log (a());
 
   return (
     <div className="App">
