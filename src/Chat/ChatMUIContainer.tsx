@@ -153,7 +153,7 @@ export default function ChatMUIContainer(props:{
     const addPartnerChat = (key:string, alias:string) => {
       setchatMUIPlaceHolder([...chatMUIPlaceHolder, 
         <div className={`${classes.chatmui} chatmui show`} id={`chatmui-${key}`} key={key}>
-          <ChatMUI updateLastMsg={updateLastMsg} alias={alias} height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} />
+          <ChatMUI updateLastMsg={updateLastMsg} alias={alias} height="500px" fg={props.fg} chat={props.chat} partnerKey={key} show={true} isGroup={key.indexOf("group") === 0} />
         </div>
       ])
     }

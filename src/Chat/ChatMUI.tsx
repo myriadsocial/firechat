@@ -12,6 +12,7 @@ import { Firegun, Chat, common } from "../firegun/index"
 import { chatType } from "../firegun/common"
 import ChatBubble from "./ChatBubble"
 import Delete from '@mui/icons-material/Delete'
+import { Add } from '@mui/icons-material'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -20,6 +21,7 @@ type ChatMUIProps = {
     chat : Chat,
     show : boolean,
     alias : string,
+    isGroup? : boolean,
     updateLastMsg : (key:string,lastMsg:string) => void,
 }
 
@@ -41,16 +43,16 @@ export default function ChatMUI(props:ChatMUIProps) {
         if (props.partnerKey.indexOf("&")>=0) {
             keys = props.partnerKey.split("&");            
             (async ()=>{
-                if (props.partnerKey.indexOf("group") !== 0) {
+                if (!props.isGroup) {
                     let cert = await props.chat.getCert(keys[0]);
-                    yourCert.current = (typeof cert === "string") ? cert : "";    
+                    yourCert.current = (typeof cert === "string") ? cert : "";
                 }
             })()
             yourPub.current = keys[0];
             yourEpub.current = keys[1];
 
             let dateNow = common.getDate()
-            if (props.partnerKey.indexOf("group") === 0) {
+            if (props.isGroup) {
                 console.log ("CHAT GROUP ON !!!");
                 let keys = props.partnerKey.split("&")
                 let owner = keys[1];
@@ -110,7 +112,12 @@ export default function ChatMUI(props:ChatMUIProps) {
                 {
                     chatsMessages.map((val)=>
                             <div key={`${val.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[val.id] = el; return chatBubbleRef.current[val.id]}}>
-                                <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                {
+                                    (props.isGroup) ?
+                                        <ChatBubble deleteChat={console.log} unsentChat={console.log} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                    :
+                                        <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                }                                
                             </div>    
                     )
                 }
@@ -271,6 +278,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                         </Typography>
                     </Grid>
                     <Grid item>
+                        {props.isGroup ? <IconButton color="primary" onClick={console.log}><Add /></IconButton> : <></>}
                         <IconButton color="error" onClick={deleteAll}><Delete /></IconButton>
                         <IconButton color="error" onClick={()=>{
                             let elem = document.getElementById(`chatmui-${props.partnerKey}`);
