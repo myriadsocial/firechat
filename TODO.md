@@ -7,3 +7,6 @@
 🔲 Tambah dan Remove Admin
 🔲 Remove Member
 🔲 Remove Duplicate Member
+🔲 Edit dan View Group Logo and Description
+🔲 Masukin Nama Pesan Pengirim
+🔲 Rapikan Icon
