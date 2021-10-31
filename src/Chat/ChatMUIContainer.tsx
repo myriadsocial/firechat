@@ -1,7 +1,7 @@
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import { useEffect, useState } from "react"
-import { Firegun, Chat, common } from "@yokowasis/firegun"
+import { Firegun, Chat, common } from "../firegun"
 import ChatMUI from "./ChatMUI"
 import ChatMUIKeyPair from "./ChatMUIKeyPair"
 import Login from "./ChatMUILogin"
@@ -41,6 +41,25 @@ export default function ChatMUIContainer(props:{
         }
       }
     >({})
+    const [myGroups, setMyGroups] = useState<
+      {
+        [key : string] : {
+          owner : string,
+          alias : string,
+          lastMsg : string,
+          keypair : string,
+        }
+      }
+    >({})
+    const [otherGroups, setOtherGroups] = useState<
+      {
+        [key : string] : {
+          alias : string,
+          lastMsg : string,
+          keypair : string    
+        }
+      }
+    >({})
     const classes = useStyles();
 
     const getFriends = async () => {
@@ -55,6 +74,7 @@ export default function ChatMUIContainer(props:{
         alias : string,
         lastMsg : string,
       }} = {};
+      if (typeof friends === "object")
       for (const pubkey in friends) {
         if (pubkey != "_")
         if (Object.prototype.hasOwnProperty.call(friends, pubkey)) {
@@ -76,6 +96,35 @@ export default function ChatMUIContainer(props:{
       setFriends(dataFriends);
     }
 
+    const getMyGroups = async () => {
+      let groups
+      try {
+        groups = await props.fg.userGet("chat-group-with");
+      } catch (error) {
+        groups = {}        
+      }
+      if (typeof groups === "object")
+
+      var groupsName:typeof myGroups;
+      groupsName = {};
+      if (typeof groups === "object")
+      for (const groupName in groups) {
+        if (groupName != "_" && groupName != "#")
+        if (Object.prototype.hasOwnProperty.call(groups, groupName)) {
+          const groupPath = groupName.split("&");
+          const group = {
+            owner : groupPath[0],
+            alias : groupPath[1],
+            lastMsg : "",
+            keypair : `group&${groupName}`,
+          }
+          groupsName[groupName] = group
+          console.log("🚀 ~ file: ChatMUIContainer.tsx ~ line 111 ~ getMyGroups ~ groupName", group)
+        }
+      }
+      setMyGroups(groupsName);
+    }
+
     useEffect(()=>{
       (window as any).fg = props.fg;
 
@@ -84,6 +133,8 @@ export default function ChatMUIContainer(props:{
           setAlias(props.fg.user.alias);
           setMyPubKey(`${props.fg.user.pair.pub}&${props.fg.user.pair.epub}`)          
           getFriends();
+          getMyGroups();
+          // getOtherGroups();
       }
 
       if (props.newChat) {
@@ -119,6 +170,7 @@ export default function ChatMUIContainer(props:{
 
     const newGroup = (name:string,desc:string,image:string) => {
       console.log ("NEW GROUP", name, desc, image);
+      props.chat.groupNew(name,desc,image);
     }
 
     return (
@@ -145,6 +197,18 @@ export default function ChatMUIContainer(props:{
                         setNewPartnerKeyPair={setNewPartnerKeyPair}
                         friends={friends}
                       />
+                      <Friends
+                        setNewPartnerKeyPair={setNewPartnerKeyPair}
+                        friends={myGroups}
+                      />
+                      {/* <MyGroups
+                        setNewPartnerKeyPair={setNewPartnerKeyPair}
+                        friends={myGroups}
+                      />
+                      <OtherGroups
+                        setNewPartnerKeyPair={setNewPartnerKeyPair}
+                        friends={otherGroups}
+                      /> */}
                     </Grid>
                   </Grid>
                   <Grid xs={12} sm={8} item>

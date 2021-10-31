@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Add } from '@mui/icons-material';
 import { Grid, TextField, IconButton } from '@mui/material';
-import { common } from '@yokowasis/firegun';
+import { common } from "../firegun";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -35,7 +35,6 @@ export default function GroupChat(
   const handleNewGroupName = (event: React.ChangeEvent<HTMLInputElement>) => {
     props.common.fileTobase64(event.target)
     .then((s:any)=>{
-      console.log (s);
       setNewImage(s.content);
     })
   }

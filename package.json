@@ -22,6 +22,7 @@
   "types": "index.tsx",
   "scripts": {
     "dev": "vite",
+    "forcedev": "vite --force",
     "build": "tsc && vite build",
     "serve": "vite preview"
   },

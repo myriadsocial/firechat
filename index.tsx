@@ -1,5 +1,5 @@
 import ChatMUIContainer from "./src/Chat/ChatMUIContainer"
-import {Firegun, Chat as ChatFG} from "@yokowasis/firegun"
+import {Firegun, Chat as ChatFG} from '@yokowasis/firegun'
 
 export default function Chat(props:{
     fg : Firegun,
