@@ -19,7 +19,9 @@ const style = {
 
 type MyProps = {
   title:string,
-  handleSave:(cb:()=>void) => void,
+  handleSave?:(cb:()=>void) => void,
+  handleOpen?:(cb:()=>void) => void,
+  handleClose?:(cb:()=>void) => void,
   btnText?:string,
   btnVariant?:"contained" | "outlined" | "text",
   btnColor?: "primary" | "secondary" | "inherit" | "success" | "error" | "info" | "warning" | undefined,
@@ -28,9 +30,9 @@ type MyProps = {
 
 const BasicModal:React.FC<MyProps> = props => {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleSave = () => {props.handleSave(()=>{setOpen(false)})};
+  const handleOpen = () => {props.handleOpen ? props.handleOpen(()=>{setOpen(true)}) : setOpen(true)};
+  const handleClose = () => {props.handleClose ? props.handleClose(()=>{setOpen(false)}) : setOpen(false)};
+  const handleSave = () => {props.handleSave ? props.handleSave(()=>{setOpen(false)}) : setOpen(false)};
 
   return (
     <>
