@@ -1,5 +1,5 @@
 import Chat from "./Chat/ChatMUIContainer"
-import {common, Firegun, Chat as ChatFG} from "./firegun/index"
+import {common, Firegun, Chat as ChatFG} from "@yokowasis/firegun"
 import { useEffect, useState } from "react";
 // import {useRef} from "react"
 

@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Add } from '@mui/icons-material';
 import { Grid, TextField, IconButton } from '@mui/material';
-import { common } from "../firegun";
+import { common } from "@yokowasis/firegun";
 
 const style = {
   position: 'absolute' as 'absolute',
