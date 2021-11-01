@@ -5,7 +5,7 @@
 🔲 Muncul Secara otomatis di Friends
 🔲 Upload Blob
 🔲 Tambah dan Remove Admin
-🔲 Remove Member
+✅ Remove Member
 🔲 Remove Duplicate Member
 🔲 Edit dan View Group Logo and Description
 🔲 Masukin Nama Pesan Pengirim
