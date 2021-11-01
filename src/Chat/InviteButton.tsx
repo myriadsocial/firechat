@@ -61,7 +61,7 @@ const InviteButton:React.FC<MyProps> = props => {
     return (
         <>
             <BasicModal handleOpen={handleOpen}  handleSave={handleSave} title="Invite New User" btnVariant="text" btnText="Invite" btnIcon={<Add />} >
-                <List dense={true}>
+                <List>
                     {
                         members.map((member,i) => 
                             <ListItem key={i}>
@@ -69,7 +69,7 @@ const InviteButton:React.FC<MyProps> = props => {
                                     <Person />
                                 </ListItemIcon>
                                 <ListItemText primary={member.alias} />
-                                <IconButton size="small" onClick={()=>{kickMember(member.pub)}}>
+                                <IconButton color="error" size="small" onClick={()=>{kickMember(member.pub)}}>
                                     <Close />
                                 </IconButton>
                             </ListItem>
