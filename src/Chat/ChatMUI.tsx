@@ -13,7 +13,7 @@ import { chatType } from "@yokowasis/firegun/common"
 import ChatBubble from "./ChatBubble"
 import Delete from '@mui/icons-material/Delete'
 import InviteButton from './InviteButton'
-import AddAdminButton from './AddAdminButton'
+// import AddAdminButton from './AddAdminButton'
 
 type ChatMUIProps = {
     partnerKey : string,
