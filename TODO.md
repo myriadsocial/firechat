@@ -4,8 +4,9 @@
 🔲 Pertama login tidak muncul friends nya for some reason (probably karena belum ditarik datanya)
 🔲 Muncul Secara otomatis di Friends
 🔲 Upload Blob
-🔲 Tambah dan Remove Admin
+✅ Tambah dan Remove Admin
 ✅ Remove Member
+🔲 Hak Akses Admin dan Member Biasa
 🔲 Remove Duplicate Member
 🔲 Edit dan View Group Logo and Description
 🔲 Masukin Nama Pesan Pengirim
