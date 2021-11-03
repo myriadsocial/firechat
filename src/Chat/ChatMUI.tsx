@@ -13,7 +13,7 @@ import { chatType } from "@yokowasis/firegun/common"
 import ChatBubble from "./ChatBubble"
 import Delete from '@mui/icons-material/Delete'
 import InviteButton from './InviteButton'
-// import AddAdminButton from './AddAdminButton'
+import AddAdminButton from './AddAdminButton'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -283,6 +283,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                             // Harusnya di sini isGroup dan isAdmin
                             props.isGroup ?
                             <>
+                                <AddAdminButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
                                 <InviteButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
                             </>                            
                             :

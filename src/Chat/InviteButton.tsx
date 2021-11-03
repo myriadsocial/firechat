@@ -32,7 +32,7 @@ const InviteButton:React.FC<MyProps> = props => {
         getMembers();
     }
 
-    const handleSave = (cb:()=>void) => {
+    const handleSave = async () => {
         let keyPairArr = keyPair.split("&");
         let pubkey;
         let alias;
@@ -43,12 +43,11 @@ const InviteButton:React.FC<MyProps> = props => {
             } else {
                 alias = keyPairArr[0].slice(0,8);
             }
-            props.chat.groupInvite(props.groupName,pubkey,alias).then(cb);
+            await props.chat.groupInvite(props.groupName,pubkey,alias)
+            getMembers();
             console.log('Adding', props.groupName, pubkey, alias);
-            cb();    
         } else {
             console.log ("Keypair Empty");
-            cb();
         }
     }
 
