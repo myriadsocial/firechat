@@ -14,6 +14,7 @@ import ChatBubble from "./ChatBubble"
 import Delete from '@mui/icons-material/Delete'
 import InviteButton from './InviteButton'
 import AddAdminButton from './AddAdminButton'
+import EditGroupChat from './EditGroupChat'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -283,6 +284,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                             // Harusnya di sini isGroup dan isAdmin
                             props.isGroup ?
                             <>
+                                <EditGroupChat  groupname={props.groupName} chat={props.chat} fg={props.fg} common={common} />
                                 <AddAdminButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
                                 <InviteButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
                             </>                            
