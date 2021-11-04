@@ -284,7 +284,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                             // Harusnya di sini isGroup dan isAdmin
                             props.isGroup ?
                             <>
-                                <EditGroupChat  groupname={props.groupName} chat={props.chat} fg={props.fg} common={common} />
+                                <EditGroupChat groupname={props.groupName || ""} chat={props.chat} fg={props.fg} common={common} />
                                 <AddAdminButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
                                 <InviteButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
                             </>                            
