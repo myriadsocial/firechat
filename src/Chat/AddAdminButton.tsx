@@ -57,6 +57,7 @@ const InviteButton:React.FC<MyProps> = props => {
             await props.chat.groupInviteAdmin(props.groupName,pubkey,alias);
             getMembers();
             console.log('Adding', props.groupName, pubkey, alias);
+            setKeyPair("");
         } else {
             console.log ("Keypair Empty");
         }
@@ -86,7 +87,7 @@ const InviteButton:React.FC<MyProps> = props => {
                         )
                     }
                 </List>
-                <TextField onChange={(e)=>{setKeyPair(e.target.value)}} fullWidth size="small" sx={{marginBottom : "10px"}} label="Key Pair" />
+                <TextField onChange={(e)=>{setKeyPair(e.target.value)}} value={keyPair} fullWidth size="small" sx={{marginBottom : "10px"}} label="Key Pair" />
             </BasicModal>
         </>
     );
