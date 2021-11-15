@@ -33,6 +33,8 @@ export default function ChatMUI(props:ChatMUIProps) {
     const [textMsg, setTextMsg] = useState("");
     const [chatsMessages, setChatsMessages] = useState<chatType[]>([]);
     const [chatsMessagesDiv, setChatsMessagesDiv] = useState<JSX.Element>(<></>);
+    const [groupOwner, setGroupOwner] = useState("");
+    const [groupAlias, setgroupAlias] = useState("");
 
     const yourPub = useRef("");
     const yourEpub = useRef("");
@@ -59,7 +61,10 @@ export default function ChatMUI(props:ChatMUIProps) {
                 console.log ("CHAT GROUP ON !!!");
                 let keys = props.partnerKey.split("&")
                 let owner = keys[1];
-                let alias = keys[2];    
+                let alias = keys[2];
+
+                setGroupOwner(owner);
+                setgroupAlias(alias);
 
                 // Get Chat Members
                 // promises.push(this.firegun.userPut(`chat-group/${groupname}/members`,JSON.stringify([{
@@ -284,9 +289,9 @@ export default function ChatMUI(props:ChatMUIProps) {
                             // Harusnya di sini isGroup dan isAdmin
                             props.isGroup ?
                             <>
-                                <EditGroupChat groupname={props.groupName || ""} chat={props.chat} fg={props.fg} common={common} />
-                                <AddAdminButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
-                                <InviteButton fg={props.fg} chat={props.chat} groupName={props.groupName || ""} />
+                                <EditGroupChat groupowner={groupOwner} groupname={groupAlias} chat={props.chat} fg={props.fg} common={common} />
+                                <AddAdminButton fg={props.fg} chat={props.chat} groupName={groupAlias} />
+                                <InviteButton fg={props.fg} chat={props.chat} groupName={groupAlias} />
                             </>                            
                             :
                             <></>

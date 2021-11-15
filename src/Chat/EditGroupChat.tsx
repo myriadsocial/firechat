@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Add, Edit } from '@mui/icons-material';
-import { Grid, TextField, IconButton } from '@mui/material';
+import { Grid, TextField, IconButton, TextareaAutosize } from '@mui/material';
 import { Chat, common, Firegun } from "@yokowasis/firegun";
 import BasicModal from './BasicModal';
 
 
 export default function EditGroupChat(
   props: {
+    groupowner : string,
     groupname : string,
     common : typeof common,
     chat : Chat,
@@ -34,11 +35,7 @@ export default function EditGroupChat(
   }
 
   const getGroupInfo = async () => {
-    // promises.push(this.firegun.userPut(`chat-group/${groupname}/info/name`,groupname))
-    // promises.push(this.firegun.userPut(`chat-group/${groupname}/info/desc`,groupDesc))
-    // promises.push(this.firegun.userPut(`chat-group/${groupname}/info/image`,groupImage))
-
-    let data = await props.fg.userGet(`chat-group/${props.groupname}/info`);
+    let data = await props.fg.Get(`~${props.groupowner}/chat-group/${props.groupname}/info`);
     console.log (data);
     if (typeof data === "object") {
       if (typeof data.desc === "string")
@@ -51,14 +48,14 @@ export default function EditGroupChat(
   }
 
   const saveEditGroup = async (cb:()=>void) => {
-    await props.chat.groupSetInfo(editGroupName,editGroupDescription,editImage)
-    alert ('asd');
+    await props.chat.groupSetInfo(editGroupName,editGroupDescription,editImage)    
     cb();
   }
 
   React.useEffect(()=>{
-    getGroupInfo();
-  },[])
+    if (props.groupname && props.groupowner)
+      getGroupInfo();
+  },[props.groupname])
 
   return (
     <>
@@ -89,6 +86,9 @@ export default function EditGroupChat(
             <Grid item>
                 <TextField
                   fullWidth
+                  InputProps={{
+                    readOnly : true,
+                  }}
                   variant="standard"
                   size="small"
                   label="Group Name"
@@ -97,14 +97,13 @@ export default function EditGroupChat(
                 />
             </Grid>
             <Grid item>
-                <TextField
-                  fullWidth
-                  variant="standard"
-                  size="small"
-                  label="Group Description"
+                <TextareaAutosize
+                  readOnly={true}
+                  maxRows={6}
                   value={editGroupDescription}
+                  style={{ width: "100%" }}
                   onChange={(e)=>{setEditGroupDescription(e.target.value)}}
-                />
+                />              
             </Grid>
         </Grid>
         </Grid>
