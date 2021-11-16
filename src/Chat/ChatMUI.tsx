@@ -69,19 +69,15 @@ export default function ChatMUI(props:ChatMUIProps) {
                 // Get Chat Members
                 // promises.push(this.firegun.userPut(`chat-group/${groupname}/members`,JSON.stringify([{
                 
-                props.fg.Get(`~${owner}/chat-group/${alias}/members`)
-                .then(async (membersJSON) => {
-                    if (typeof membersJSON === "string") {
-                        let members:{"alias": string, "pub" : string}[];
-                        members = JSON.parse(membersJSON);
-                        members.forEach(async (member) => {
-                            props.fg.gun.get(`~${member.pub}`).get("chat-group-with").get(`${owner}&${alias}`).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
-                                if (s) {
-                                    processChat(s,keys,member.pub === props.fg.user.pair.pub);
-                                }                        
-                            })            
-                        })
-                    }
+                props.chat.groupGetMembers(owner,alias)
+                .then(members => {
+                    members.forEach(async (member) => {
+                        props.fg.gun.get(`~${member.pub}`).get("chat-group-with").get(`${owner}&${alias}`).get(dateNow.year).get(dateNow.month).get(dateNow.date).map().once(async (s)=>{
+                            if (s) {
+                                processChat(s,keys,member.pub === props.fg.user.pair.pub);
+                            }                        
+                        })            
+                    })    
                 })
             } else {
                 // Chat 1 on 1

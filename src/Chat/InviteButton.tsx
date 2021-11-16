@@ -21,11 +21,9 @@ const InviteButton:React.FC<MyProps> = props => {
 
     // promises.push(this.firegun.userPut(`chat-group/${groupname}/members`,JSON.stringify([{
     const getMembers = async () => {
-        let data = await props.fg.userGet(`~${props.groupowner}/chat-group/${props.groupName}/members`);
-        if (typeof data === "string") {
-            let members = JSON.parse(data);
-            setMembers(members);                        
-        }
+        let members = await props.chat.groupGetMembers(props.groupowner,props.groupName);
+        console.log (members);
+        setMembers(members);                        
     }
 
     const handleOpen = (cb:()=>void) => {
