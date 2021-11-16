@@ -17,6 +17,7 @@ export default function EditGroupChat(
   const [editGroupName, setEditGroupName] = React.useState("");
   const [editGroupDescription, setEditGroupDescription] = React.useState("");
   const [editImage, setEditImage] = React.useState("");
+  const [isGroupAdmin, setIsGroupAdmin] = React.useState(false);
 
   const handleNewGroupName = (event: React.ChangeEvent<HTMLInputElement>) => {
     props.common.fileTobase64(event.target)
@@ -40,7 +41,13 @@ export default function EditGroupChat(
       setEditGroupDescription(data.desc);
       setEditGroupName(data.name);
       setEditImage(data.image);
-    }  
+    }
+
+    let admins = await props.chat.groupGetAdmin(props.groupowner, props.groupname);
+    if (admins.some(e => e.pub === props.fg.user.pair.pub)) {
+      setIsGroupAdmin(true);
+    }
+
   }
 
   const saveEditGroup = async (cb:()=>void) => {
@@ -83,7 +90,7 @@ export default function EditGroupChat(
                 <TextField
                   fullWidth
                   InputProps={{
-                    readOnly : props.fg.user.pair.pub !== props.groupowner,
+                    readOnly : true
                   }}
                   variant="standard"
                   size="small"
@@ -94,7 +101,7 @@ export default function EditGroupChat(
             </Grid>
             <Grid item>
                 <TextareaAutosize
-                  readOnly={props.fg.user.pair.pub !== props.groupowner}
+                  readOnly={props.fg.user.pair.pub !== props.groupowner && isGroupAdmin === false}
                   maxRows={6}
                   value={editGroupDescription}
                   style={{ width: "100%" }}
