@@ -8,6 +8,7 @@ import { Person } from '@mui/icons-material';
 import Close from '@mui/icons-material/Close';
 
 type MyProps = {
+    groupowner : string,
     fg : Firegun,
     groupName : string,
     chat : Chat
@@ -20,21 +21,8 @@ const InviteButton:React.FC<MyProps> = props => {
 
     // promises.push(this.firegun.userPut(`chat-group/${groupname}/members`,JSON.stringify([{
     const getMembers = async () => {
-        var data;
-        try {
-            let s = await props.fg.userGet(`chat-group/${props.groupName}/admins`);
-            if (typeof s === "string") {
-                data = s
-            } else {
-                data = JSON.stringify([]);
-            }
-        } catch (error) {
-            data = JSON.stringify([]);            
-        }
-        if (typeof data === "string") {
-            let members = JSON.parse(data);
-            setMembers(members);                        
-        }
+        var members = await props.chat.groupGetAdmin(props.groupowner, props.groupName)
+        setMembers(members);
     }
 
     const handleOpen = (cb:()=>void) => {

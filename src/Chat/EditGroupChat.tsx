@@ -35,20 +35,16 @@ export default function EditGroupChat(
   }
 
   const getGroupInfo = async () => {
-    let data = await props.fg.Get(`~${props.groupowner}/chat-group/${props.groupname}/info`);
-    console.log (data);
+    let data = await props.chat.groupGetInfo(props.groupowner, props.groupname);
     if (typeof data === "object") {
-      if (typeof data.desc === "string")
-        setEditGroupDescription(data.desc);
-      if (typeof data.name === "string")
-        setEditGroupName(data.name);
-      if (typeof data.image === "string")
-        setEditImage(data.image);
+      setEditGroupDescription(data.desc);
+      setEditGroupName(data.name);
+      setEditImage(data.image);
     }  
   }
 
   const saveEditGroup = async (cb:()=>void) => {
-    await props.chat.groupSetInfo(editGroupName,editGroupDescription,editImage)    
+    await props.chat.groupSetInfo(props.groupowner,editGroupName,editGroupDescription,editImage)
     cb();
   }
 
