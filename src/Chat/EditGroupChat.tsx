@@ -87,7 +87,7 @@ export default function EditGroupChat(
                 <TextField
                   fullWidth
                   InputProps={{
-                    readOnly : true,
+                    readOnly : props.fg.user.pair.pub !== props.groupowner,
                   }}
                   variant="standard"
                   size="small"
@@ -98,7 +98,7 @@ export default function EditGroupChat(
             </Grid>
             <Grid item>
                 <TextareaAutosize
-                  readOnly={true}
+                  readOnly={props.fg.user.pair.pub !== props.groupowner}
                   maxRows={6}
                   value={editGroupDescription}
                   style={{ width: "100%" }}
