@@ -10,6 +10,7 @@ import Close from '@mui/icons-material/Close';
 type MyProps = {
     fg : Firegun,
     groupName : string,
+    groupowner: string,
     chat : Chat
 }
 
@@ -20,7 +21,7 @@ const InviteButton:React.FC<MyProps> = props => {
 
     // promises.push(this.firegun.userPut(`chat-group/${groupname}/members`,JSON.stringify([{
     const getMembers = async () => {
-        let data = await props.fg.userGet(`chat-group/${props.groupName}/members`);
+        let data = await props.fg.userGet(`~${props.groupowner}/chat-group/${props.groupName}/members`);
         if (typeof data === "string") {
             let members = JSON.parse(data);
             setMembers(members);                        
@@ -43,7 +44,7 @@ const InviteButton:React.FC<MyProps> = props => {
             } else {
                 alias = keyPairArr[0].slice(0,8);
             }
-            await props.chat.groupInvite(props.groupName,pubkey,alias)
+            await props.chat.groupInvite(props.groupowner,props.groupName,pubkey,alias)
             getMembers();
             console.log('Adding', props.groupName, pubkey, alias);
             setKeyPair("");

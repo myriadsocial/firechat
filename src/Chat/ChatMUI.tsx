@@ -291,7 +291,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                             <>
                                 <EditGroupChat groupowner={groupOwner} groupname={groupAlias} chat={props.chat} fg={props.fg} common={common} />
                                 <AddAdminButton groupowner={groupOwner} fg={props.fg} chat={props.chat} groupName={groupAlias} />
-                                <InviteButton fg={props.fg} chat={props.chat} groupName={groupAlias} />
+                                <InviteButton groupowner={groupOwner} fg={props.fg} chat={props.chat} groupName={groupAlias} />
                             </>                            
                             :
                             <></>
