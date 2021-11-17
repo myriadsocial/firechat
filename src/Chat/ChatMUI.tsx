@@ -15,6 +15,7 @@ import Delete from '@mui/icons-material/Delete'
 import InviteButton from './InviteButton'
 import AddAdminButton from './AddAdminButton'
 import EditGroupChat from './EditGroupChat'
+import { RefreshRounded } from '@mui/icons-material'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -287,11 +288,12 @@ export default function ChatMUI(props:ChatMUIProps) {
                             <>
                                 <EditGroupChat groupowner={groupOwner} groupname={groupAlias} chat={props.chat} fg={props.fg} common={common} />
                                 <AddAdminButton groupowner={groupOwner} fg={props.fg} chat={props.chat} groupName={groupAlias} />
-                                <InviteButton groupowner={groupOwner} fg={props.fg} chat={props.chat} groupName={groupAlias} />
+                                <InviteButton groupowner={groupOwner} fg={props.fg} chat={props.chat} groupName={groupAlias} />                                
                             </>                            
                             :
                             <></>
                         }                        
+                        <IconButton color="primary" onClick={()=>{ props.fg.clearData() }}><RefreshRounded /></IconButton>
                         <IconButton color="error" onClick={deleteAll}><Delete /></IconButton>
                         <IconButton color="error" onClick={()=>{
                             let elem = document.getElementById(`chatmui-${props.partnerKey}`);
