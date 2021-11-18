@@ -1,6 +1,6 @@
 {
   "name": "@yokowasis/firechat",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "ReactTS Material UI Chat Component",
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
     "@mui/material": "^5.0.6",
     "@mui/styles": "^5.0.2",
     "@types/downloadjs": "^1.4.2",
-    "@yokowasis/firegun": "^1.6.2",
+    "@yokowasis/firegun": "^1.6.8-1",
     "downloadjs": "^1.4.7"
   },
   "devDependencies": {
