@@ -15,7 +15,7 @@ import Delete from '@mui/icons-material/Delete'
 import InviteButton from './InviteButton'
 import AddAdminButton from './AddAdminButton'
 import EditGroupChat from './EditGroupChat'
-import { RefreshRounded } from '@mui/icons-material'
+import { RefreshRounded, Search } from '@mui/icons-material'
 
 type ChatMUIProps = {
     partnerKey : string,
@@ -36,6 +36,7 @@ export default function ChatMUI(props:ChatMUIProps) {
     const [chatsMessagesDiv, setChatsMessagesDiv] = useState<JSX.Element>(<></>);
     const [groupOwner, setGroupOwner] = useState("");
     const [groupAlias, setgroupAlias] = useState("");
+    const [searchString, setSearchString] = useState("");
 
     const yourPub = useRef("");
     const yourEpub = useRef("");
@@ -68,7 +69,6 @@ export default function ChatMUI(props:ChatMUIProps) {
                 setgroupAlias(alias);
 
                 // Get Chat Members
-                // promises.push(this.firegun.userPut(`chat-group/${groupname}/members`,JSON.stringify([{
                 
                 props.chat.groupGetMembers(owner,alias)
                 .then(members => {
@@ -274,7 +274,7 @@ export default function ChatMUI(props:ChatMUIProps) {
             >
                 <Grid container item textAlign="center" fontWeight="bold"  justifyContent="space-between">
                     <Grid item style={{marginRight : "auto"}}>
-                        {/* Chat Date History */}
+                        <TextField onChange={(e)=>{ setSearchString(e.target.value) }} label="Search" size="small" variant="standard" sx={{paddingBottom : "10px"}} /> <IconButton color="primary" onClick={()=>{ props.chat.searchChat(searchString,yourPub.current,yourEpub.current,(s)=>{console.log(s)}) }}><Search /> </IconButton>
                     </Grid>
                     <Grid item xs>
                         <Typography pt={1}>
