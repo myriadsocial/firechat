@@ -69,7 +69,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                 setgroupAlias(alias);
 
                 // Get Chat Members
-                props.chat.groupRetrieveChat({ owner : owner, alias: alias}, { date : dateNow.date, month : dateNow.month, year : dateNow.year.toString() },processChat)                
+                props.chat.groupRetrieveChatMonthly({ owner : owner, alias: alias}, { date : dateNow.date, month : dateNow.month, year : dateNow.year.toString() },processChat)                
             } else {
                 // Chat 1 on 1
 
@@ -79,7 +79,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                 })
 
                 // Listen to chat node. Proses chat yg masuk
-                props.chat.retrieve({ pub : yourPub.current, epub : yourEpub.current},  { date : dateNow.date, month: dateNow.month, year : dateNow.year.toString()},processChat);
+                props.chat.retrieveMonthly({ pub : yourPub.current, epub : yourEpub.current},  { date : dateNow.date, month: dateNow.month, year : dateNow.year.toString()},processChat);
             }
         } else {
             console.log ("Partner Key Incomplete")
