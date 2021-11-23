@@ -108,11 +108,7 @@ export default function ChatMUI(
         let msg = textMsg;
         setTextMsg("");
         console.log ("Sending Chat...")
-
-        let date = common.getDate();
-        let timestamp = `${date.year}/${date.month}/${date.date}T${date.hour}:${date.minutes}:${date.seconds}.${date.miliseconds}`;
-        let id = timestamp.replace(/\//g,".");
-
+        
         // Check apakah group send
         if (props.isGroup) {
         } else {
@@ -125,10 +121,6 @@ export default function ChatMUI(
 
         console.log ("Sending Chat... Success")
     
-    }
-
-    const unsentChat = () => {
-
     }
 
     const Elem = (props:{elem : JSX.Element}) => {
@@ -146,7 +138,7 @@ export default function ChatMUI(
                 (props.isGroup) ?
                     <ChatBubble sender="" status="" deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
                 :
-                    <ChatBubble sender="" status="" deleteChat={handleDeleteChat} unsentChat={unsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                    <ChatBubble sender="" status="" deleteChat={handleDeleteChat} unsentChat={handleUnsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
             }                                
             </div>    
         </>
@@ -176,7 +168,7 @@ export default function ChatMUI(
                     (props.isGroup) ?
                         <ChatBubble sender="" status={chat.status} deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
                     :
-                        <ChatBubble sender="" status={chat.status} deleteChat={handleDeleteChat} unsentChat={unsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                        <ChatBubble sender="" status={chat.status} deleteChat={handleDeleteChat} unsentChat={handleUnsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
                 }                                
                 </div>    
             )}
@@ -217,6 +209,13 @@ export default function ChatMUI(
 
     // END REACT FUNCTION -------------------------------------------------
     // EVENT HANDLER -------------------------------------------------
+
+    const handleUnsentChat = (chatID:string, timestamp:string) => {
+        const date = timestamp.split("T")[0];
+        props.chat.unsend({ pub : partner.current.pub, epub : partner.current.epub},date,chatID,partner.current.cert);
+        deleteBubleChat(chatID);
+    }
+
     const handleDeleteAll = () => {
 
         let listElements = document.getElementsByClassName("bubbleChecked");
