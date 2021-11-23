@@ -33,6 +33,8 @@ const useStyles = makeStyles({
 
 export default function ChatBubble(
     props: {
+        sender : string,
+        status : string,        
         self : boolean,
         text : string,
         timestamp : string,
@@ -107,13 +109,25 @@ export default function ChatBubble(
         )
     }
 
+    const Sender = () => {
+        return (
+            <Typography variant="body2">
+                {props.sender}
+            </Typography>
+        )
+    }
+
     return (
         <>
             <Card className={`${classes.card} ${(props.self ? "self" : "notself")}`}>
                 <CardContent>
+                    <Sender />
                     <ParseText />
-                    <Typography variant="caption">
+                    <Typography component="p" variant="caption">
                         {props.timestamp}
+                    </Typography>
+                    <Typography component="p" variant="caption">
+                        {props.status}
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>

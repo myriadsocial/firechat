@@ -33,7 +33,7 @@
     "@mui/material": "^5.0.6",
     "@mui/styles": "^5.0.2",
     "@types/downloadjs": "^1.4.2",
-    "@yokowasis/firegun": "^1.7.1",
+    "@yokowasis/firegun": "^1.7.2",
     "downloadjs": "^1.4.7"
   },
   "devDependencies": {
