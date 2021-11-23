@@ -109,9 +109,9 @@ export default function ChatMUI(props:ChatMUIProps) {
                             <div key={`${val.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[val.id] = el; return chatBubbleRef.current[val.id]}}>
                                 {
                                     (props.isGroup) ?
-                                        <ChatBubble deleteChat={console.log} unsentChat={console.log} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                        <ChatBubble sender="" status={val.status} deleteChat={console.log} unsentChat={console.log} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
                                     :
-                                        <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                        <ChatBubble sender="" status={val.status} deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
                                 }                                
                             </div>    
                     )
@@ -139,7 +139,7 @@ export default function ChatMUI(props:ChatMUIProps) {
             let chatsTemp = chatsMessages.filter(function( obj ) {
                 return obj.timestamp !== 'sending...';
             });
-            chatsTemp.push({_self : (typeof alwaysSelf !== "undefined" ? alwaysSelf : s._self), msg : s.msg, timestamp: s.timestamp, id : s.id});
+            chatsTemp.push({_self : (typeof alwaysSelf !== "undefined" ? alwaysSelf : s._self), msg : s.msg, timestamp: s.timestamp, id : s.id, status : s.status});
             chatsTemp.sort(common.dynamicSort("timestamp"));
 
             chatsTemp = chatsTemp.filter((thing, index, self) =>
