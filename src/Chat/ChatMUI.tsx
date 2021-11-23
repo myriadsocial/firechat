@@ -29,6 +29,11 @@ type ChatMUIProps = {
     updateLastMsg : (key:string,lastMsg:string) => void,
 }
 
+// type Pubkey = {
+//     pub : string,
+//     epub : string,
+// }
+
 export default function ChatMUI(props:ChatMUIProps) {
 
     const [textMsg, setTextMsg] = useState("");
@@ -109,7 +114,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                             <div key={`${val.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[val.id] = el; return chatBubbleRef.current[val.id]}}>
                                 {
                                     (props.isGroup) ?
-                                        <ChatBubble deleteChat={console.log} unsentChat={console.log} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                        <ChatBubble deleteChat={console.log} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
                                     :
                                         <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
                                 }                                
@@ -136,10 +141,18 @@ export default function ChatMUI(props:ChatMUIProps) {
 
     const processChat = async (s:{[x:string] : any}, alwaysSelf? : boolean) => {
         setChatsMessages(chatsMessages=>{
+            const date = s.timestamp.split("T")[0]; 
             let chatsTemp = chatsMessages.filter(function( obj ) {
                 return obj.timestamp !== 'sending...';
             });
-            chatsTemp.push({_self : (typeof alwaysSelf !== "undefined" ? alwaysSelf : s._self), msg : s.msg, timestamp: s.timestamp, id : s.id});
+            let self = (typeof alwaysSelf !== "undefined" ? alwaysSelf : s._self);
+
+
+            chatsTemp.push({_self : self, msg : s.msg, timestamp: s.timestamp, id : s.id, status : s.status});
+            if (s.status !== "read" && self && !props.isGroup) {
+                props.chat.markAsRead({ pub : yourPub.current, epub : yourEpub.current}, date,s.id,yourCert.current);
+            }
+
             chatsTemp.sort(common.dynamicSort("timestamp"));
 
             chatsTemp = chatsTemp.filter((thing, index, self) =>
@@ -177,9 +190,7 @@ export default function ChatMUI(props:ChatMUIProps) {
 
     const deleteChat = (chatID:string, timestamp:string) => {
         const pubkey = props.partnerKey.split("&")[0]
-        const date = timestamp.split("T")[0];
-        props.fg.userDel(`chat-with/${pubkey}/${date}/${chatID}`)
-        console.log ("DELETE", `chat-with/${pubkey}/${date}/${chatID}`);
+        props.chat.deleteChat(pubkey,chatID,timestamp);
         deleteBubleChat(chatID);
     }
 
@@ -201,7 +212,13 @@ export default function ChatMUI(props:ChatMUIProps) {
     const unsentChat = (chatID:string, timestamp:string) => {
         const pubkey = props.partnerKey.split("&")
         const date = timestamp.split("T")[0];
-        props.chat.unsend({ pub : pubkey[0], epub : pubkey[1]},date,chatID,yourCert.current);
+        if (props.isGroup) {
+            console.log ("GROUP DELETE CHAT")
+            props.chat.groupDeleteChat(`${groupOwner}&${groupAlias}`,chatID,timestamp);
+        } else {
+            console.log ("Unsent Biasa")
+            props.chat.unsend({ pub : pubkey[0], epub : pubkey[1]},date,chatID,yourCert.current);
+        }
         console.log ("UNSENT", pubkey, date, chatID);
         deleteBubleChat(chatID);
     }
