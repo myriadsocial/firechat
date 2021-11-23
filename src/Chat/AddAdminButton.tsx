@@ -14,7 +14,7 @@ type MyProps = {
     chat : Chat
 }
 
-const InviteButton:React.FC<MyProps> = props => {
+const AddAdminButton:React.FC<MyProps> = props => {
 
     const [keyPair, setKeyPair] = React.useState("");
     const [members, setMembers] = React.useState<{alias : string, pub:string}[]>([]);
@@ -81,4 +81,4 @@ const InviteButton:React.FC<MyProps> = props => {
     );
 }
 
-export default InviteButton;
+export default AddAdminButton;
