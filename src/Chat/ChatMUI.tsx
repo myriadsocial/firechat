@@ -72,6 +72,7 @@ export default function ChatMUI(
                         { month : dateNow.month, year : dateNow.year}                        
                     )
                     renderChat(chats);
+                    listenChat();
                 }
             } else {
                 console.log ("Partner Key Incomplete")
@@ -83,6 +84,37 @@ export default function ChatMUI(
 
     // REACT FUNCTION -----------------------------------------------------
 
+    const listenChat = () => {
+        props.chat.listen(
+            { pub : partner.current.pub, epub : partner.current.epub },
+            ((b)=>{
+                let a:chatType;
+                a = b as chatType;
+                renderChat([a]);
+            }) 
+        )
+    }
+
+    const sendChat = async () => {
+
+        let msg = textMsg;
+        setTextMsg("");
+        console.log ("Sending Chat...")
+
+        // Check apakah group send
+        if (props.isGroup) {
+        } else {
+            await props.chat.send(
+                {pub : partner.current.pub, epub: partner.current.epub},
+                msg,
+                partner.current.cert
+            );
+        }
+
+        console.log ("Sending Chat... Success")
+    
+    }
+
     const deleteChat = () => {
 
     }
@@ -90,8 +122,6 @@ export default function ChatMUI(
     const unsentChat = () => {
 
     }
-
-    // END REACT FUNCTION -------------------------------------------------
 
     const renderChat = (chats:chatType[]=[]) => {
         for (const chat of chats) {
@@ -117,9 +147,7 @@ export default function ChatMUI(
         setChatsMessagesDiv(elem);
     }
 
-    const sendChat = async () => {
-    }
-
+    // END REACT FUNCTION -------------------------------------------------
     // EVENT HANDLER -------------------------------------------------
     const handleDeleteAll = () => {      
 
