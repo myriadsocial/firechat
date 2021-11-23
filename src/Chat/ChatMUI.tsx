@@ -233,11 +233,21 @@ export default function ChatMUI(
     }
 
     const handleSendChat = async () => {
-
+        sendChat();
     }
 
-    const handleAttachFile = () => {
+    const handleAttachFile = async () => {
+        
+        let inputElement = document.getElementById(`file-${props.partnerKey.slice(0,8)}`);
 
+        if (inputElement) {
+            let file = await common.fileTobase64(inputElement as HTMLInputElement)
+            let data = {
+                info : file.info,
+                content : file.content
+            }
+            setTextMsg(JSON.stringify(data));            
+        }
     }
     
     const handleDeleteChat = (chatID:string, timestamp:string) => {
