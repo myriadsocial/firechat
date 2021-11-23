@@ -29,11 +29,6 @@ type ChatMUIProps = {
     updateLastMsg : (key:string,lastMsg:string) => void,
 }
 
-type Pubkey = {
-    pub : string,
-    epub : string,
-}
-
 export default function ChatMUI(props:ChatMUIProps) {
 
     const [textMsg, setTextMsg] = useState("");
@@ -74,7 +69,7 @@ export default function ChatMUI(props:ChatMUIProps) {
                 setgroupAlias(alias);
 
                 // Get Chat Members
-                props.chat.groupRetrieveChatMonthly({ owner : owner, alias: alias}, { date : dateNow.date, month : dateNow.month, year : dateNow.year.toString() },processChat)                
+                props.chat.groupRetrieveChat({ owner : owner, alias: alias}, { date : dateNow.date, month : dateNow.month, year : dateNow.year.toString() },processChat)                
             } else {
                 // Chat 1 on 1
 
@@ -83,13 +78,8 @@ export default function ChatMUI(props:ChatMUIProps) {
                     deleteBubleChat(chatID);
                 })
 
-                // Listen jika sewaktu - waktu partner mark as read
-                props.fg.gun.user().get("chat-with").get(yourPub.current).get(dateNow.year).get(dateNow.month).get(dateNow.date).get("markAsRead").on((chatID)=>{
-                    markRead(chatID);
-                })
-
                 // Listen to chat node. Proses chat yg masuk
-                props.chat.retrieveMonthly({ pub : yourPub.current, epub : yourEpub.current},  { date : dateNow.date, month: dateNow.month, year : dateNow.year.toString()},processChat);
+                props.chat.retrieve({ pub : yourPub.current, epub : yourEpub.current},  { date : dateNow.date, month: dateNow.month, year : dateNow.year.toString()},processChat);
             }
         } else {
             console.log ("Partner Key Incomplete")
@@ -119,9 +109,9 @@ export default function ChatMUI(props:ChatMUIProps) {
                             <div key={`${val.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[val.id] = el; return chatBubbleRef.current[val.id]}}>
                                 {
                                     (props.isGroup) ?
-                                        <ChatBubble sender="" status={val.status} deleteChat={console.log} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                        <ChatBubble deleteChat={console.log} unsentChat={console.log} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
                                     :
-                                        <ChatBubble sender="" status={val.status} deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
+                                        <ChatBubble deleteChat={deleteChat} unsentChat={unsentChat} chatID={val.id} self={val._self} text={val.msg} timestamp={val.timestamp} />
                                 }                                
                             </div>    
                     )
@@ -137,51 +127,6 @@ export default function ChatMUI(props:ChatMUIProps) {
         setChatsMessages(myArray);
     }
 
-    const markAsRead = async (pairkey: Pubkey,date:string,chatID: string,cert=""): Promise<string> => {
-        return new Promise(async (resolve, reject) => {
-            if (!props.chat.firegun.user.alias) {
-                reject("User Belum Login")
-            } else {
-                if (cert === "") {
-                    let tempCert = await props.chat.firegun.Get(`~${pairkey.pub}/chat-cert`);
-                    if (typeof tempCert === "string") {
-                        cert = tempCert;
-                    }
-                }
-                
-                try {
-                    // await props.chat.firegun.Put(`~${pairkey.pub}/chat-with/${props.chat.firegun.user.pair.pub}/${date}/${chatID}/status`,"read",true,"",{opt : { cert : cert }})
-                    // await props.chat.firegun.Put(`~${props.chat.firegun.user.pair.pub}/chat-with/${pairkey.pub}/${date}/${chatID}/status`,"read")
-
-                    let random = Math.random();
-                    console.log ("PUT MARK",`~${pairkey.pub}/chat-with/${props.chat.firegun.user.pair.pub}/${date}/markAsRead`,random.toString());
-                    await props.chat.firegun.Put(`~${pairkey.pub}/chat-with/${props.chat.firegun.user.pair.pub}/${date}/markAsRead`,random.toString(),true,"",{opt : { cert : cert }})
-                    resolve("OK");                    
-                } catch (error) {
-                    reject (error);                
-                }
-            }
-        });        
-    }
-
-    const markRead = (chatID:string) => {
-
-        // change array object child        
-        const myArray = chatsMessages.filter(() => {
-            return true;
-        })
-
-        console.log (myArray);
-
-        // myArray.map((obj,index)=>{
-        //     if (obj.id === chatID) {
-        //         myArray[index].status = "read";
-        //     }
-        // });
-
-        // setChatsMessages(myArray);
-    }
-
     const deleteMultiBubleChat = (chatIDS:string[]) => {
         const myArray = chatsMessages.filter(function( obj ) {
             return !chatIDS.includes(obj.timestamp.replace(/\//g,"."));
@@ -191,18 +136,10 @@ export default function ChatMUI(props:ChatMUIProps) {
 
     const processChat = async (s:{[x:string] : any}, alwaysSelf? : boolean) => {
         setChatsMessages(chatsMessages=>{
-            const date = s.timestamp.split("T")[0]; 
             let chatsTemp = chatsMessages.filter(function( obj ) {
                 return obj.timestamp !== 'sending...';
             });
-            let self = (typeof alwaysSelf !== "undefined" ? alwaysSelf : s._self);
-
-
-            chatsTemp.push({_self : self, msg : s.msg, timestamp: s.timestamp, id : s.id, status : s.status});
-            if (s.status !== "read" && self === false && props.isGroup === false) {
-                markAsRead({ pub : yourPub.current, epub : yourEpub.current}, date,s.id,yourCert.current);
-            }
-
+            chatsTemp.push({_self : (typeof alwaysSelf !== "undefined" ? alwaysSelf : s._self), msg : s.msg, timestamp: s.timestamp, id : s.id});
             chatsTemp.sort(common.dynamicSort("timestamp"));
 
             chatsTemp = chatsTemp.filter((thing, index, self) =>
@@ -240,7 +177,9 @@ export default function ChatMUI(props:ChatMUIProps) {
 
     const deleteChat = (chatID:string, timestamp:string) => {
         const pubkey = props.partnerKey.split("&")[0]
-        props.chat.deleteChat(pubkey,chatID,timestamp);
+        const date = timestamp.split("T")[0];
+        props.fg.userDel(`chat-with/${pubkey}/${date}/${chatID}`)
+        console.log ("DELETE", `chat-with/${pubkey}/${date}/${chatID}`);
         deleteBubleChat(chatID);
     }
 
@@ -262,13 +201,7 @@ export default function ChatMUI(props:ChatMUIProps) {
     const unsentChat = (chatID:string, timestamp:string) => {
         const pubkey = props.partnerKey.split("&")
         const date = timestamp.split("T")[0];
-        if (props.isGroup) {
-            console.log ("GROUP DELETE CHAT")
-            props.chat.groupDeleteChat(`${groupOwner}&${groupAlias}`,chatID,timestamp);
-        } else {
-            console.log ("Unsent Biasa")
-            props.chat.unsend({ pub : pubkey[0], epub : pubkey[1]},date,chatID,yourCert.current);
-        }
+        props.chat.unsend({ pub : pubkey[0], epub : pubkey[1]},date,chatID,yourCert.current);
         console.log ("UNSENT", pubkey, date, chatID);
         deleteBubleChat(chatID);
     }
