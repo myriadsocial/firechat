@@ -127,10 +127,6 @@ export default function ChatMUI(
     
     }
 
-    const deleteChat = () => {
-
-    }
-
     const unsentChat = () => {
 
     }
@@ -150,7 +146,7 @@ export default function ChatMUI(
                 (props.isGroup) ?
                     <ChatBubble sender="" status="" deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
                 :
-                    <ChatBubble sender="" status="" deleteChat={deleteChat} unsentChat={unsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                    <ChatBubble sender="" status="" deleteChat={handleDeleteChat} unsentChat={unsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
             }                                
             </div>    
         </>
@@ -168,6 +164,8 @@ export default function ChatMUI(
             chatsMessages.current.push(chat);
         }
 
+        chatsMessages.current.sort(common.dynamicSort("timestamp"));
+
         let elem:JSX.Element;
 
         elem =
@@ -176,9 +174,9 @@ export default function ChatMUI(
                 <div key={`${chat.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[chat.id] = el; return chatBubbleRef.current[chat.id]}}>
                 {
                     (props.isGroup) ?
-                        <ChatBubble sender="" status="" deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                        <ChatBubble sender="" status={chat.status} deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
                     :
-                        <ChatBubble sender="" status="" deleteChat={deleteChat} unsentChat={unsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                        <ChatBubble sender="" status={chat.status} deleteChat={handleDeleteChat} unsentChat={unsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
                 }                                
                 </div>    
             )}
@@ -187,6 +185,13 @@ export default function ChatMUI(
         chatsMessagesDivRef.current = elem;
 
         setChatsMessagesDiv(chatsMessagesDivRef.current);
+    }
+
+    const deleteBubleChat = (chatID:string) => {
+        chatsMessages.current = chatsMessages.current.filter(function( obj ) {
+            return obj.timestamp.replace(/\//g,".") !== chatID;
+        });
+        renderChat();
     }
 
     // END REACT FUNCTION -------------------------------------------------
@@ -202,6 +207,14 @@ export default function ChatMUI(
     const handleAttachFile = () => {
 
     }
+    
+    const handleDeleteChat = (chatID:string, timestamp:string) => {
+        const pubkey = partner.current.pub;
+        const date = timestamp.split("T")[0];
+        props.fg.userDel(`chat-with/${pubkey}/${date}/${chatID}`)
+        deleteBubleChat(chatID);
+    }
+    
 
 
     // ENDEVENT HANDLER -------------------------------------------------
