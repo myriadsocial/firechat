@@ -37,6 +37,7 @@ export default function ChatMUI(
 
     const chatsMessages = React.useRef<chatType[]>([]);
     const chatBubbleRef = React.useRef<{[x:string] : HTMLDivElement | null}>({})
+    const chatsMessagesDivRef = React.useRef<JSX.Element>(<></>)
 
 
     // REACT STATE -------------------------------------------------
@@ -90,7 +91,7 @@ export default function ChatMUI(
             ((b)=>{
                 let a:chatType;
                 a = b as chatType;
-                renderChat([a]);
+                insertChat(a)
             }) 
         )
     }
@@ -100,6 +101,10 @@ export default function ChatMUI(
         let msg = textMsg;
         setTextMsg("");
         console.log ("Sending Chat...")
+
+        let date = common.getDate();
+        let timestamp = `${date.year}/${date.month}/${date.date}T${date.hour}:${date.minutes}:${date.seconds}.${date.miliseconds}`;
+        let id = timestamp.replace(/\//g,".");
 
         // Check apakah group send
         if (props.isGroup) {
@@ -123,6 +128,32 @@ export default function ChatMUI(
 
     }
 
+    const Elem = (props:{elem : JSX.Element}) => {
+        return <>{props.elem}</>
+    }
+
+    const insertChat = (chat:chatType) => {
+
+        let elem =
+        <>
+            <div key={`${chat.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[chat.id] = el; return chatBubbleRef.current[chat.id]}}>
+            {
+                (props.isGroup) ?
+                    <ChatBubble sender="" status="" deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                :
+                    <ChatBubble sender="" status="" deleteChat={deleteChat} unsentChat={unsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+            }                                
+            </div>    
+        </>
+
+        chatsMessagesDivRef.current = <>
+            <Elem elem={chatsMessagesDivRef.current} />
+            <Elem elem={elem} />
+        </>;
+
+        setChatsMessagesDiv(chatsMessagesDivRef.current);
+    }
+
     const renderChat = (chats:chatType[]=[]) => {
         for (const chat of chats) {
             chatsMessages.current.push(chat);
@@ -144,7 +175,9 @@ export default function ChatMUI(
             )}
         </>
 
-        setChatsMessagesDiv(elem);
+        chatsMessagesDivRef.current = elem;
+
+        setChatsMessagesDiv(chatsMessagesDivRef.current);
     }
 
     // END REACT FUNCTION -------------------------------------------------
