@@ -81,6 +81,13 @@ export default function ChatMUI(
         })()
     },[])
 
+    React.useEffect(()=>{
+        // Scroll to end
+        var objDiv = document.getElementById(`chatbox-${props.partnerKey.slice(0,8)}`);
+        if (objDiv) 
+            objDiv.scrollTop = objDiv.scrollHeight;
+    },[chatsMessagesDiv])
+
     // END REACT EFFECT -------------------------------------------------
 
     // REACT FUNCTION -----------------------------------------------------
@@ -135,7 +142,7 @@ export default function ChatMUI(
     const insertChat = (chat:chatType) => {
 
         chatsMessages.current.push(chat);
-        
+
         let elem =
         <>
             <div key={`${chat.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[chat.id] = el; return chatBubbleRef.current[chat.id]}}>
