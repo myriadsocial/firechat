@@ -74,6 +74,7 @@ export default function ChatMUI(
                     )
                     renderChat(chats);
                     listenChat();
+                    listenUnsent();
                 }
             } else {
                 console.log ("Partner Key Incomplete")
@@ -101,6 +102,13 @@ export default function ChatMUI(
                 insertChat(a)
             }) 
         )
+    }
+
+    const listenUnsent = () => {
+        props.chat.listenUnsent({ pub : partner.current.pub, epub : partner.current.epub },(chatID)=>{
+            console.log ("UNSEND FIREGUN !!!");
+            deleteBubleChat(chatID);
+        })
     }
 
     const sendChat = async () => {
