@@ -194,9 +194,41 @@ export default function ChatMUI(
         renderChat();
     }
 
+    const deleteMultiBubleChat = (chatIDS:string[]) => {
+        chatsMessages.current = chatsMessages.current.filter(function( obj ) {
+            return !chatIDS.includes(obj.timestamp.replace(/\//g,"."));
+        });
+        renderChat();
+    }
+
+    const deleteMultiChat = async (chatsArray : {chatID:string, timestamp:string}[]) => {
+        const pubkey = partner.current.pub;
+        let chatIDs:string[] = [];
+        for (const val of chatsArray) {
+            console.log (val);
+            const date = val.timestamp.split("T")[0];
+            // Pake await biar tidak terlalu kencang deletenya, biar database tidak corrupt
+            await props.fg.userDel(`chat-with/${pubkey}/${date}/${val.chatID}`)
+            chatIDs.push(val.chatID);            
+        }
+        console.log(chatIDs);
+        deleteMultiBubleChat(chatIDs)
+    }
+
     // END REACT FUNCTION -------------------------------------------------
     // EVENT HANDLER -------------------------------------------------
-    const handleDeleteAll = () => {      
+    const handleDeleteAll = () => {
+
+        let listElements = document.getElementsByClassName("bubbleChecked");
+        let chatsArray:{chatID:string, timestamp:string}[] = [];
+        for (let i = 0; i < listElements.length; i++) {
+            let elem:HTMLElement = (listElements[i] as any);
+            let id = elem.dataset.chatid;
+            if (id) {
+                chatsArray.push({chatID:id, timestamp:id.replace(/\./g,"/")});
+            }            
+        }
+        deleteMultiChat(chatsArray)
 
     }
 
