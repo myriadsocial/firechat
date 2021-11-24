@@ -42,7 +42,7 @@ export default function ChatBubble(
         timestamp : string,
         chatID : string,
         decryptChat? :(chat:chatType) => Promise<string>,    
-        deleteChat : (chatID:string, timestamp:string) => void,
+        deleteChat? : (chatID:string, timestamp:string) => void,
         unsentChat : (chatID:string, timestamp:string) => void,
     }
 ) {
@@ -99,7 +99,8 @@ export default function ChatBubble(
     }
 
     const deleteChat = (chatID:string,timestamp:string) => {
-        props.deleteChat (chatID, timestamp);
+        if (props.deleteChat)
+            props.deleteChat (chatID, timestamp);
     }
 
     const unsentChat = (chatID:string,timestamp:string) => {
@@ -114,13 +115,19 @@ export default function ChatBubble(
         }
     }
 
-    const Operation = (props:{chatID : string,timestamp:string, self:boolean}) => {
+    const Operation = (props:{deleteChat? : (chatID:string, timestamp:string) => void, chatID : string,timestamp:string, self:boolean}) => {
         return (
             <Typography variant="body2">
-                <Checkbox onChange={changeCheckbox} className="" inputProps={{ "data-chatid" : props.chatID } as any}  style={{color : "white"}} />
-                <IconButton style={{color : "white"}} aria-label="Delete" onClick={()=>{deleteChat(props.chatID,props.timestamp)}}>
-                    <Delete />
-                </IconButton>
+                {props.deleteChat ?
+                    <>
+                        <Checkbox onChange={changeCheckbox} className="" inputProps={{ "data-chatid" : props.chatID } as any}  style={{color : "white"}} />
+                        <IconButton style={{color : "white"}} aria-label="Delete" onClick={()=>{deleteChat(props.chatID,props.timestamp)}}>
+                            <Delete />
+                        </IconButton>
+                    </>
+                :
+                    <></>
+                }
                 {props.self ? 
                     <IconButton style={{color : "white"}} aria-label="Unsent" onClick={()=>{unsentChat(props.chatID,props.timestamp)}} >
                         <Undo />
@@ -153,7 +160,7 @@ export default function ChatBubble(
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>
-                    <Operation chatID={props.chatID} timestamp={props.timestamp} self={props.self} />
+                    <Operation deleteChat={props.deleteChat} chatID={props.chatID} timestamp={props.timestamp} self={props.self} />
                 </CardActions>
             </Card>        
         </>        

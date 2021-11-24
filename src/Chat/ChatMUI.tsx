@@ -201,10 +201,9 @@ export default function ChatMUI(
                     <ChatBubble 
                         sender={chat.alias || ""} 
                         status={chat.status} 
-                        deleteChat={console.log} 
-                        unsentChat={console.log} 
+                        unsentChat={handleUnsentChat} 
                         chatID={chat.id} 
-                        self={chat._self} 
+                        self={chat.alias === props.fg.user.alias} 
                         text={chat.msg} 
                         timestamp={chat.timestamp} />
                 :
@@ -247,10 +246,9 @@ export default function ChatMUI(
                         <ChatBubble 
                             sender={chat.alias} 
                             status={chat.status} 
-                            deleteChat={console.log} 
-                            unsentChat={console.log} 
+                            unsentChat={handleUnsentChat} 
                             chatID={chat.id} 
-                            self={chat._self} 
+                            self={chat.alias === props.fg.user.alias} 
                             text={chat.msg} 
                             timestamp={chat.timestamp} />
                     :
@@ -320,8 +318,14 @@ export default function ChatMUI(
 
     const handleUnsentChat = (chatID:string, timestamp:string) => {
         const date = timestamp.split("T")[0];
-        props.chat.unsend({ pub : partner.current.pub, epub : partner.current.epub},date,chatID,partner.current.cert);
-        deleteBubleChat(chatID);
+        if (props.isGroup) {
+            const groupID = `${partner.current.groupOwner}&${partner.current.groupAlias}`;
+            props.chat.groupDeleteChat(groupID, chatID, timestamp);
+            deleteBubleChat(chatID);
+        } else {
+            props.chat.unsend({ pub : partner.current.pub, epub : partner.current.epub},date,chatID,partner.current.cert);
+            deleteBubleChat(chatID);    
+        }
     }
 
     const handleDeleteAll = () => {
