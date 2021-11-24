@@ -65,6 +65,8 @@ export default function ChatMUI(
                     partner.current.cert = (typeof cert === "string") ? cert : "";
                     partner.current.pub = keys[0];
                     partner.current.epub = keys[1];
+
+                    props.chat.markAsRead({pub : partner.current.pub, epub : partner.current.epub},partner.current.cert);
     
                     // Retrieve AvailableChat
     
@@ -75,6 +77,7 @@ export default function ChatMUI(
                     renderChat(chats);
                     listenChat();
                     listenUnsent();
+                    listenMarkAsRead();
                 }
             } else {
                 console.log ("Partner Key Incomplete")
@@ -92,6 +95,27 @@ export default function ChatMUI(
     // END REACT EFFECT -------------------------------------------------
 
     // REACT FUNCTION -----------------------------------------------------
+
+    const listenMarkAsRead = () => {
+        props.chat.listenMarkAsRead(
+            {pub : partner.current.pub, epub : partner.current.epub},
+            markAsRead
+        )
+    }
+
+    const markAsRead = (timestamp:string) => {
+        let changed = false;
+        for (const chat of chatsMessages.current) {
+            if (chat.timestamp <= timestamp) {
+                chat.status = "read";
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            renderChat()
+        }
+    }
 
     const listenChat = () => {
         props.chat.listen(
