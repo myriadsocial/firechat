@@ -9,6 +9,8 @@ import Button from "@mui/material/Button"
 import Typography from "@mui/material/Typography"
 import makeStyles from "@mui/styles/makeStyles";
 import download from "downloadjs"
+import { chatType } from "@yokowasis/firegun/common";
+import React from "react";
 
 const useStyles = makeStyles({
 
@@ -39,11 +41,14 @@ export default function ChatBubble(
         text : string,
         timestamp : string,
         chatID : string,
+        decryptChat? :(chat:chatType) => Promise<string>,    
         deleteChat : (chatID:string, timestamp:string) => void,
         unsentChat : (chatID:string, timestamp:string) => void,
     }
 ) {
     const classes = useStyles();
+
+    const [decryptedChat, setDecryptedChat] = React.useState<string>("");
 
     const ParseText = () => {
         if (typeof props.text === "object" || (typeof props.text === "string" && props.text.indexOf(";base64,")>=0)) {
@@ -72,7 +77,24 @@ export default function ChatBubble(
                 return (<Typography variant="body2"><Button variant="contained" color="warning" onClick={()=>{download(props.text)}}>Download</Button></Typography>)
             }            
         } else {
-            return (<Typography variant="body2">{props.text}</Typography>)
+            if ((typeof props.text === "string") && (props.text.search("SEA") === 0)) {
+                let chat:chatType = {
+                    _self : props.self,
+                    alias : props.sender,
+                    msg : props.text,
+                    timestamp : props.timestamp,
+                    id : props.chatID,
+                    status : props.status                    
+                };
+                if (props.decryptChat)
+                props.decryptChat(chat)
+                .then(s=>{
+                    setDecryptedChat(s);
+                })
+                return (<Typography variant="body2">{decryptedChat}</Typography>)
+            } else {
+                return (<Typography variant="body2">{props.text}</Typography>)
+            }
         }
     }
 

@@ -200,7 +200,7 @@ export default function ChatMUI(
                     (props.isGroup) ?
                         <ChatBubble sender="" status={chat.status} deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
                     :
-                        <ChatBubble sender="" status={chat.status} deleteChat={handleDeleteChat} unsentChat={handleUnsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                        <ChatBubble sender="" status={chat.status} deleteChat={handleDeleteChat} unsentChat={handleUnsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} decryptChat={decryptChat} />
                 }                                
                 </div>    
             )}
@@ -237,6 +237,19 @@ export default function ChatMUI(
         }
         console.log(chatIDs);
         deleteMultiBubleChat(chatIDs)
+    }
+
+    const decryptChat = async (chat:chatType):Promise<string> => {
+        let a = await props.chat.decryptChat(
+            chat,
+            {pub : partner.current.pub, epub : partner.current.epub},            
+        )
+
+        if (a.msg) {
+            return (a.msg as string);
+        } else {
+            return ""
+        }
     }
 
     // END REACT FUNCTION -------------------------------------------------
