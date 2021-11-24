@@ -57,6 +57,20 @@ export default function ChatMUI(
     
                 if (props.isGroup) {
                     // Group Chat
+                    let keys = props.partnerKey.split("&")
+                    let owner = keys[1];
+                    let alias = keys[2];
+    
+                    partner.current.groupOwner = owner;
+                    partner.current.groupAlias = alias;
+    
+                    let data = await props.chat.groupRetrieveChatMonthly(
+                        {owner : partner.current.groupOwner, alias : partner.current.groupAlias},
+                        { month : dateNow.month, year : dateNow.year, date: dateNow.date },
+                    )
+
+                    renderChat(data);
+                    listenGroupChat();
                 } else {
                     // 1 on 1 Chat
                     let keys:string[];
@@ -128,6 +142,17 @@ export default function ChatMUI(
         )
     }
 
+    const listenGroupChat = () => {
+        props.chat.groupListen(
+            {owner : partner.current.groupOwner, alias : partner.current.groupAlias},
+            ((b)=>{
+                let a:chatType;
+                a = b as chatType;
+                insertChat(a)
+            })
+        )
+    }
+
     const listenUnsent = () => {
         props.chat.listenUnsent({ pub : partner.current.pub, epub : partner.current.epub },(chatID)=>{
             console.log ("UNSEND FIREGUN !!!");
@@ -143,6 +168,11 @@ export default function ChatMUI(
         
         // Check apakah group send
         if (props.isGroup) {
+            await props.chat.groupSend(
+                partner.current.groupOwner,
+                partner.current.groupAlias,
+                msg
+            );
         } else {
             await props.chat.send(
                 {pub : partner.current.pub, epub: partner.current.epub},
@@ -168,9 +198,25 @@ export default function ChatMUI(
             <div key={`${chat.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[chat.id] = el; return chatBubbleRef.current[chat.id]}}>
             {
                 (props.isGroup) ?
-                    <ChatBubble sender="" status="" deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                    <ChatBubble 
+                        sender={chat.alias || ""} 
+                        status={chat.status} 
+                        deleteChat={console.log} 
+                        unsentChat={console.log} 
+                        chatID={chat.id} 
+                        self={chat._self} 
+                        text={chat.msg} 
+                        timestamp={chat.timestamp} />
                 :
-                    <ChatBubble sender="" status="" deleteChat={handleDeleteChat} unsentChat={handleUnsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                    <ChatBubble
+                        sender={""}
+                        status={chat.status} 
+                        deleteChat={handleDeleteChat} 
+                        unsentChat={handleUnsentChat} 
+                        chatID={chat.id} 
+                        self={chat._self} 
+                        text={chat.msg} 
+                        timestamp={chat.timestamp} />
             }                                
             </div>    
         </>
@@ -198,9 +244,26 @@ export default function ChatMUI(
                 <div key={`${chat.timestamp}-${Math.random()}`} ref={(el)=>{chatBubbleRef.current[chat.id] = el; return chatBubbleRef.current[chat.id]}}>
                 {
                     (props.isGroup) ?
-                        <ChatBubble sender="" status={chat.status} deleteChat={console.log} unsentChat={console.log} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} />
+                        <ChatBubble 
+                            sender={chat.alias} 
+                            status={chat.status} 
+                            deleteChat={console.log} 
+                            unsentChat={console.log} 
+                            chatID={chat.id} 
+                            self={chat._self} 
+                            text={chat.msg} 
+                            timestamp={chat.timestamp} />
                     :
-                        <ChatBubble sender="" status={chat.status} deleteChat={handleDeleteChat} unsentChat={handleUnsentChat} chatID={chat.id} self={chat._self} text={chat.msg} timestamp={chat.timestamp} decryptChat={decryptChat} />
+                        <ChatBubble 
+                            sender="" 
+                            status={chat.status} 
+                            deleteChat={handleDeleteChat} 
+                            unsentChat={handleUnsentChat} 
+                            chatID={chat.id} 
+                            self={chat._self} 
+                            text={chat.msg} 
+                            timestamp={chat.timestamp}
+                            decryptChat={decryptChat} />
                 }                                
                 </div>    
             )}
